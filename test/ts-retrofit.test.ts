@@ -20,7 +20,7 @@ describe('Test ts-retrofit.', () => {
       .setEndpoint(TEST_SERVER_ENDPOINT)
       .build(UserService);
     const token = '123456abcdef';
-    let response = await testService.getUsers(token);
+    const response = await testService.getUsers(token);
     expect(response.config.url).toEqual(`${TEST_SERVER_ENDPOINT}/${API_PREFIX}/users`);
     expect(response.config.method).toEqual('get');
     expect(response.config.headers['X-A']).toEqual('abc');
@@ -50,7 +50,7 @@ describe('Test ts-retrofit.', () => {
     const age = 21;
     const country = 'US';
     const user = { name, age, country };
-    let response = await testService.replaceUser(userId, user);
+    const response = await testService.replaceUser(userId, user);
     expect(response.config.url).toEqual(`${TEST_SERVER_ENDPOINT}/${API_PREFIX}/users/${userId}`);
     expect(response.config.method).toEqual('put');
     expect(response.config.data).toEqual(JSON.stringify(user));
@@ -63,7 +63,7 @@ describe('Test ts-retrofit.', () => {
     const userId = 1;
     const age = 21;
     const user = { age };
-    let response = await testService.updateUser(userId, user);
+    const response = await testService.updateUser(userId, user);
     expect(response.config.url).toEqual(`${TEST_SERVER_ENDPOINT}/${API_PREFIX}/users/${userId}`);
     expect(response.config.method).toEqual('patch');
     expect(response.config.data).toEqual(JSON.stringify(user));
@@ -74,7 +74,7 @@ describe('Test ts-retrofit.', () => {
       .setEndpoint(TEST_SERVER_ENDPOINT)
       .build(UserService);
     const userId = 1;
-    let response = await testService.deleteUser(userId);
+    const response = await testService.deleteUser(userId);
     expect(response.config.url).toEqual(`${TEST_SERVER_ENDPOINT}/${API_PREFIX}/users/${userId}`);
     expect(response.config.method).toEqual('delete');
   });
@@ -84,7 +84,7 @@ describe('Test ts-retrofit.', () => {
       .setEndpoint(TEST_SERVER_ENDPOINT)
       .build(UserService);
     const userId = 1;
-    let response = await testService.headUser(userId);
+    const response = await testService.headUser(userId);
     expect(response.config.url).toEqual(`${TEST_SERVER_ENDPOINT}/${API_PREFIX}/users/${userId}`);
     expect(response.config.method).toEqual('head');
   });
@@ -97,7 +97,7 @@ describe('Test ts-retrofit.', () => {
       title: 'TypeScript',
       author: 'John Doe',
     };
-    let response = await searchService.search(query);
+    const response = await searchService.search(query);
     expect(response.config.url).toEqual(`${TEST_SERVER_ENDPOINT}/${API_PREFIX}/search`);
     expect(response.config.params).toMatchObject(query);
     expect(response.config.method).toEqual('get');

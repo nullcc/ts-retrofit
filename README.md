@@ -73,7 +73,9 @@ export class SearchService extends BaseService {
     .setEndpoint(TEST_SERVER_ENDPOINT)
     .build(UserService);
   const token = '123456abcdef';
-  let response = await testService.getUsers(token);
+  const response = await testService.getUsers(token);
+  console.log(response.data);
+  // use response.data ...
 })()
 ```
 
