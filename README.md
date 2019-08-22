@@ -7,25 +7,14 @@ A retrofit implementation in TypeScript.
 
 ```typescript
 import {
-  GET,
-  POST,
-  PUT,
-  PATCH,
-  DELETE,
-  HEAD,
-  BasePath,
-  Header,
-  Headers,
-  PathParam,
-  QueryMap,
-  Body,
-  BaseService,
-} from 'ts-retrofit';
-import { AxiosResponse } from 'axios';
-const TEST_SERVER_HOST = 'http://localhost';
-const TEST_SERVER_PORT = 8080;
+  GET, POST, PUT, PATCH, DELETE, HEAD, BasePath, Header,
+  Headers, PathParam, QueryMap, Body, BaseService, ServiceBuilder, Response
+} from "ts-retrofit";
+export const TEST_SERVER_HOST = "http://localhost";
+export const TEST_SERVER_PORT = 12345;
 export const TEST_SERVER_ENDPOINT = `${TEST_SERVER_HOST}:${TEST_SERVER_PORT}`;
-export const API_PREFIX = 'api/v1';
+export const API_PREFIX = "/api/v1";
+export const TOKEN = "abcdef123456";
 
 export interface User {
   id?: number;
@@ -40,42 +29,54 @@ export interface SearchQuery {
   category?: string;
 }
 
+export interface Auth {
+  username: string;
+  password: string;
+}
+
 @BasePath(API_PREFIX)
 export class UserService extends BaseService {
-  @GET('users')
-  @Headers('X-A', 'abc')
-  async getUsers(@Header('X-Token') token: string): Promise<AxiosResponse> { return <AxiosResponse> {} };
+  @GET("/users")
+  async getUsers(@Header("X-Token") token: string): Promise<Response> { return <Response> {} };
 
-  @POST('users')
-  async createUser(@Body user: User): Promise<AxiosResponse> { return <AxiosResponse> {} };
+  @GET("/users/{userId}")
+  async getUser(@Header("X-Token") token: string, @PathParam("userId") userId: number): Promise<Response> { return <Response> {} };
 
-  @PUT('users/{userId}')
-  async replaceUser(@PathParam('userId') userId: number, @Body user: User): Promise<AxiosResponse> { return <AxiosResponse> {} };
+  @POST("/users")
+  async createUser(@Header("X-Token") token: string, @Body user: User): Promise<Response> { return <Response> {} };
 
-  @PATCH('users/{userId}')
-  async updateUser(@PathParam('userId') userId: number, @Body user: Partial<User>): Promise<AxiosResponse> { return <AxiosResponse> {} };
+  @PUT("/users/{userId}")
+  async replaceUser(@Header("X-Token") token: string, @PathParam("userId") userId: number, @Body user: User): Promise<Response> { return <Response> {} };
 
-  @DELETE('users/{userId}')
-  async deleteUser(@PathParam('userId') userId: number): Promise<AxiosResponse> { return <AxiosResponse> {} };
+  @PATCH("/users/{userId}")
+  async updateUser(@Header("X-Token") token: string, @PathParam("userId") userId: number, @Body user: Partial<User>): Promise<Response> { return <Response> {} };
 
-  @HEAD('users/{userId}')
-  async headUser(@PathParam('userId') userId: number): Promise<AxiosResponse> { return <AxiosResponse> {} };
+  @DELETE("/users/{userId}")
+  async deleteUser(@Header("X-Token") token: string, @PathParam("userId") userId: number): Promise<Response> { return <Response> {} };
+
+  @HEAD("/users/{userId}")
+  async headUser(@Header("X-Token") token: string, @PathParam("userId") userId: number): Promise<Response> { return <Response> {} };
 }
 
 @BasePath(API_PREFIX)
 export class SearchService extends BaseService {
-  @GET('search')
-  async search(@QueryMap query: SearchQuery): Promise<AxiosResponse> { return <AxiosResponse> {} };
+  @GET("/search")
+  async search(@Header("X-Token") token: string, @QueryMap query: SearchQuery): Promise<Response> { return <Response> {} };
+}
+
+@BasePath("")
+export class AuthService extends BaseService {
+  @POST("/oauth2/authorize")
+  @Headers("Content-Type", "application/x-www-form-urlencoded")
+  async auth(@Body body: Auth): Promise<Response> { return <Response> {} };
 }
 
 (async () => {
-  const testService = new ServiceBuilder()
+  const userService = new ServiceBuilder()
     .setEndpoint(TEST_SERVER_ENDPOINT)
     .build(UserService);
-  const token = '123456abcdef';
-  const response = await testService.getUsers(token);
-  console.log(response.data);
-  // use response.data ...
+    const response = await userService.getUsers(TOKEN);
+    // use response.data ...
 })()
 ```
 

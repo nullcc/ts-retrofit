@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "tslint": "tslint -c tslint.json --project . src/**/*.ts src/**/*.tsx"
   },
   "author": "",
   "license": "ISC",
@@ -22,6 +23,7 @@
     "jest": "^24.9.0",
     "lodash": "^4.17.15",
     "ts-jest": "^24.0.2",
+    "tslint": "^5.19.0",
     "typescript": "^3.5.3"
   }
 }
