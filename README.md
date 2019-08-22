@@ -75,8 +75,8 @@ export class AuthService extends BaseService {
   const userService = new ServiceBuilder()
     .setEndpoint(TEST_SERVER_ENDPOINT)
     .build(UserService);
-    const response = await userService.getUsers(TOKEN);
-    // use response.data ...
+  const response = await userService.getUsers(TOKEN);
+  // use response.data ...
 })()
 ```
 
