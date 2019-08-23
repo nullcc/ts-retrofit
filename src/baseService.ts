@@ -1,5 +1,6 @@
 import * as qs from "qs";
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
+import { Method } from "./constants";
 
 axios.defaults.withCredentials = true;
 
@@ -105,18 +106,20 @@ export class BaseService {
     }
 
     switch (method) {
-      case "GET":
+      case Method.GET:
         return this._httpClient.get(url, config);
-      case "POST":
+      case Method.POST:
         return this._httpClient.post(url, config);
-      case "PUT":
+      case Method.PUT:
         return this._httpClient.put(url, config);
-      case "PATCH":
+      case Method.PATCH:
         return this._httpClient.patch(url, config);
-      case "DELETE":
+      case Method.DELETE:
         return this._httpClient.delete(url, config);
-      case "HEAD":
+      case Method.HEAD:
         return this._httpClient.head(url, config);
+      case Method.OPTIONS:
+        return this._httpClient.options(url, config);
       default:
         return this._httpClient.get(url, config);
     }
@@ -154,7 +157,7 @@ class HttpClient {
   public async get(url: string, config: AxiosRequestConfig): Promise<Response> {
     const requestConfig: AxiosRequestConfig = {
       url,
-      method: "get",
+      method: Method.GET,
       ...config,
     };
     return await this._sendRequest(requestConfig);
@@ -163,7 +166,7 @@ class HttpClient {
   public async post(url: string, config: AxiosRequestConfig): Promise<Response> {
     const requestConfig: AxiosRequestConfig = {
       url,
-      method: "post",
+      method: Method.POST,
       ...config,
     };
     return await this._sendRequest(requestConfig);
@@ -172,7 +175,7 @@ class HttpClient {
   public async put(url: string, config: AxiosRequestConfig): Promise<Response> {
     const requestConfig: AxiosRequestConfig = {
       url,
-      method: "put",
+      method: Method.PUT,
       ...config,
     };
     return await this._sendRequest(requestConfig);
@@ -181,7 +184,7 @@ class HttpClient {
   public async patch(url: string, config: AxiosRequestConfig): Promise<Response> {
     const requestConfig: AxiosRequestConfig = {
       url,
-      method: "patch",
+      method: Method.PATCH,
       ...config,
     };
     return await this._sendRequest(requestConfig);
@@ -190,7 +193,7 @@ class HttpClient {
   public async delete(url: string, config: AxiosRequestConfig): Promise<Response> {
     const requestConfig: AxiosRequestConfig = {
       url,
-      method: "delete",
+      method: Method.DELETE,
       ...config,
     };
     return await this._sendRequest(requestConfig);
@@ -199,7 +202,16 @@ class HttpClient {
   public async head(url: string, config: AxiosRequestConfig): Promise<Response> {
     const requestConfig: AxiosRequestConfig = {
       url,
-      method: "head",
+      method: Method.HEAD,
+      ...config,
+    };
+    return await this._sendRequest(requestConfig);
+  }
+
+  public async options(url: string, config: AxiosRequestConfig): Promise<Response> {
+    const requestConfig: AxiosRequestConfig = {
+      url,
+      method: Method.OPTIONS,
       ...config,
     };
     return await this._sendRequest(requestConfig);

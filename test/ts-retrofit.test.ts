@@ -95,6 +95,16 @@ describe("Test ts-retrofit.", () => {
     expect(response.config.url).toEqual(`${TEST_SERVER_ENDPOINT}${API_PREFIX}/users/${userId}`);
   });
 
+  test("Test `@OPTIONS` decorator.", async () => {
+    const userService = new ServiceBuilder()
+      .setEndpoint(TEST_SERVER_ENDPOINT)
+      .build(UserService);
+    const userId = 1;
+    const response = await userService.optionsUser(TOKEN, userId);
+    expect(response.config.method).toEqual("options");
+    expect(response.config.url).toEqual(`${TEST_SERVER_ENDPOINT}${API_PREFIX}/users/${userId}`);
+  });
+
   test("Test `@PathParam` decorator.", async () => {
     const userService = new ServiceBuilder()
       .setEndpoint(TEST_SERVER_ENDPOINT)

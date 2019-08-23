@@ -1,3 +1,4 @@
+import { Method } from "./constants";
 import { BaseService } from "./baseService";
 
 interface IHeaders {
@@ -44,7 +45,7 @@ const registerMethod = (method: string, url: string) => {
  * @constructor
  */
 export const GET = (url: string) => {
-  return registerMethod("GET", url);
+  return registerMethod(Method.GET, url);
 };
 
 /**
@@ -54,7 +55,7 @@ export const GET = (url: string) => {
  * @constructor
  */
 export const POST = (url: string) => {
-  return registerMethod("POST", url);
+  return registerMethod(Method.POST, url);
 };
 
 /**
@@ -64,7 +65,7 @@ export const POST = (url: string) => {
  * @constructor
  */
 export const PUT = (url: string) => {
-  return registerMethod("PUT", url);
+  return registerMethod(Method.PUT, url);
 };
 
 /**
@@ -74,7 +75,7 @@ export const PUT = (url: string) => {
  * @constructor
  */
 export const PATCH = (url: string) => {
-  return registerMethod("PATCH", url);
+  return registerMethod(Method.PATCH, url);
 };
 
 /**
@@ -84,7 +85,7 @@ export const PATCH = (url: string) => {
  * @constructor
  */
 export const DELETE = (url: string) => {
-  return registerMethod("DELETE", url);
+  return registerMethod(Method.DELETE, url);
 };
 
 /**
@@ -94,7 +95,17 @@ export const DELETE = (url: string) => {
  * @constructor
  */
 export const HEAD = (url: string) => {
-  return registerMethod("HEAD", url);
+  return registerMethod(Method.HEAD, url);
+};
+
+/**
+ * OPTIONS decorator
+ * @param {string} url
+ * @return {(target: BaseService, methodName: string, descriptor: PropertyDescriptor) => void}
+ * @constructor
+ */
+export const OPTIONS = (url: string) => {
+  return registerMethod(Method.OPTIONS, url);
 };
 
 /**

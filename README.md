@@ -7,7 +7,7 @@ A retrofit implementation in TypeScript.
 
 ```typescript
 import {
-  GET, POST, PUT, PATCH, DELETE, HEAD, BasePath, Header, Query,
+  GET, POST, PUT, PATCH, DELETE, HEAD, OPTIONS, BasePath, Header, Query,
   Headers, PathParam, QueryMap, Body, BaseService, ServiceBuilder, Response
 } from "ts-retrofit";
 export const TEST_SERVER_HOST = "http://localhost";
@@ -56,6 +56,9 @@ export class UserService extends BaseService {
 
   @HEAD("/users/{userId}")
   async headUser(@Header("X-Token") token: string, @PathParam("userId") userId: number): Promise<Response> { return <Response> {} };
+
+  @OPTIONS("/users/{userId}")
+  async optionsUser(@Header("X-Token") token: string, @PathParam("userId") userId: number): Promise<Response> { return <Response> {} };
 }
 
 @BasePath(API_PREFIX)
@@ -94,3 +97,8 @@ export class PostService extends BaseService {
 })()
 ```
 
+## Test
+
+```bash
+npm test
+```

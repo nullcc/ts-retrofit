@@ -1,5 +1,5 @@
 import {
-  GET, POST, PUT, PATCH, DELETE, HEAD, BasePath, Header, Query,
+  GET, POST, PUT, PATCH, DELETE, HEAD, OPTIONS, BasePath, Header, Query,
   Headers, PathParam, QueryMap, Body, BaseService, Response
 } from "../src";
 
@@ -49,6 +49,9 @@ export class UserService extends BaseService {
 
   @HEAD("/users/{userId}")
   async headUser(@Header("X-Token") token: string, @PathParam("userId") userId: number): Promise<Response> { return <Response> {} };
+
+  @OPTIONS("/users/{userId}")
+  async optionsUser(@Header("X-Token") token: string, @PathParam("userId") userId: number): Promise<Response> { return <Response> {} };
 }
 
 @BasePath(API_PREFIX)
