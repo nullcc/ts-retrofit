@@ -2,6 +2,7 @@ import {
   GET, POST, PUT, PATCH, DELETE, HEAD, BasePath, Header, Query,
   Headers, PathParam, QueryMap, Body, BaseService, Response
 } from "../src";
+
 export const TEST_SERVER_HOST = "http://localhost";
 export const TEST_SERVER_PORT = 12345;
 export const TEST_SERVER_ENDPOINT = `${TEST_SERVER_HOST}:${TEST_SERVER_PORT}`;

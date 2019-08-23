@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "jest --coverage",
-    "tslint": "tslint -c tslint.json --project . src/**/*.ts src/**/*.tsx test/**/*.ts test/**/*.tsx"
+    "tslint": "tslint -c tslint.json --project . src/**/*.ts src/**/*.tsx test/**/*.test.ts test/**/*.test.tsx"
   },
   "author": "",
   "license": "ISC",
