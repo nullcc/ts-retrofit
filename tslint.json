@@ -13,7 +13,8 @@
     ],
     "object-literal-sort-keys": false,
     "max-classes-per-file": [true, 99],
-    "ban-types": []
+    "ban-types": [],
+    "ordered-imports": false
   },
   "rulesDirectory": []
 }

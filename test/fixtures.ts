@@ -59,6 +59,9 @@ export class SearchService extends BaseService {
 @BasePath("")
 export class AuthService extends BaseService {
   @POST("/oauth2/authorize")
-  @Headers("Content-Type", "application/x-www-form-urlencoded")
+  @Headers({
+    "Content-Type": "application/x-www-form-urlencoded",
+    "Accept": "application/json"
+  })
   async auth(@Body body: Auth): Promise<Response> { return <Response> {} };
 }

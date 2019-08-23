@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "jest",
+    "test": "jest --coverage",
     "tslint": "tslint -c tslint.json --project . src/**/*.ts src/**/*.tsx"
   },
   "author": "",

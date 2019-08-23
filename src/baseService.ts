@@ -1,4 +1,4 @@
-import * as qs from 'qs';
+import * as qs from "qs";
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 
 axios.defaults.withCredentials = true;
@@ -24,7 +24,7 @@ export class BaseService {
     const noWrappedMethodNames = [
       "getInstanceMethodNames",
       "_wrap",
-      "_resolveData"
+      "_resolveData",
     ];
 
     const self = this;
@@ -122,10 +122,10 @@ export class BaseService {
   }
 
   private _resolveData(headers: any, data: any) {
-    if (!headers['Content-Type']) {
+    if (!headers["Content-Type"]) {
       return data;
     }
-    if (headers['Content-Type'] === "application/x-www-form-urlencoded") {
+    if (headers["Content-Type"] === "application/x-www-form-urlencoded") {
       return qs.stringify(data);
     }
     return data;

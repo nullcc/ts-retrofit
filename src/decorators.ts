@@ -1,5 +1,9 @@
 import { BaseService } from "./baseService";
 
+interface IHeaders {
+  [x: string]: string;
+}
+
 /**
  * Ensure the `__meta__` attribute is in the target object and
  * `methodName` has been initialized in it.
@@ -146,18 +150,17 @@ export const Body = (target: any, methodName: string, paramIndex: number) => {
 
 /**
  * Set static HTTP headers for API endpoint.
- * @param {string} key
- * @param {string} value
+ * @param {IHeaders} headers
  * @return {(target: any, methodName: string, descriptor: PropertyDescriptor) => void}
  * @constructor
  */
-export const Headers = (key: string, value: string) => {
+export const Headers = (headers: IHeaders) => {
   return (target: any, methodName: string, descriptor: PropertyDescriptor) => {
     ensureMeta(target, methodName);
     if (!target.__meta__[methodName].headers) {
       target.__meta__[methodName].headers = {};
     }
-    target.__meta__[methodName].headers[key] = value;
+    target.__meta__[methodName].headers = headers;
   };
 };
 

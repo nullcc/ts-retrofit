@@ -139,6 +139,7 @@ describe("Test ts-retrofit.", () => {
     };
     const response = await authService.auth(auth);
     expect(response.config.headers["Content-Type"]).toEqual("application/x-www-form-urlencoded");
+    expect(response.config.headers["Accept"]).toEqual("application/json");
   });
 
   test("Test `@Header` decorator.", async () => {
