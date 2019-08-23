@@ -3,7 +3,7 @@ import { app } from "./server";
 import { ServiceBuilder } from "../src";
 import {
   TEST_SERVER_ENDPOINT, API_PREFIX, TOKEN, UserService, SearchService,
-  AuthService, User, SearchQuery, Auth, TEST_SERVER_PORT
+  AuthService, IUser, ISearchQuery, IAuth, TEST_SERVER_PORT
 } from "./fixtures";
 
 describe("Test ts-retrofit.", () => {
@@ -40,7 +40,7 @@ describe("Test ts-retrofit.", () => {
     const userService = new ServiceBuilder()
       .setEndpoint(TEST_SERVER_ENDPOINT)
       .build(UserService);
-    const newUser: User = {
+    const newUser: IUser = {
       name: "Jane",
       age: 18
     };
@@ -108,7 +108,7 @@ describe("Test ts-retrofit.", () => {
     const searchService = new ServiceBuilder()
       .setEndpoint(TEST_SERVER_ENDPOINT)
       .build(SearchService);
-    const query: SearchQuery = {
+    const query: ISearchQuery = {
       title: "TypeScript",
       author: "John Doe",
     };
@@ -121,7 +121,7 @@ describe("Test ts-retrofit.", () => {
     const userService = new ServiceBuilder()
       .setEndpoint(TEST_SERVER_ENDPOINT)
       .build(UserService);
-    const newUser: User = {
+    const newUser: IUser = {
       name: "Jane",
       age: 18
     };
@@ -133,7 +133,7 @@ describe("Test ts-retrofit.", () => {
     const authService = new ServiceBuilder()
       .setEndpoint(TEST_SERVER_ENDPOINT)
       .build(AuthService);
-    const auth: Auth = {
+    const auth: IAuth = {
       username: "test",
       password: "123456",
     };

@@ -8,20 +8,20 @@ export const TEST_SERVER_ENDPOINT = `${TEST_SERVER_HOST}:${TEST_SERVER_PORT}`;
 export const API_PREFIX = "/api/v1";
 export const TOKEN = "abcdef123456";
 
-export interface User {
+export interface IUser {
   id?: number;
   name: string;
   age: number;
   [x: string]: any;
 }
 
-export interface SearchQuery {
+export interface ISearchQuery {
   title?: string;
   author?: string;
   category?: string;
 }
 
-export interface Auth {
+export interface IAuth {
   username: string;
   password: string;
 }
@@ -35,13 +35,13 @@ export class UserService extends BaseService {
   async getUser(@Header("X-Token") token: string, @PathParam("userId") userId: number): Promise<Response> { return <Response> {} };
 
   @POST("/users")
-  async createUser(@Header("X-Token") token: string, @Body user: User): Promise<Response> { return <Response> {} };
+  async createUser(@Header("X-Token") token: string, @Body user: IUser): Promise<Response> { return <Response> {} };
 
   @PUT("/users/{userId}")
-  async replaceUser(@Header("X-Token") token: string, @PathParam("userId") userId: number, @Body user: User): Promise<Response> { return <Response> {} };
+  async replaceUser(@Header("X-Token") token: string, @PathParam("userId") userId: number, @Body user: IUser): Promise<Response> { return <Response> {} };
 
   @PATCH("/users/{userId}")
-  async updateUser(@Header("X-Token") token: string, @PathParam("userId") userId: number, @Body user: Partial<User>): Promise<Response> { return <Response> {} };
+  async updateUser(@Header("X-Token") token: string, @PathParam("userId") userId: number, @Body user: Partial<IUser>): Promise<Response> { return <Response> {} };
 
   @DELETE("/users/{userId}")
   async deleteUser(@Header("X-Token") token: string, @PathParam("userId") userId: number): Promise<Response> { return <Response> {} };
@@ -53,7 +53,7 @@ export class UserService extends BaseService {
 @BasePath(API_PREFIX)
 export class SearchService extends BaseService {
   @GET("/search")
-  async search(@Header("X-Token") token: string, @QueryMap query: SearchQuery): Promise<Response> { return <Response> {} };
+  async search(@Header("X-Token") token: string, @QueryMap query: ISearchQuery): Promise<Response> { return <Response> {} };
 }
 
 @BasePath("")
@@ -63,5 +63,5 @@ export class AuthService extends BaseService {
     "Content-Type": "application/x-www-form-urlencoded",
     "Accept": "application/json"
   })
-  async auth(@Body body: Auth): Promise<Response> { return <Response> {} };
+  async auth(@Body body: IAuth): Promise<Response> { return <Response> {} };
 }
