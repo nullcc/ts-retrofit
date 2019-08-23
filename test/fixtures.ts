@@ -1,5 +1,5 @@
 import {
-  GET, POST, PUT, PATCH, DELETE, HEAD, BasePath, Header,
+  GET, POST, PUT, PATCH, DELETE, HEAD, BasePath, Header, Query,
   Headers, PathParam, QueryMap, Body, BaseService, Response
 } from "../src";
 export const TEST_SERVER_HOST = "http://localhost";
@@ -64,4 +64,15 @@ export class AuthService extends BaseService {
     "Accept": "application/json"
   })
   async auth(@Body body: IAuth): Promise<Response> { return <Response> {} };
+}
+
+@BasePath(API_PREFIX)
+export class PostService extends BaseService {
+  @GET("/posts")
+  @Query({
+    page: 1,
+    size: 20,
+    sort: "createdAt:desc",
+  })
+  async getPosts(): Promise<Response> { return <Response> {} };
 }

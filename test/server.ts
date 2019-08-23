@@ -1,7 +1,7 @@
 import * as _ from "lodash";
 import express from "express";
 import bodyParser from "body-parser";
-import { User, API_PREFIX } from "./fixtures";
+import { IUser, API_PREFIX } from "./fixtures";
 
 export const app = express();
 
@@ -12,9 +12,9 @@ const users = [
 ];
 
 class UserStore {
-  private _users: User[];
+  private _users: IUser[];
 
-  constructor(users: User[]) {
+  constructor(users: IUser[]) {
     this._users = users;
   }
 
@@ -22,7 +22,7 @@ class UserStore {
 
   }
 
-  get users(): User[] {
+  get users(): IUser[] {
     return this._users;
   }
 }
@@ -62,5 +62,9 @@ app.get("/api/v1/search", jsonParser, function(req, res) {
 });
 
 app.post("/oauth2/authorize", jsonParser, function(req, res) {
+  res.status(200).json({});
+});
+
+app.get("/api/v1/posts", jsonParser, function(req, res) {
   res.status(200).json({});
 });

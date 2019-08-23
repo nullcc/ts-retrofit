@@ -41,13 +41,14 @@ export class BaseService {
           const basePath = self.__meta__.basePath;
           const path = self.__meta__[methodName].path;
           const headers = self.__meta__[methodName].headers || {};
+          const query = self.__meta__[methodName].query || {};
           const headerParams = self.__meta__[methodName].headerParams;
           const pathParams = self.__meta__[methodName].pathParams;
           const queryMapIndex = self.__meta__[methodName].queryMap;
           const bodyIndex = self.__meta__[methodName].body;
           return (...args: any[]) => {
             const url = [endpoint, basePath, path].join("");
-            return self._wrap(method, url, headers, headerParams, pathParams, queryMapIndex, bodyIndex, args);
+            return self._wrap(method, url, headers, query, headerParams, pathParams, queryMapIndex, bodyIndex, args);
           };
         },
         set(value: Function) {
@@ -70,13 +71,13 @@ export class BaseService {
     });
   }
 
-  private _wrap(method: string, urlTemplate: string, headers: any, headerParams: any[], pathParams: any[],
-                queryMapIndex: number, bodyIndex: number, args: any[]): Promise<Response> {
+  private _wrap(method: string, urlTemplate: string, headers: any, query: any, headerParams: any[],
+                pathParams: any[], queryMapIndex: number, bodyIndex: number, args: any[]): Promise<Response> {
     let url = urlTemplate;
 
     const config: AxiosRequestConfig = {
       headers,
-      params: {},
+      params: { ...query },
     };
 
     for (const pos in pathParams) {

@@ -3,7 +3,7 @@ import { app } from "./server";
 import { ServiceBuilder } from "../src";
 import {
   TEST_SERVER_ENDPOINT, API_PREFIX, TOKEN, UserService, SearchService,
-  AuthService, IUser, ISearchQuery, IAuth, TEST_SERVER_PORT
+  PostService, AuthService, IUser, ISearchQuery, IAuth, TEST_SERVER_PORT
 } from "./fixtures";
 
 describe("Test ts-retrofit.", () => {
@@ -148,5 +148,17 @@ describe("Test ts-retrofit.", () => {
       .build(UserService);
     const response = await userService.getUsers(TOKEN);
     expect(response.config.headers["X-Token"]).toEqual(TOKEN);
+  });
+
+  test("Test `@Query` decorator.", async () => {
+    const postService = new ServiceBuilder()
+      .setEndpoint(TEST_SERVER_ENDPOINT)
+      .build(PostService);
+    const response = await postService.getPosts();
+    expect(response.config.params).toMatchObject({
+      page: 1,
+      size: 20,
+      sort: "createdAt:desc"
+    });
   });
 });

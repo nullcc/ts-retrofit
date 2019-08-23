@@ -1,7 +1,11 @@
 import { BaseService } from "./baseService";
 
 interface IHeaders {
-  [x: string]: string;
+  [x: string]: string | number;
+}
+
+interface IQuery {
+  [x: string]: string | number | boolean;
 }
 
 /**
@@ -177,5 +181,21 @@ export const Header = (paramName: string) => {
       target.__meta__[methodName].headerParams = {};
     }
     target.__meta__[methodName].headerParams[paramIndex] = paramName;
+  };
+};
+
+/**
+ * Set static query for API endpoint.
+ * @param {IQuery} query
+ * @return {(target: any, methodName: string, descriptor: PropertyDescriptor) => void}
+ * @constructor
+ */
+export const Query = (query: IQuery) => {
+  return (target: any, methodName: string, descriptor: PropertyDescriptor) => {
+    ensureMeta(target, methodName);
+    if (!target.__meta__[methodName].headers) {
+      target.__meta__[methodName].query = {};
+    }
+    target.__meta__[methodName].query = query;
   };
 };
