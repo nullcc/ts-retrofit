@@ -3,7 +3,7 @@ import { app } from "./server";
 import { ServiceBuilder } from "../src";
 import {
   TEST_SERVER_ENDPOINT, API_PREFIX, TOKEN, UserService, SearchService,
-  PostService, AuthService, IUser, ISearchQuery, IAuth, TEST_SERVER_PORT
+  PostService, AuthService, IUser, ISearchQuery, IAuth, IPost, TEST_SERVER_PORT
 } from "./fixtures";
 
 describe("Test ts-retrofit.", () => {
@@ -170,5 +170,18 @@ describe("Test ts-retrofit.", () => {
       size: 20,
       sort: "createdAt:desc"
     });
+  });
+
+  test("Test `@FormUrlEncoded` decorator.", async () => {
+    const postService = new ServiceBuilder()
+      .setEndpoint(TEST_SERVER_ENDPOINT)
+      .build(PostService);
+    const post: IPost = {
+      title: "hello",
+      content: "world",
+    };
+    const response = await postService.createPost(post);
+    expect(response.config.headers["Content-Type"]).toEqual("application/x-www-form-urlencoded; charset=UTF-8");
+    expect(response.config.data).toEqual("title=hello&content=world");
   });
 });

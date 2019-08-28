@@ -8,7 +8,7 @@ A retrofit implementation in TypeScript.
 ```typescript
 import {
   GET, POST, PUT, PATCH, DELETE, HEAD, OPTIONS, BasePath, Header, Query,
-  Headers, PathParam, QueryMap, Body, BaseService, ServiceBuilder, Response
+  Headers, PathParam, QueryMap, Body, FormUrlEncoded, BaseService, ServiceBuilder, Response
 } from "ts-retrofit";
 export const TEST_SERVER_HOST = "http://localhost";
 export const TEST_SERVER_PORT = 12345;
@@ -32,6 +32,11 @@ export interface ISearchQuery {
 export interface IAuth {
   username: string;
   password: string;
+}
+
+export interface IPost {
+  title: string;
+  content: string;
 }
 
 @BasePath(API_PREFIX)
@@ -86,6 +91,10 @@ export class PostService extends BaseService {
     sort: "createdAt:desc",
   })
   async getPosts(): Promise<Response> { return <Response> {} };
+
+  @POST("/posts")
+  @FormUrlEncoded()
+  async createPost(@Body body: IPost): Promise<Response> { return <Response> {} };
 }
 
 (async () => {
@@ -96,6 +105,29 @@ export class PostService extends BaseService {
   // use response.data ...
 })()
 ```
+
+## Decorators
+
+|     Category     |      Name       |                         Description                          | Decorator Position |                           Example                            |
+| :--------------: | :-------------: | :----------------------------------------------------------: | :----------------: | :----------------------------------------------------------: |
+|   HTTP Method    |      @GET       |                          GET Method                          |       Method       |                        @GET("/users")                        |
+|   HTTP Method    |      @POST      |                         POST Method                          |       Method       |                       @POST("/users")                        |
+|   HTTP Method    |      @PUT       |                          PUT Method                          |       Method       |                   @PUT("/users/{userId}")                    |
+|   HTTP Method    |     @PATCH      |                         PATCH Method                         |       Method       |                  @PATCH("/users/{userId}")                   |
+|   HTTP Method    |     @DELETE     |                        DELETE Method                         |       Method       |                  @DELETE("/users/{userId}")                  |
+|   HTTP Method    |      @HEAD      |                         HEAD Method                          |       Method       |                   @HEAD("/users/{userId}")                   |
+|   HTTP Method    |    @OPTIONS     |                        OPTIONS Method                        |       Method       |                 @OPTIONS("/users/{userId}")                  |
+|    Base Path     |    @BasePath    |    Specifying the base path of a series of API endpoints     |       Class        |                     @BasePath("/api/v1")                     |
+|  Static Headers  |    @Headers     |        Specifying the static headers of API endpoint         |       Method       | @Headers({ "Content-Type": "application/x-www-form-urlencoded",   "Accept": "application/json" }) |
+| Header Parameter |     @Header     |                    Parameterizing header                     |  Method Parameter  |                      @Header("X-Token")                      |
+|  Path Parameter  |   @PathParam    |             Specifying parameter in path of API              |  Method Parameter  |                     @PathParam("userId")                     |
+|       Body       |      @Body      |                     Specifying body data                     |  Method Parameter  |                            @Body                             |
+|   Static Query   |     @Query      |                 Specifying static query data                 |       Method       | @Query({   page: 1,   size: 20,   sort: "createdAt:desc" })  |
+| Query Parameters |    @QueryMap    |                     Parameterizing query                     |  Method Parameter  |                          @QueryMap                           |
+|  Static Headers  | @FormUrlEncoded | Specifying "Content-Type" to be "application/x-www-form-urlencoded" |       Method       |                      @FormUrlEncoded()                       |
+
+
+
 
 ## Test
 

@@ -1,6 +1,6 @@
 import {
   GET, POST, PUT, PATCH, DELETE, HEAD, OPTIONS, BasePath, Header, Query,
-  Headers, PathParam, QueryMap, Body, BaseService, Response
+  Headers, PathParam, QueryMap, Body, FormUrlEncoded, BaseService, Response
 } from "../src";
 
 export const TEST_SERVER_HOST = "http://localhost";
@@ -25,6 +25,11 @@ export interface ISearchQuery {
 export interface IAuth {
   username: string;
   password: string;
+}
+
+export interface IPost {
+  title: string;
+  content: string;
 }
 
 @BasePath(API_PREFIX)
@@ -79,4 +84,8 @@ export class PostService extends BaseService {
     sort: "createdAt:desc",
   })
   async getPosts(): Promise<Response> { return <Response> {} };
+
+  @POST("/posts")
+  @FormUrlEncoded()
+  async createPost(@Body body: IPost): Promise<Response> { return <Response> {} };
 }

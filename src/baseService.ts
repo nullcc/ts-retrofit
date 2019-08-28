@@ -125,11 +125,11 @@ export class BaseService {
     }
   }
 
-  private _resolveData(headers: any, data: any) {
+  private _resolveData(headers: any, data: any): any {
     if (!headers["Content-Type"]) {
       return data;
     }
-    if (headers["Content-Type"] === "application/x-www-form-urlencoded") {
+    if (headers["Content-Type"].indexOf("application/x-www-form-urlencoded") !== -1) {
       return qs.stringify(data);
     }
     return data;

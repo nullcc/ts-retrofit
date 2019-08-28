@@ -210,3 +210,12 @@ export const Query = (query: IQuery) => {
     target.__meta__[methodName].query = query;
   };
 };
+
+/**
+ * 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' will be added
+ * to HTTP headers.
+ * @constructor
+ */
+export const FormUrlEncoded = () => {
+  return Headers({ "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8" });
+};

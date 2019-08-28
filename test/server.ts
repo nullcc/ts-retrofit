@@ -48,3 +48,7 @@ app.post("/oauth2/authorize", jsonParser, function(req, res) {
 app.get("/api/v1/posts", jsonParser, function(req, res) {
   res.status(200).json({});
 });
+
+app.post("/api/v1/posts", jsonParser, function(req, res) {
+  res.status(200).json({});
+});
