@@ -8,7 +8,7 @@ A retrofit implementation in TypeScript.
 ```typescript
 import {
   GET, POST, PUT, PATCH, DELETE, HEAD, OPTIONS, BasePath, Header, Query,
-  Headers, Path, QueryMap, Body, FormUrlEncoded, Field, 
+  Headers, Path, QueryMap, Body, FormUrlEncoded, Field, FieldMap,
   BaseService, ServiceBuilder, Response
 } from "ts-retrofit";
 export const TEST_SERVER_HOST = "http://localhost";
@@ -96,6 +96,10 @@ export class PostService extends BaseService {
   @POST("/posts")
   @FormUrlEncoded()
   async createPost(@Field("title") title: string, @Field("content") content: string): Promise<Response> { return <Response> {} };
+  
+  @POST("/posts")
+  @FormUrlEncoded()
+  async createPost2(@FieldMap post: IPost): Promise<Response> { return <Response> {} };
 }
 
 (async () => {
