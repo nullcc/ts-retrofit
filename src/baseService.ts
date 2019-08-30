@@ -37,19 +37,8 @@ export class BaseService {
           if (noWrappedMethodNames.includes(methodName)) {
             return self._methodMap[methodName];
           }
-          const endpoint = self._endpoint;
-          const method = self.__meta__[methodName].method;
-          const basePath = self.__meta__.basePath;
-          const path = self.__meta__[methodName].path;
-          const headers = self.__meta__[methodName].headers || {};
-          const query = self.__meta__[methodName].query || {};
-          const headerParams = self.__meta__[methodName].headerParams;
-          const pathParams = self.__meta__[methodName].pathParams;
-          const queryMapIndex = self.__meta__[methodName].queryMap;
-          const bodyIndex = self.__meta__[methodName].body;
           return (...args: any[]) => {
-            const url = [endpoint, basePath, path].join("");
-            return self._wrap(method, url, headers, query, headerParams, pathParams, queryMapIndex, bodyIndex, args);
+            return self._wrap(methodName, args);
           };
         },
         set(value: Function) {
@@ -72,13 +61,26 @@ export class BaseService {
     });
   }
 
-  private _wrap(method: string, urlTemplate: string, headers: any, query: any, headerParams: any[],
-                pathParams: any[], queryMapIndex: number, bodyIndex: number, args: any[]): Promise<Response> {
-    let url = urlTemplate;
+  private _wrap(methodName: string, args: any[]): Promise<Response> {
+    const meta = this.__meta__;
+    const endpoint = this._endpoint;
+    const basePath = meta.basePath;
+    const method = meta[methodName].method;
+    const path = meta[methodName].path;
+    const headers = meta[methodName].headers || {};
+    const query = meta[methodName].query || {};
+    const headerParams = meta[methodName].headerParams;
+    const pathParams = meta[methodName].pathParams;
+    const queryMapIndex = meta[methodName].queryMap;
+    const bodyIndex = meta[methodName].body;
+    const fields = meta[methodName].fields || {};
+    const fieldMapIndex = meta[methodName].fieldMap;
+
+    let url = [endpoint, basePath, path].join("");
 
     const config: AxiosRequestConfig = {
       headers,
-      params: { ...query },
+      params: query,
     };
 
     for (const pos in pathParams) {
@@ -103,6 +105,26 @@ export class BaseService {
 
     if (bodyIndex >= 0) {
       config.data = this._resolveData(config.headers, args[bodyIndex]);
+    }
+
+    if (Object.keys(fields).length > 0) {
+      const data = {};
+      for (const pos in fields) {
+        if (fields[pos]) {
+          data[fields[pos]] = args[pos];
+        }
+      }
+      config.data = this._resolveData(config.headers, data);
+    }
+
+    if (fieldMapIndex >= 0) {
+      const data = {};
+      for (const key in args[fieldMapIndex]) {
+        if (args[fieldMapIndex][key]) {
+          data[key] = args[fieldMapIndex][key];
+        }
+      }
+      config.data = this._resolveData(config.headers, data);
     }
 
     switch (method) {

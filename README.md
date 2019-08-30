@@ -8,7 +8,8 @@ A retrofit implementation in TypeScript.
 ```typescript
 import {
   GET, POST, PUT, PATCH, DELETE, HEAD, OPTIONS, BasePath, Header, Query,
-  Headers, PathParam, QueryMap, Body, FormUrlEncoded, BaseService, ServiceBuilder, Response
+  Headers, PathParam, QueryMap, Body, FormUrlEncoded, Field, 
+  BaseService, ServiceBuilder, Response
 } from "ts-retrofit";
 export const TEST_SERVER_HOST = "http://localhost";
 export const TEST_SERVER_PORT = 12345;
@@ -94,7 +95,7 @@ export class PostService extends BaseService {
 
   @POST("/posts")
   @FormUrlEncoded()
-  async createPost(@Body body: IPost): Promise<Response> { return <Response> {} };
+  async createPost(@Field("title") title: string, @Field("content") content: string): Promise<Response> { return <Response> {} };
 }
 
 (async () => {
@@ -125,6 +126,8 @@ export class PostService extends BaseService {
 |   Static Query   |     @Query      |                 Specifying static query data                 |       Method       | @Query({   page: 1,   size: 20,   sort: "createdAt:desc" })  |
 | Query Parameters |    @QueryMap    |                     Parameterizing query                     |  Method Parameter  |                          @QueryMap                           |
 |  Static Headers  | @FormUrlEncoded | Specifying "Content-Type" to be "application/x-www-form-urlencoded" |       Method       |                      @FormUrlEncoded()                       |
+| Field Parameter  |     @Field      | Only effective when method has been decorated by @FormUrlEncoded |  Method Parameter  |                        @Field("name")                        |
+| Field Parameters |    @FieldMap    |                    Parameterizing fields                     |  Method Parameter  |                          @FieldMap                           |
 
 
 

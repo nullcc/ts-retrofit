@@ -176,11 +176,24 @@ describe("Test ts-retrofit.", () => {
     const postService = new ServiceBuilder()
       .setEndpoint(TEST_SERVER_ENDPOINT)
       .build(PostService);
-    const post: IPost = {
-      title: "hello",
-      content: "world",
-    };
-    const response = await postService.createPost(post);
+    const response = await postService.createPost("hello", "world");
+    expect(response.config.headers["Content-Type"]).toEqual("application/x-www-form-urlencoded; charset=UTF-8");
+  });
+
+  test("Test `@Field` decorator.", async () => {
+    const postService = new ServiceBuilder()
+      .setEndpoint(TEST_SERVER_ENDPOINT)
+      .build(PostService);
+    const response = await postService.createPost("hello", "world");
+    expect(response.config.headers["Content-Type"]).toEqual("application/x-www-form-urlencoded; charset=UTF-8");
+    expect(response.config.data).toEqual("title=hello&content=world");
+  });
+
+  test("Test `@FieldMap` decorator.", async () => {
+    const postService = new ServiceBuilder()
+      .setEndpoint(TEST_SERVER_ENDPOINT)
+      .build(PostService);
+    const response = await postService.createPost2({ title: "hello", content: "world" });
     expect(response.config.headers["Content-Type"]).toEqual("application/x-www-form-urlencoded; charset=UTF-8");
     expect(response.config.data).toEqual("title=hello&content=world");
   });

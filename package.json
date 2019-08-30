@@ -11,7 +11,6 @@
   "license": "ISC",
   "dependencies": {
     "axios": "^0.19.0",
-    "express": "^4.17.1",
     "qs": "^6.8.0"
   },
   "devDependencies": {
@@ -19,6 +18,7 @@
     "@types/jest": "^24.0.18",
     "@types/qs": "^6.5.3",
     "body-parser": "^1.19.0",
+    "express": "^4.17.1",
     "jest": "^24.9.0",
     "ts-jest": "^24.0.2",
     "tslint": "^5.19.0",

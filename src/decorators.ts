@@ -140,18 +140,6 @@ export const PathParam = (paramName: string) => {
 };
 
 /**
- * Set query map for API endpoint.
- * @param target
- * @param {string} methodName
- * @param {number} paramIndex
- * @constructor
- */
-export const QueryMap = (target: any, methodName: string, paramIndex: number) => {
-  ensureMeta(target, methodName);
-  target.__meta__[methodName].queryMap = paramIndex;
-};
-
-/**
  * Set body for API endpoint.
  * @param target
  * @param {string} methodName
@@ -212,10 +200,51 @@ export const Query = (query: IQuery) => {
 };
 
 /**
+ * Set query map for API endpoint.
+ * @param target
+ * @param {string} methodName
+ * @param {number} paramIndex
+ * @constructor
+ */
+export const QueryMap = (target: any, methodName: string, paramIndex: number) => {
+  ensureMeta(target, methodName);
+  target.__meta__[methodName].queryMap = paramIndex;
+};
+
+/**
  * 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' will be added
  * to HTTP headers.
  * @constructor
  */
 export const FormUrlEncoded = () => {
   return Headers({ "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8" });
+};
+
+/**
+ * Set field of form for API endpoint. Only effective when method has been
+ * decorated by @FormUrlEncoded.
+ * @param {string} paramName
+ * @return {(target: any, methodName: string, paramIndex: number) => void}
+ * @constructor
+ */
+export const Field = (paramName: string) => {
+  return (target: any, methodName: string, paramIndex: number) => {
+    ensureMeta(target, methodName);
+    if (!target.__meta__[methodName].fields) {
+      target.__meta__[methodName].fields = {};
+    }
+    target.__meta__[methodName].fields[paramIndex] = paramName;
+  };
+};
+
+/**
+ * Set field map for API endpoint.
+ * @param target
+ * @param {string} methodName
+ * @param {number} paramIndex
+ * @constructor
+ */
+export const FieldMap = (target: any, methodName: string, paramIndex: number) => {
+  ensureMeta(target, methodName);
+  target.__meta__[methodName].fieldMap = paramIndex;
 };
