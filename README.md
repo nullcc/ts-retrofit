@@ -2,7 +2,6 @@
 
 A retrofit implementation in TypeScript.
 
-
 ## Usages
 
 ```typescript
@@ -111,6 +110,8 @@ export class PostService extends BaseService {
 })()
 ```
 
+See [test](test/ts-retrofit.test.ts) to see more examples.
+
 ## Decorators
 
 |     Category     |      Name       |                         Description                          | Decorator Position |                           Example                            |
@@ -130,11 +131,8 @@ export class PostService extends BaseService {
 |   Static Query   |     @Query      |                 Specifying static query data                 |       Method       | @Query({   page: 1,   size: 20,   sort: "createdAt:desc" })  |
 | Query Parameters |    @QueryMap    |                     Parameterizing query                     |  Method Parameter  |                          @QueryMap                           |
 |  Static Headers  | @FormUrlEncoded | Specifying "Content-Type" to be "application/x-www-form-urlencoded" |       Method       |                      @FormUrlEncoded()                       |
-| Field Parameter  |     @Field      | Only effective when method has been decorated by @FormUrlEncoded |  Method Parameter  |                        @Field("name")                        |
-| Field Parameters |    @FieldMap    |                    Parameterizing fields                     |  Method Parameter  |                          @FieldMap                           |
-
-
-
+| Field Parameter  |     @Field      | Specifying field in method parameter, only effective when method has been decorated by @FormUrlEncoded |  Method Parameter  |                        @Field("name")                        |
+| Field Parameters |    @FieldMap    | Specifying field map in method parameter, only effective when method has been decorated by @FormUrlEncoded                     |  Method Parameter  |                          @FieldMap                           |
 
 ## Test
 
