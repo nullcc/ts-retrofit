@@ -105,7 +105,7 @@ describe("Test ts-retrofit.", () => {
     expect(response.config.url).toEqual(`${TEST_SERVER_ENDPOINT}${API_PREFIX}/users/${userId}`);
   });
 
-  test("Test `@PathParam` decorator.", async () => {
+  test("Test `@Path` decorator.", async () => {
     const userService = new ServiceBuilder()
       .setEndpoint(TEST_SERVER_ENDPOINT)
       .build(UserService);

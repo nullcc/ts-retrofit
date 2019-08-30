@@ -129,7 +129,7 @@ export const BasePath = (path: string) => {
  * @return {(target: any, methodName: string, paramIndex: number) => void}
  * @constructor
  */
-export const PathParam = (paramName: string) => {
+export const Path = (paramName: string) => {
   return (target: any, methodName: string, paramIndex: number) => {
     ensureMeta(target, methodName);
     if (!target.__meta__[methodName].pathParams) {
@@ -148,7 +148,7 @@ export const PathParam = (paramName: string) => {
  */
 export const Body = (target: any, methodName: string, paramIndex: number) => {
   ensureMeta(target, methodName);
-  target.__meta__[methodName].body = paramIndex;
+  target.__meta__[methodName].bodyIndex = paramIndex;
 };
 
 /**
@@ -208,7 +208,7 @@ export const Query = (query: IQuery) => {
  */
 export const QueryMap = (target: any, methodName: string, paramIndex: number) => {
   ensureMeta(target, methodName);
-  target.__meta__[methodName].queryMap = paramIndex;
+  target.__meta__[methodName].queryMapIndex = paramIndex;
 };
 
 /**
@@ -246,5 +246,5 @@ export const Field = (paramName: string) => {
  */
 export const FieldMap = (target: any, methodName: string, paramIndex: number) => {
   ensureMeta(target, methodName);
-  target.__meta__[methodName].fieldMap = paramIndex;
+  target.__meta__[methodName].fieldMapIndex = paramIndex;
 };

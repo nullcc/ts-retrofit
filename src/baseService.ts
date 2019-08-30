@@ -65,16 +65,16 @@ export class BaseService {
     const meta = this.__meta__;
     const endpoint = this._endpoint;
     const basePath = meta.basePath;
-    const method = meta[methodName].method;
     const path = meta[methodName].path;
+    const method = meta[methodName].method;
     const headers = meta[methodName].headers || {};
     const query = meta[methodName].query || {};
     const headerParams = meta[methodName].headerParams;
     const pathParams = meta[methodName].pathParams;
-    const queryMapIndex = meta[methodName].queryMap;
-    const bodyIndex = meta[methodName].body;
+    const queryMapIndex = meta[methodName].queryMapIndex;
+    const bodyIndex = meta[methodName].bodyIndex;
     const fields = meta[methodName].fields || {};
-    const fieldMapIndex = meta[methodName].fieldMap;
+    const fieldMapIndex = meta[methodName].fieldMapIndex;
 
     let url = [endpoint, basePath, path].join("");
 
