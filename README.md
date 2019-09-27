@@ -110,7 +110,7 @@ export class PostService extends BaseService {
 })()
 ```
 
-See [test](test/ts-retrofit.test.ts) to see more examples.
+See [test](test/ts-retrofit.test.ts) to get more examples.
 
 ## Decorators
 
