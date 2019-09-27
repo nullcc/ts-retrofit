@@ -1,7 +1,7 @@
 import {
   GET, POST, PUT, PATCH, DELETE, HEAD, OPTIONS, BasePath, Header, Query,
-  Headers, Path, QueryMap, Body, FormUrlEncoded, Field, FieldMap,
-  BaseService, Response
+  Headers, Path, QueryMap, Body, FormUrlEncoded, Field, FieldMap, Multipart,
+  Part, IPartDescriptor, BaseService, Response,
 } from "../src";
 
 export const TEST_SERVER_HOST = "http://localhost";
@@ -70,7 +70,7 @@ export class SearchService extends BaseService {
 export class AuthService extends BaseService {
   @POST("/oauth2/authorize")
   @Headers({
-    "Content-Type": "application/x-www-form-urlencoded",
+    "Content-Type": "application/x-www-form-urlencoded;charset=utf-8",
     "Accept": "application/json"
   })
   async auth(@Body body: IAuth): Promise<Response> { return <Response> {} };
@@ -93,4 +93,11 @@ export class PostService extends BaseService {
   @POST("/posts")
   @FormUrlEncoded()
   async createPost2(@FieldMap post: IPost): Promise<Response> { return <Response> {} };
+}
+
+@BasePath(API_PREFIX)
+export class FileService extends BaseService {
+  @POST("/upload")
+  @Multipart()
+  async upload(@Part("bucket") bucket: IPartDescriptor, @Part("file") file: IPartDescriptor): Promise<Response> { return <Response> {} };
 }

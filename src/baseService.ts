@@ -1,11 +1,14 @@
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
+import FormData from "form-data";
 import { DataResolverFactory } from "./dataResolver";
+import { HttpMethod } from "./constants";
+import {Part} from "./index";
 
 axios.defaults.withCredentials = true;
 
 export type Response = AxiosResponse;
 
-const NON_HTTP_REQUEST_PROPERTY_NAME = '__nonHTTPRequestMethod__';
+const NON_HTTP_REQUEST_PROPERTY_NAME = "__nonHTTPRequestMethod__";
 
 export const nonHTTPRequestMethod = (target: any, methodName: string) => {
   const descriptor = {
@@ -38,8 +41,8 @@ export class BaseService {
         configurable: true,
         get(): Function {
           const method = self._methodMap[methodName];
-          const descriptor = Object.getOwnPropertyDescriptor(method, NON_HTTP_REQUEST_PROPERTY_NAME);
-          if (descriptor && descriptor.value === true) {
+          const methodOriginalDescriptor = Object.getOwnPropertyDescriptor(method, NON_HTTP_REQUEST_PROPERTY_NAME);
+          if (methodOriginalDescriptor && methodOriginalDescriptor.value === true) {
             return method;
           }
           return (...args: any[]) => {
@@ -71,9 +74,13 @@ export class BaseService {
   private _wrap(methodName: string, args: any[]): Promise<Response> {
     const url = this._resolveUrl(methodName, args);
     const method = this._resolveHttpMethod(methodName);
-    const headers = this._resolveHeaders(methodName, args);
+    let headers = this._resolveHeaders(methodName, args);
     const query = this._resolveQuery(methodName, args);
     const data = this._resolveData(methodName, headers, args);
+
+    if (headers["content-type"] && headers["content-type"].indexOf("multipart/form-data") !== -1) {
+      headers = { ...headers, ...(data as FormData).getHeaders() };
+    }
 
     const config: AxiosRequestConfig = {
       url,
@@ -86,7 +93,7 @@ export class BaseService {
   }
 
   @nonHTTPRequestMethod
-  private _resolveUrl(methodName: string, args: any[]) {
+  private _resolveUrl(methodName: string, args: any[]): string {
     const meta = this.__meta__;
     const endpoint = this._endpoint;
     const basePath = meta.basePath;
@@ -102,13 +109,13 @@ export class BaseService {
   }
 
   @nonHTTPRequestMethod
-  private _resolveHttpMethod(methodName: string) {
+  private _resolveHttpMethod(methodName: string): HttpMethod {
     const meta = this.__meta__;
     return meta[methodName].method;
   }
 
   @nonHTTPRequestMethod
-  private _resolveHeaders(methodName: string, args: any[]) {
+  private _resolveHeaders(methodName: string, args: any[]): any {
     const meta = this.__meta__;
     const headers = meta[methodName].headers || {};
     const headerParams = meta[methodName].headerParams;
@@ -121,7 +128,7 @@ export class BaseService {
   }
 
   @nonHTTPRequestMethod
-  private _resolveQuery(methodName: string, args: any[]) {
+  private _resolveQuery(methodName: string, args: any[]): any {
     const meta = this.__meta__;
     const query = meta[methodName].query || {};
     const queryMapIndex = meta[methodName].queryMapIndex;
@@ -136,10 +143,11 @@ export class BaseService {
   }
 
   @nonHTTPRequestMethod
-  private _resolveData(methodName: string, headers: any, args: any[]) {
+  private _resolveData(methodName: string, headers: any, args: any[]): any {
     const meta = this.__meta__;
     const bodyIndex = meta[methodName].bodyIndex;
     const fields = meta[methodName].fields || {};
+    const parts = meta[methodName].parts || {};
     const fieldMapIndex = meta[methodName].fieldMapIndex;
     let data = {};
 
@@ -170,9 +178,21 @@ export class BaseService {
       data = { ...data, ...reqData };
     }
 
-    const contentType = headers["Content-Type"] || "application/json";
-    const dataResolver = DataResolverFactory.createDataResolver(contentType);
-    return dataResolver.resolve(data);
+    // @MultiPart
+    if (Object.keys(parts).length > 0) {
+      const reqData = {};
+      for (const pos in parts) {
+        if (parts[pos]) {
+          reqData[parts[pos]] = args[pos];
+        }
+      }
+      data = { ...data, ...reqData };
+    }
+
+    const contentType = headers["content-type"] || "application/json";
+    const dataResolverFactory = new DataResolverFactory();
+    const dataResolver = dataResolverFactory.createDataResolver(contentType);
+    return dataResolver.resolve(headers, data);
   }
 }
 

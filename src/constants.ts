@@ -1,9 +1,10 @@
-export enum Method {
-  GET = "GET",
-  POST = "POST",
-  PUT = "PUT",
-  PATCH = "PATCH",
-  DELETE = "DELETE",
-  HEAD = "HEAD",
-  OPTIONS = "OPTIONS",
-}
+import { Method } from "axios";
+
+export type HttpMethod = Method;
+
+export const DATA_CONTENT_TYPES = [
+  "application/x-www-form-urlencoded",
+  "multipart/form-data",
+  "application/json",
+  "text/xml",
+];

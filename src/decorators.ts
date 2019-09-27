@@ -1,4 +1,4 @@
-import { Method } from "./constants";
+import { HttpMethod } from "./constants";
 import { BaseService } from "./baseService";
 
 interface IHeaders {
@@ -26,11 +26,11 @@ const ensureMeta = (target: BaseService, methodName: string) => {
 
 /**
  * Register HTTP method and path in API method.
- * @param {string} method
+ * @param {HttpMethod} method
  * @param {string} url
  * @return {(target: BaseService, methodName: string, descriptor: PropertyDescriptor) => void}
  */
-const registerMethod = (method: string, url: string) => {
+const registerMethod = (method: HttpMethod, url: string) => {
   return (target: BaseService, methodName: string, descriptor: PropertyDescriptor) => {
     ensureMeta(target, methodName);
     target.__meta__[methodName].method = method;
@@ -45,7 +45,7 @@ const registerMethod = (method: string, url: string) => {
  * @constructor
  */
 export const GET = (url: string) => {
-  return registerMethod(Method.GET, url);
+  return registerMethod("GET", url);
 };
 
 /**
@@ -55,7 +55,7 @@ export const GET = (url: string) => {
  * @constructor
  */
 export const POST = (url: string) => {
-  return registerMethod(Method.POST, url);
+  return registerMethod("POST", url);
 };
 
 /**
@@ -65,7 +65,7 @@ export const POST = (url: string) => {
  * @constructor
  */
 export const PUT = (url: string) => {
-  return registerMethod(Method.PUT, url);
+  return registerMethod("PUT", url);
 };
 
 /**
@@ -75,7 +75,7 @@ export const PUT = (url: string) => {
  * @constructor
  */
 export const PATCH = (url: string) => {
-  return registerMethod(Method.PATCH, url);
+  return registerMethod("PATCH", url);
 };
 
 /**
@@ -85,7 +85,7 @@ export const PATCH = (url: string) => {
  * @constructor
  */
 export const DELETE = (url: string) => {
-  return registerMethod(Method.DELETE, url);
+  return registerMethod("DELETE", url);
 };
 
 /**
@@ -95,7 +95,7 @@ export const DELETE = (url: string) => {
  * @constructor
  */
 export const HEAD = (url: string) => {
-  return registerMethod(Method.HEAD, url);
+  return registerMethod("HEAD", url);
 };
 
 /**
@@ -105,7 +105,7 @@ export const HEAD = (url: string) => {
  * @constructor
  */
 export const OPTIONS = (url: string) => {
-  return registerMethod(Method.OPTIONS, url);
+  return registerMethod("OPTIONS", url);
 };
 
 /**
@@ -212,12 +212,12 @@ export const QueryMap = (target: any, methodName: string, paramIndex: number) =>
 };
 
 /**
- * 'Content-Type': 'application/x-www-form-urlencoded' will be added
+ * 'content-type': 'application/x-www-form-urlencoded;charset=utf-8' will be added
  * to HTTP headers.
  * @constructor
  */
 export const FormUrlEncoded = () => {
-  return Headers({ "Content-Type": "application/x-www-form-urlencoded" });
+  return Headers({ "content-type": "application/x-www-form-urlencoded;charset=utf-8" });
 };
 
 /**
@@ -248,3 +248,34 @@ export const FieldMap = (target: any, methodName: string, paramIndex: number) =>
   ensureMeta(target, methodName);
   target.__meta__[methodName].fieldMapIndex = paramIndex;
 };
+
+/**
+ * 'content-type': 'multipart/form-data' will be added to HTTP headers.
+ * @return {(target: any, methodName: string, descriptor: PropertyDescriptor) => void}
+ * @constructor
+ */
+export const Multipart = () => {
+  return Headers({ "content-type": "multipart/form-data" });
+};
+
+/**
+ * Set part of form data for API endpoint. Only effective when method has been
+ * decorated by @Multipart.
+ * @param {string} paramName
+ * @return {(target: any, methodName: string, paramIndex: number) => void}
+ * @constructor
+ */
+export const Part = (paramName: string) => {
+  return (target: any, methodName: string, paramIndex: number) => {
+    ensureMeta(target, methodName);
+    if (!target.__meta__[methodName].parts) {
+      target.__meta__[methodName].parts = {};
+    }
+    target.__meta__[methodName].parts[paramIndex] = paramName;
+  };
+};
+
+export interface IPartDescriptor {
+  value: any;
+  filename?: string;
+}

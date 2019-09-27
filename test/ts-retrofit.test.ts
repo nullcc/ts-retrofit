@@ -1,9 +1,11 @@
 import * as http from "http";
+import * as fs from "fs";
 import { app } from "./server";
 import { ServiceBuilder } from "../src";
 import {
   TEST_SERVER_ENDPOINT, API_PREFIX, TOKEN, UserService, SearchService,
-  PostService, AuthService, IUser, ISearchQuery, IAuth, IPost, TEST_SERVER_PORT
+  PostService, AuthService, FileService, IUser, ISearchQuery, IAuth, IPost,
+  TEST_SERVER_PORT,
 } from "./fixtures";
 
 describe("Test ts-retrofit.", () => {
@@ -148,7 +150,7 @@ describe("Test ts-retrofit.", () => {
       password: "123456",
     };
     const response = await authService.auth(auth);
-    expect(response.config.headers["Content-Type"]).toEqual("application/x-www-form-urlencoded");
+    expect(response.config.headers["Content-Type"]).toEqual("application/x-www-form-urlencoded;charset=utf-8");
     expect(response.config.headers["Accept"]).toEqual("application/json");
   });
 
@@ -177,7 +179,7 @@ describe("Test ts-retrofit.", () => {
       .setEndpoint(TEST_SERVER_ENDPOINT)
       .build(PostService);
     const response = await postService.createPost("hello", "world");
-    expect(response.config.headers["Content-Type"]).toEqual("application/x-www-form-urlencoded");
+    expect(response.config.headers["Content-Type"]).toEqual("application/x-www-form-urlencoded;charset=utf-8");
   });
 
   test("Test `@Field` decorator.", async () => {
@@ -185,7 +187,7 @@ describe("Test ts-retrofit.", () => {
       .setEndpoint(TEST_SERVER_ENDPOINT)
       .build(PostService);
     const response = await postService.createPost("hello", "world");
-    expect(response.config.headers["Content-Type"]).toEqual("application/x-www-form-urlencoded");
+    expect(response.config.headers["Content-Type"]).toEqual("application/x-www-form-urlencoded;charset=utf-8");
     expect(response.config.data).toEqual("title=hello&content=world");
   });
 
@@ -194,7 +196,22 @@ describe("Test ts-retrofit.", () => {
       .setEndpoint(TEST_SERVER_ENDPOINT)
       .build(PostService);
     const response = await postService.createPost2({ title: "hello", content: "world" });
-    expect(response.config.headers["Content-Type"]).toEqual("application/x-www-form-urlencoded");
+    expect(response.config.headers["Content-Type"]).toEqual("application/x-www-form-urlencoded;charset=utf-8");
     expect(response.config.data).toEqual("title=hello&content=world");
+  });
+
+  test("Test `@Multipart` decorator.", async () => {
+    const fileService = new ServiceBuilder()
+      .setEndpoint(TEST_SERVER_ENDPOINT)
+      .build(FileService);
+    const bucket = {
+      value: "test-bucket",
+    };
+    const file = {
+      value: fs.readFileSync('test/pic.png'),
+      filename: "pic.png",
+    };
+    const response = await fileService.upload(bucket, file);
+    expect(response.config.headers["Content-Type"]).toContain("multipart/form-data");
   });
 });

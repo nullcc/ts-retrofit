@@ -1,9 +1,12 @@
 import express from "express";
 import bodyParser from "body-parser";
+import multer from "multer";
 
 export const app = express();
 
 const jsonParser = bodyParser.json();
+const upload = multer();
+app.use(bodyParser.urlencoded({ extended: false} ));
 
 app.get("/api/v1/users", function(req, res) {
   res.status(200).json({});
@@ -50,5 +53,11 @@ app.get("/api/v1/posts", jsonParser, function(req, res) {
 });
 
 app.post("/api/v1/posts", jsonParser, function(req, res) {
+  res.status(200).json({});
+});
+
+app.post("/api/v1/upload", upload.any(), function(req, res) {
+  // get fields of form data from `req.body`
+  // get files from req.files array
   res.status(200).json({});
 });
