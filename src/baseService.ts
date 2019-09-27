@@ -1,10 +1,19 @@
-import * as qs from "qs";
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
-import { Method } from "./constants";
+import { DataResolverFactory } from "./dataResolver";
 
 axios.defaults.withCredentials = true;
 
 export type Response = AxiosResponse;
+
+const NON_HTTP_REQUEST_PROPERTY_NAME = '__nonHTTPRequestMethod__';
+
+export const nonHTTPRequestMethod = (target: any, methodName: string) => {
+  const descriptor = {
+    value: true,
+    writable: false,
+  };
+  Object.defineProperty(target[methodName], NON_HTTP_REQUEST_PROPERTY_NAME, descriptor);
+};
 
 export class BaseService {
   public __meta__: any;
@@ -22,20 +31,16 @@ export class BaseService {
       this._methodMap[methodName] = this[methodName];
     });
 
-    const noWrappedMethodNames = [
-      "getInstanceMethodNames",
-      "_wrap",
-      "_resolveData",
-    ];
-
     const self = this;
     for (const methodName of methodNames) {
       const descriptor = {
         enumerable: true,
         configurable: true,
         get(): Function {
-          if (noWrappedMethodNames.includes(methodName)) {
-            return self._methodMap[methodName];
+          const method = self._methodMap[methodName];
+          const descriptor = Object.getOwnPropertyDescriptor(method, NON_HTTP_REQUEST_PROPERTY_NAME);
+          if (descriptor && descriptor.value === true) {
+            return method;
           }
           return (...args: any[]) => {
             return self._wrap(methodName, args);
@@ -49,6 +54,7 @@ export class BaseService {
     }
   }
 
+  @nonHTTPRequestMethod
   private _getInstanceMethodNames(): string[] {
     let properties: string[] = [];
     let obj = this;
@@ -61,100 +67,112 @@ export class BaseService {
     });
   }
 
+  @nonHTTPRequestMethod
   private _wrap(methodName: string, args: any[]): Promise<Response> {
+    const url = this._resolveUrl(methodName, args);
+    const method = this._resolveHttpMethod(methodName);
+    const headers = this._resolveHeaders(methodName, args);
+    const query = this._resolveQuery(methodName, args);
+    const data = this._resolveData(methodName, headers, args);
+
+    const config: AxiosRequestConfig = {
+      url,
+      method,
+      headers,
+      params: query,
+      data,
+    };
+    return this._httpClient.sendRequest(config);
+  }
+
+  @nonHTTPRequestMethod
+  private _resolveUrl(methodName: string, args: any[]) {
     const meta = this.__meta__;
     const endpoint = this._endpoint;
     const basePath = meta.basePath;
     const path = meta[methodName].path;
-    const method = meta[methodName].method;
-    const headers = meta[methodName].headers || {};
-    const query = meta[methodName].query || {};
-    const headerParams = meta[methodName].headerParams;
     const pathParams = meta[methodName].pathParams;
-    const queryMapIndex = meta[methodName].queryMapIndex;
-    const bodyIndex = meta[methodName].bodyIndex;
-    const fields = meta[methodName].fields || {};
-    const fieldMapIndex = meta[methodName].fieldMapIndex;
-
     let url = [endpoint, basePath, path].join("");
-
-    const config: AxiosRequestConfig = {
-      headers,
-      params: query,
-    };
-
     for (const pos in pathParams) {
       if (pathParams[pos]) {
         url = url.replace(new RegExp(`\{${pathParams[pos]}}`), args[pos]);
       }
     }
+    return url;
+  }
 
+  @nonHTTPRequestMethod
+  private _resolveHttpMethod(methodName: string) {
+    const meta = this.__meta__;
+    return meta[methodName].method;
+  }
+
+  @nonHTTPRequestMethod
+  private _resolveHeaders(methodName: string, args: any[]) {
+    const meta = this.__meta__;
+    const headers = meta[methodName].headers || {};
+    const headerParams = meta[methodName].headerParams;
     for (const pos in headerParams) {
       if (headerParams[pos]) {
-        config.headers[headerParams[pos]] = args[pos];
+        headers[headerParams[pos]] = args[pos];
       }
     }
+    return headers;
+  }
 
+  @nonHTTPRequestMethod
+  private _resolveQuery(methodName: string, args: any[]) {
+    const meta = this.__meta__;
+    const query = meta[methodName].query || {};
+    const queryMapIndex = meta[methodName].queryMapIndex;
     if (queryMapIndex >= 0) {
       for (const key in args[queryMapIndex]) {
         if (args[queryMapIndex][key]) {
-          config.params[key] = args[queryMapIndex][key];
+          query[key] = args[queryMapIndex][key];
         }
       }
     }
-
-    if (bodyIndex >= 0) {
-      config.data = this._resolveData(config.headers, args[bodyIndex]);
-    }
-
-    if (Object.keys(fields).length > 0) {
-      const data = {};
-      for (const pos in fields) {
-        if (fields[pos]) {
-          data[fields[pos]] = args[pos];
-        }
-      }
-      config.data = this._resolveData(config.headers, data);
-    }
-
-    if (fieldMapIndex >= 0) {
-      const data = {};
-      for (const key in args[fieldMapIndex]) {
-        if (args[fieldMapIndex][key]) {
-          data[key] = args[fieldMapIndex][key];
-        }
-      }
-      config.data = this._resolveData(config.headers, data);
-    }
-
-    switch (method) {
-      case Method.GET:
-        return this._httpClient.get(url, config);
-      case Method.POST:
-        return this._httpClient.post(url, config);
-      case Method.PUT:
-        return this._httpClient.put(url, config);
-      case Method.PATCH:
-        return this._httpClient.patch(url, config);
-      case Method.DELETE:
-        return this._httpClient.delete(url, config);
-      case Method.HEAD:
-        return this._httpClient.head(url, config);
-      case Method.OPTIONS:
-        return this._httpClient.options(url, config);
-      default:
-        return this._httpClient.get(url, config);
-    }
+    return query;
   }
 
-  private _resolveData(headers: any, data: any): any {
-    if (!headers["Content-Type"]) {
-      return data;
+  @nonHTTPRequestMethod
+  private _resolveData(methodName: string, headers: any, args: any[]) {
+    const meta = this.__meta__;
+    const bodyIndex = meta[methodName].bodyIndex;
+    const fields = meta[methodName].fields || {};
+    const fieldMapIndex = meta[methodName].fieldMapIndex;
+    let data = {};
+
+    // @Body
+    if (bodyIndex >= 0) {
+      data = { ...data, ...args[bodyIndex] };
     }
-    if (headers["Content-Type"].indexOf("application/x-www-form-urlencoded") !== -1) {
-      return qs.stringify(data);
+
+    // @Field
+    if (Object.keys(fields).length > 0) {
+      const reqData = {};
+      for (const pos in fields) {
+        if (fields[pos]) {
+          reqData[fields[pos]] = args[pos];
+        }
+      }
+      data = { ...data, ...reqData };
     }
-    return data;
+
+    // @FieldMap
+    if (fieldMapIndex >= 0) {
+      const reqData = {};
+      for (const key in args[fieldMapIndex]) {
+        if (args[fieldMapIndex][key]) {
+          reqData[key] = args[fieldMapIndex][key];
+        }
+      }
+      data = { ...data, ...reqData };
+    }
+
+    const contentType = headers["Content-Type"] || "application/json";
+    const dataResolver = DataResolverFactory.createDataResolver(contentType);
+    return dataResolver.resolve(data);
   }
 }
 
@@ -176,70 +194,7 @@ export class ServiceBuilder {
 }
 
 class HttpClient {
-  public async get(url: string, config: AxiosRequestConfig): Promise<Response> {
-    const requestConfig: AxiosRequestConfig = {
-      url,
-      method: Method.GET,
-      ...config,
-    };
-    return await this._sendRequest(requestConfig);
-  }
-
-  public async post(url: string, config: AxiosRequestConfig): Promise<Response> {
-    const requestConfig: AxiosRequestConfig = {
-      url,
-      method: Method.POST,
-      ...config,
-    };
-    return await this._sendRequest(requestConfig);
-  }
-
-  public async put(url: string, config: AxiosRequestConfig): Promise<Response> {
-    const requestConfig: AxiosRequestConfig = {
-      url,
-      method: Method.PUT,
-      ...config,
-    };
-    return await this._sendRequest(requestConfig);
-  }
-
-  public async patch(url: string, config: AxiosRequestConfig): Promise<Response> {
-    const requestConfig: AxiosRequestConfig = {
-      url,
-      method: Method.PATCH,
-      ...config,
-    };
-    return await this._sendRequest(requestConfig);
-  }
-
-  public async delete(url: string, config: AxiosRequestConfig): Promise<Response> {
-    const requestConfig: AxiosRequestConfig = {
-      url,
-      method: Method.DELETE,
-      ...config,
-    };
-    return await this._sendRequest(requestConfig);
-  }
-
-  public async head(url: string, config: AxiosRequestConfig): Promise<Response> {
-    const requestConfig: AxiosRequestConfig = {
-      url,
-      method: Method.HEAD,
-      ...config,
-    };
-    return await this._sendRequest(requestConfig);
-  }
-
-  public async options(url: string, config: AxiosRequestConfig): Promise<Response> {
-    const requestConfig: AxiosRequestConfig = {
-      url,
-      method: Method.OPTIONS,
-      ...config,
-    };
-    return await this._sendRequest(requestConfig);
-  }
-
-  private async _sendRequest(config: AxiosRequestConfig): Promise<Response> {
+  public async sendRequest(config: AxiosRequestConfig): Promise<Response> {
     try {
       return await axios(config);
     } catch (err) {

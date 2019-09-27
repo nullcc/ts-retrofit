@@ -212,12 +212,12 @@ export const QueryMap = (target: any, methodName: string, paramIndex: number) =>
 };
 
 /**
- * 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' will be added
+ * 'Content-Type': 'application/x-www-form-urlencoded' will be added
  * to HTTP headers.
  * @constructor
  */
 export const FormUrlEncoded = () => {
-  return Headers({ "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8" });
+  return Headers({ "Content-Type": "application/x-www-form-urlencoded" });
 };
 
 /**

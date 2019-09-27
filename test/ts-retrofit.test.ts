@@ -177,7 +177,7 @@ describe("Test ts-retrofit.", () => {
       .setEndpoint(TEST_SERVER_ENDPOINT)
       .build(PostService);
     const response = await postService.createPost("hello", "world");
-    expect(response.config.headers["Content-Type"]).toEqual("application/x-www-form-urlencoded; charset=UTF-8");
+    expect(response.config.headers["Content-Type"]).toEqual("application/x-www-form-urlencoded");
   });
 
   test("Test `@Field` decorator.", async () => {
@@ -185,7 +185,7 @@ describe("Test ts-retrofit.", () => {
       .setEndpoint(TEST_SERVER_ENDPOINT)
       .build(PostService);
     const response = await postService.createPost("hello", "world");
-    expect(response.config.headers["Content-Type"]).toEqual("application/x-www-form-urlencoded; charset=UTF-8");
+    expect(response.config.headers["Content-Type"]).toEqual("application/x-www-form-urlencoded");
     expect(response.config.data).toEqual("title=hello&content=world");
   });
 
@@ -194,7 +194,7 @@ describe("Test ts-retrofit.", () => {
       .setEndpoint(TEST_SERVER_ENDPOINT)
       .build(PostService);
     const response = await postService.createPost2({ title: "hello", content: "world" });
-    expect(response.config.headers["Content-Type"]).toEqual("application/x-www-form-urlencoded; charset=UTF-8");
+    expect(response.config.headers["Content-Type"]).toEqual("application/x-www-form-urlencoded");
     expect(response.config.data).toEqual("title=hello&content=world");
   });
 });
