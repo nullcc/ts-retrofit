@@ -41,7 +41,7 @@ jobs:
 
       publish:
         provider: script
-        script: "cp .npmrc $HOME/.npmrc && npm publish"
+        script: "cp .npmrc.template $HOME/.npmrc && npm publish"
         skip_cleanup: true
         on:
           tags: true
