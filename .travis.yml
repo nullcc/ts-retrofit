@@ -33,15 +33,14 @@ jobs:
         - echo "Testing Finished."
 
     - stage: publish
-      script:
+      before_deploy:
         - echo "Publishing npm package ..."
-        - npm version
-        - npm publish
+      after_deploy:
         - echo "Publish npm package successfully!"
-
-      publish:
-        provider: script
-        script: "cp .npmrc.template $HOME/.npmrc && npm publish"
+      deploy:
+        provider: npm
+        email: "$NPM_EMAIL"
+        api_key: "$NPM_TOKEN"
         skip_cleanup: true
         on:
           tags: true
