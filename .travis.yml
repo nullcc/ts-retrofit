@@ -34,10 +34,8 @@ jobs:
         - echo "Publish npm package successfully!"
       deploy:
         provider: npm
-        email:
-          secure: $NPM_EMAIL
-        api_key:
-          secure: $NPM_TOKEN
+        email: $NPM_EMAIL
+        api_key: $NPM_TOKEN
         skip_cleanup: true
         on:
           tags: true
