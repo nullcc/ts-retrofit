@@ -2,7 +2,13 @@
 
 A retrofit implementation in TypeScript.
 
-## Usages
+## Quick Overview
+
+Install ts-retrofit
+
+```bash
+$ npm i ts-retrofit
+```
 
 ```typescript
 import {
@@ -146,5 +152,5 @@ See [test](test/ts-retrofit.test.ts) to get more examples.
 ## Test
 
 ```bash
-npm test
+$ npm test
 ```

@@ -1,11 +1,13 @@
 {
   "name": "ts-retrofit",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "",
   "main": "index.js",
   "scripts": {
     "test": "jest --coverage",
-    "tslint": "tslint -c tslint.json --project . src/**/*.ts src/**/*.tsx test/**/*.test.ts test/**/*.test.tsx"
+    "tslint": "tslint -c tslint.json --project . src/**/*.ts src/**/*.tsx test/**/*.test.ts test/**/*.test.tsx",
+    "build": "tsc",
+    "prepublish": "npm run build"
   },
   "author": "",
   "license": "ISC",

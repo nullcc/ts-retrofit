@@ -2,7 +2,6 @@ import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 import FormData from "form-data";
 import { DataResolverFactory } from "./dataResolver";
 import { HttpMethod } from "./constants";
-import {Part} from "./index";
 
 axios.defaults.withCredentials = true;
 
