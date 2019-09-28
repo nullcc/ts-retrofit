@@ -1,6 +1,6 @@
 # ts-retrofit
 
-A retrofit implementation in TypeScript.
+A axios based retrofit implementation for TypeScript.
 
 ## Installing
 
