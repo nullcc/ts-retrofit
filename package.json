@@ -1,6 +1,6 @@
 {
   "name": "ts-retrofit",
-  "version": "1.0.9",
+  "version": "1.0.10",
   "description": "A axios based retrofit implementation for TypeScript.",
   "main": "lib/index.js",
   "types": "lib/types/index.d.ts",
