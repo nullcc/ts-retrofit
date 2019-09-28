@@ -1,5 +1,7 @@
 # ts-retrofit
 
+[![build status](https://travis-ci.org/nullcc/ts-retrofit.svg?branch=master)](https://travis-ci.org/nullcc/ts-retrofit)
+
 A axios based retrofit implementation for TypeScript.
 
 ## Installing
