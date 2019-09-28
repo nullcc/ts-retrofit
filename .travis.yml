@@ -8,7 +8,6 @@ install:
 
 os:
   - linux
-  - windows
 
 stages:
   - test
@@ -33,14 +32,15 @@ jobs:
         - echo "Testing Finished."
 
     - stage: publish
+      if: tag IS present
       before_deploy:
         - echo "Publishing npm package ..."
       after_deploy:
         - echo "Publish npm package successfully!"
       deploy:
         provider: npm
-        email: "$NPM_EMAIL"
-        api_key: "$NPM_TOKEN"
+        email: $NPM_EMAIL
+        api_key: $NPM_TOKEN
         skip_cleanup: true
         on:
           tags: true
