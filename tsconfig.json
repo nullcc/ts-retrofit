@@ -10,12 +10,11 @@
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
     "strict": true,
-    "sourceMap": true,
-    "declaration": true,
+    "sourceMap": false,
+    "declaration": false,
     "allowSyntheticDefaultImports": true,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
-    "declarationDir": "lib/types",
     "outDir": "lib"
   },
   "include": [
