@@ -15,18 +15,13 @@ stages:
 
 jobs:
   include:
-    - stage: lint
+    - stage: lint and test
       script:
         - node --version
         - npm --version
         - echo "Linting Started ..."
         - npm run tslint
         - echo "Linting Finished."
-
-    - stage: test
-      script:
-        - node --version
-        - npm --version
         - echo "Testing Started ..."
         - npm test
         - echo "Testing Finished."
@@ -39,8 +34,10 @@ jobs:
         - echo "Publish npm package successfully!"
       deploy:
         provider: npm
-        email: $NPM_EMAIL
-        api_key: $NPM_TOKEN
+        email:
+          secure: $NPM_EMAIL
+        api_key:
+          secure: $NPM_TOKEN
         skip_cleanup: true
         on:
           tags: true
