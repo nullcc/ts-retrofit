@@ -1,11 +1,48 @@
 language: node_js
+
 node_js:
-  - '8'
-  - '10'
-  - '11'
-  - '12'
+  - "10"
 
 install:
   - npm install
 
-script: npm test
+os:
+  - linux
+  - windows
+
+stages:
+  - test
+  - name: deploy
+
+jobs:
+  include:
+    - stage: lint
+      script:
+        - node --version
+        - npm --version
+        - echo "Linting Started ..."
+        - npm run tslint
+        - echo "Linting Finished."
+
+    - stage: test
+      script:
+        - node --version
+        - npm --version
+        - echo "Testing Started ..."
+        - npm test
+        - echo "Testing Finished."
+
+    - stage: deploy
+      script:
+        - echo "Publishing npm package..."
+        - npm version
+        - npm publish
+        - echo "Publish npm package successfully!"
+
+      deploy:
+        provider: npm
+        email: "$NPM_EMAIL"
+        api_key: "$NPM_TOKEN"
+        skip_cleanup: true
+        on:
+          tags: true
