@@ -1,9 +1,0 @@
-{
-  "extends": "./tsconfig.json",
-  "compilerOptions": {
-    "module": "amd",  // https://github.com/Microsoft/TypeScript/issues/27117
-    "declaration": true,
-    "emitDeclarationOnly": true,
-    "outFile": "lib/index.d.ts"
-  }
-}

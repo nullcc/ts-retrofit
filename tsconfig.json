@@ -11,13 +11,18 @@
     "noFallthroughCasesInSwitch": true,
     "strict": true,
     "sourceMap": false,
-    "declaration": false,
+    "declaration": true,
     "allowSyntheticDefaultImports": true,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
-    "outDir": "lib"
+    "outDir": "lib",
+    "declarationDir": "lib/types"
   },
   "include": [
-    "src"
+    "src/**/*"
+  ],
+  "exclude": [
+    "node_modules",
+    "**/*.test.ts"
   ]
 }
