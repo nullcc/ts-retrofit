@@ -2,13 +2,13 @@
 
 A retrofit implementation in TypeScript.
 
-## Quick Overview
-
-Install ts-retrofit
+## Installing
 
 ```bash
 $ npm i ts-retrofit
 ```
+
+## Quick Overview
 
 ```typescript
 import {
