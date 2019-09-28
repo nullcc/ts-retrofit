@@ -259,7 +259,7 @@ export const FieldMap = (target: any, methodName: string, paramIndex: number) =>
  * @constructor
  */
 export const Multipart = (target: any, methodName: string, descriptor: PropertyDescriptor) => {
-  return Headers({ "content-type": "multipart/form-data" })(target, methodName, descriptor);
+  Headers({ "content-type": "multipart/form-data" })(target, methodName, descriptor);
 };
 
 /**
