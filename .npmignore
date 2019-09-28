@@ -8,3 +8,4 @@ response-samples
 .DS_Store
 package-lock.json
 .travis.yml
+.npmrc
