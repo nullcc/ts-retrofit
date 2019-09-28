@@ -87,17 +87,17 @@ export class PostService extends BaseService {
   async getPosts(): Promise<Response> { return <Response> {} };
 
   @POST("/posts")
-  @FormUrlEncoded()
+  @FormUrlEncoded
   async createPost(@Field("title") title: string, @Field("content") content: string): Promise<Response> { return <Response> {} };
 
   @POST("/posts")
-  @FormUrlEncoded()
+  @FormUrlEncoded
   async createPost2(@FieldMap post: IPost): Promise<Response> { return <Response> {} };
 }
 
 @BasePath(API_PREFIX)
 export class FileService extends BaseService {
   @POST("/upload")
-  @Multipart()
+  @Multipart
   async upload(@Part("bucket") bucket: IPartDescriptor, @Part("file") file: IPartDescriptor): Promise<Response> { return <Response> {} };
 }

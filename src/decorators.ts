@@ -213,11 +213,13 @@ export const QueryMap = (target: any, methodName: string, paramIndex: number) =>
 
 /**
  * 'content-type': 'application/x-www-form-urlencoded;charset=utf-8' will be added
- * to HTTP headers.
+ * @param target
+ * @param {string} methodName
+ * @param {PropertyDescriptor} descriptor
  * @constructor
  */
-export const FormUrlEncoded = () => {
-  return Headers({ "content-type": "application/x-www-form-urlencoded;charset=utf-8" });
+export const FormUrlEncoded = (target: any, methodName: string, descriptor: PropertyDescriptor) => {
+  Headers({ "content-type": "application/x-www-form-urlencoded;charset=utf-8" })(target, methodName, descriptor);
 };
 
 /**
@@ -251,11 +253,13 @@ export const FieldMap = (target: any, methodName: string, paramIndex: number) =>
 
 /**
  * 'content-type': 'multipart/form-data' will be added to HTTP headers.
- * @return {(target: any, methodName: string, descriptor: PropertyDescriptor) => void}
+ * @param target
+ * @param {string} methodName
+ * @param {PropertyDescriptor} descriptor
  * @constructor
  */
-export const Multipart = () => {
-  return Headers({ "content-type": "multipart/form-data" });
+export const Multipart = (target: any, methodName: string, descriptor: PropertyDescriptor) => {
+  return Headers({ "content-type": "multipart/form-data" })(target, methodName, descriptor);
 };
 
 /**

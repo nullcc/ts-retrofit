@@ -93,18 +93,18 @@ export class PostService extends BaseService {
   async getPosts(): Promise<Response> { return <Response> {} };
 
   @POST("/posts")
-  @FormUrlEncoded()
+  @FormUrlEncoded
   async createPost(@Field("title") title: string, @Field("content") content: string): Promise<Response> { return <Response> {} };
   
   @POST("/posts")
-  @FormUrlEncoded()
+  @FormUrlEncoded
   async createPost2(@FieldMap post: IPost): Promise<Response> { return <Response> {} };
 }
 
 @BasePath(API_PREFIX)
 export class FileService extends BaseService {
   @POST("/upload")
-  @Multipart()
+  @Multipart
   async upload(@Part("bucket") bucket: PartDescriptor, @Part("file") file: PartDescriptor): Promise<Response> { return <Response> {} };
 }
 
@@ -137,10 +137,10 @@ See [test](test/ts-retrofit.test.ts) to get more examples.
 |       Body       |      @Body      |                     Specifying body data                     |  Method Parameter  |                            @Body                             |
 |   Static Query   |     @Query      |                 Specifying static query data                 |       Method       |  @Query({ page: 1,   size: 20,   sort: "createdAt:desc" })   |
 | Query Parameters |    @QueryMap    |                     Parameterizing query                     |  Method Parameter  |                          @QueryMap                           |
-|  Static Headers  | @FormUrlEncoded | Specifying "content-type" to be "application/x-www-form-urlencoded" |       Method       |                      @FormUrlEncoded()                       |
+|  Static Headers  | @FormUrlEncoded | Specifying "content-type" to be "application/x-www-form-urlencoded" |       Method       |                       @FormUrlEncoded                        |
 | Field Parameter  |     @Field      | Specifying field in method parameter, only effective when method has been decorated by @FormUrlEncoded |  Method Parameter  |                        @Field("name")                        |
 | Field Parameters |    @FieldMap    | Specifying field map in method parameter, only effective when method has been decorated by @FormUrlEncoded |  Method Parameter  |                          @FieldMap                           |
-|  Static Headers  |   @Multipart    |    Specifying "content-type" to be "multipart/form-data"     |       Method       |                         @Multipart()                         |
+|  Static Headers  |   @Multipart    |    Specifying "content-type" to be "multipart/form-data"     |       Method       |                          @Multipart                          |
 | Part Parameters  |      @Part      | Specifying field map in method parameter, only effective when method has been decorated by @Multipart |  Method Parameter  |                        @Part("name")                         |
 
 ## Test
