@@ -1,7 +1,7 @@
 import {
   GET, POST, PUT, PATCH, DELETE, HEAD, OPTIONS, BasePath, Header, Query,
   Headers, Path, QueryMap, Body, FormUrlEncoded, Field, FieldMap, Multipart,
-  Part, IPartDescriptor, BaseService, Response,
+  Part, IPartDescriptor, BaseService, Response, HeaderMap,
 } from "../src";
 
 export const TEST_SERVER_HOST = "http://localhost";
@@ -93,6 +93,10 @@ export class PostService extends BaseService {
   @POST("/posts")
   @FormUrlEncoded
   async createPost2(@FieldMap post: IPost): Promise<Response> { return <Response> {} };
+
+  @POST("/posts")
+  @FormUrlEncoded
+  async createPost3(@HeaderMap headers: any, @FieldMap post: IPost): Promise<Response> { return <Response> {} };
 }
 
 @BasePath(API_PREFIX)

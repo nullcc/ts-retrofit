@@ -116,19 +116,6 @@ describe("Test ts-retrofit.", () => {
     expect(response.config.url).toEqual(`${TEST_SERVER_ENDPOINT}${API_PREFIX}/users/${userId}`);
   });
 
-  test("Test `@QueryMap` decorator.", async () => {
-    const searchService = new ServiceBuilder()
-      .setEndpoint(TEST_SERVER_ENDPOINT)
-      .build(SearchService);
-    const query: ISearchQuery = {
-      title: "TypeScript",
-      author: "John Doe",
-    };
-    const response = await searchService.search(TOKEN, query);
-    expect(response.config.url).toEqual(`${TEST_SERVER_ENDPOINT}${API_PREFIX}/search`);
-    expect(response.config.params).toMatchObject(query);
-  });
-
   test("Test `@Body` decorator.", async () => {
     const userService = new ServiceBuilder()
       .setEndpoint(TEST_SERVER_ENDPOINT)
@@ -162,6 +149,16 @@ describe("Test ts-retrofit.", () => {
     expect(response.config.headers["X-Token"]).toEqual(TOKEN);
   });
 
+  test("Test `@HeaderMap` decorator.", async () => {
+    const postService = new ServiceBuilder()
+      .setEndpoint(TEST_SERVER_ENDPOINT)
+      .build(PostService);
+    const post: IPost = { title: "hello", content: "world" };
+    const response = await postService.createPost3({ 'X-Foo': 'foo', 'X-Bar': 'bar'}, post);
+    expect(response.config.headers["X-Foo"]).toEqual('foo');
+    expect(response.config.headers["X-Bar"]).toEqual('bar');
+  });
+
   test("Test `@Query` decorator.", async () => {
     const postService = new ServiceBuilder()
       .setEndpoint(TEST_SERVER_ENDPOINT)
@@ -172,6 +169,19 @@ describe("Test ts-retrofit.", () => {
       size: 20,
       sort: "createdAt:desc"
     });
+  });
+
+  test("Test `@QueryMap` decorator.", async () => {
+    const searchService = new ServiceBuilder()
+      .setEndpoint(TEST_SERVER_ENDPOINT)
+      .build(SearchService);
+    const query: ISearchQuery = {
+      title: "TypeScript",
+      author: "John Doe",
+    };
+    const response = await searchService.search(TOKEN, query);
+    expect(response.config.url).toEqual(`${TEST_SERVER_ENDPOINT}${API_PREFIX}/search`);
+    expect(response.config.params).toMatchObject(query);
   });
 
   test("Test `@FormUrlEncoded` decorator.", async () => {

@@ -123,6 +123,14 @@ export class BaseService {
         headers[headerParams[pos]] = args[pos];
       }
     }
+    const headerMapIndex = meta[methodName].headerMapIndex;
+    if (headerMapIndex >= 0) {
+      for (const key in args[headerMapIndex]) {
+        if (args[headerMapIndex][key]) {
+          headers[key] = args[headerMapIndex][key];
+        }
+      }
+    }
     return headers;
   }
 

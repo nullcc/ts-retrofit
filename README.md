@@ -140,11 +140,12 @@ See [test](test/ts-retrofit.test.ts) to get more examples.
 |   HTTP Method    |    @OPTIONS     |                        OPTIONS Method                        |       Method       |                 @OPTIONS("/users/{userId}")                  |
 |    Base Path     |    @BasePath    |    Specifying the base path of a series of API endpoints     |       Class        |                     @BasePath("/api/v1")                     |
 |  Static Headers  |    @Headers     |        Specifying the static headers of API endpoint         |       Method       | @Headers({ "content-type": "application/x-www-form-urlencoded",   "Accept": "application/json" }) |
-| Header Parameter |     @Header     |                    Parameterizing header                     |  Method Parameter  |                      @Header("X-Token")                      |
+| Header Parameter |     @Header     |                    Parameterized header                     |  Method Parameter  |                      @Header("X-Token")                      |
+| Header Parameters |    @HeaderMap    |                     Parameterized header                     |  Method Parameter  |                          @HeaderMap                           |
 |  Path Parameter  |      @Path      |             Specifying parameter in path of API              |  Method Parameter  |                     @PathParam("userId")                     |
 |       Body       |      @Body      |                     Specifying body data                     |  Method Parameter  |                            @Body                             |
 |   Static Query   |     @Query      |                 Specifying static query data                 |       Method       |  @Query({ page: 1,   size: 20,   sort: "createdAt:desc" })   |
-| Query Parameters |    @QueryMap    |                     Parameterizing query                     |  Method Parameter  |                          @QueryMap                           |
+| Query Parameters |    @QueryMap    |                     Parameterized query                     |  Method Parameter  |                          @QueryMap                           |
 |  Static Headers  | @FormUrlEncoded | Specifying "content-type" to be "application/x-www-form-urlencoded" |       Method       |                       @FormUrlEncoded                        |
 | Field Parameter  |     @Field      | Specifying field in method parameter, only effective when method has been decorated by @FormUrlEncoded |  Method Parameter  |                        @Field("name")                        |
 | Field Parameters |    @FieldMap    | Specifying field map in method parameter, only effective when method has been decorated by @FormUrlEncoded |  Method Parameter  |                          @FieldMap                           |

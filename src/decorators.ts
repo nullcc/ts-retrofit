@@ -10,8 +10,7 @@ interface IQuery {
 }
 
 /**
- * Ensure the `__meta__` attribute is in the target object and
- * `methodName` has been initialized in it.
+ * Ensure the `__meta__` attribute is in the target object and `methodName` has been initialized.
  * @param {BaseService} target
  * @param {string} methodName
  */
@@ -181,6 +180,18 @@ export const Header = (paramName: string) => {
     }
     target.__meta__[methodName].headerParams[paramIndex] = paramName;
   };
+};
+
+/**
+ * Set header map for API endpoint.
+ * @param target
+ * @param {string} methodName
+ * @param {number} paramIndex
+ * @constructor
+ */
+export const HeaderMap = (target: any, methodName: string, paramIndex: number) => {
+  ensureMeta(target, methodName);
+  target.__meta__[methodName].headerMapIndex = paramIndex;
 };
 
 /**
