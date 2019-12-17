@@ -2,6 +2,7 @@
   "name": "ts-retrofit",
   "version": "1.1.0",
   "description": "A axios based retrofit implementation for TypeScript.",
+  "repository": "https://github.com/nullcc/ts-retrofit",
   "main": "lib/index.js",
   "types": "lib/types/index.d.ts",
   "keywords": [
@@ -10,6 +11,7 @@
     "js",
     "axios"
   ],
+  "bugs": "https://github.com/nullcc/ts-retrofit/issues",
   "scripts": {
     "test": "jest --coverage",
     "tslint": "tslint -c tslint.json --project . src/**/*.ts src/**/*.tsx test/**/*.test.ts test/**/*.test.tsx",
