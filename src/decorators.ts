@@ -1,11 +1,11 @@
 import { HttpMethod } from "./constants";
 import { BaseService } from "./baseService";
 
-interface IHeaders {
+interface Headers {
   [x: string]: string | number;
 }
 
-interface IQuery {
+interface Query {
   [x: string]: string | number | boolean;
 }
 
@@ -152,11 +152,11 @@ export const Body = (target: any, methodName: string, paramIndex: number) => {
 
 /**
  * Set static HTTP headers for API endpoint.
- * @param {IHeaders} headers
+ * @param {Headers} headers
  * @return {(target: any, methodName: string, descriptor: PropertyDescriptor) => void}
  * @constructor
  */
-export const Headers = (headers: IHeaders) => {
+export const Headers = (headers: Headers) => {
   return (target: any, methodName: string, descriptor: PropertyDescriptor) => {
     ensureMeta(target, methodName);
     if (!target.__meta__[methodName].headers) {
@@ -196,11 +196,11 @@ export const HeaderMap = (target: any, methodName: string, paramIndex: number) =
 
 /**
  * Set static query for API endpoint.
- * @param {IQuery} query
+ * @param {Query} query
  * @return {(target: any, methodName: string, descriptor: PropertyDescriptor) => void}
  * @constructor
  */
-export const Query = (query: IQuery) => {
+export const Query = (query: Query) => {
   return (target: any, methodName: string, descriptor: PropertyDescriptor) => {
     ensureMeta(target, methodName);
     if (!target.__meta__[methodName].headers) {
@@ -290,7 +290,7 @@ export const Part = (paramName: string) => {
   };
 };
 
-export interface IPartDescriptor {
+export interface PartDescriptor {
   value: any;
   filename?: string;
 }

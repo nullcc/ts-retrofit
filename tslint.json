@@ -14,7 +14,8 @@
     "object-literal-sort-keys": false,
     "max-classes-per-file": [true, 99],
     "ban-types": [],
-    "ordered-imports": false
+    "ordered-imports": false,
+    "interface-name" : [true, "never-prefix"]
   },
   "rulesDirectory": []
 }
