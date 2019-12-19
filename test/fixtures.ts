@@ -28,7 +28,7 @@ export interface Auth {
   password: string;
 }
 
-export interface IPost {
+export interface Post {
   title: string;
   content: string;
 }
@@ -92,11 +92,11 @@ export class PostService extends BaseService {
 
   @POST("/posts")
   @FormUrlEncoded
-  async createPost2(@FieldMap post: IPost): Promise<Response> { return <Response> {} };
+  async createPost2(@FieldMap post: Post): Promise<Response> { return <Response> {} };
 
   @POST("/posts")
   @FormUrlEncoded
-  async createPost3(@HeaderMap headers: any, @FieldMap post: IPost): Promise<Response> { return <Response> {} };
+  async createPost3(@HeaderMap headers: any, @FieldMap post: Post): Promise<Response> { return <Response> {} };
 }
 
 @BasePath(API_PREFIX)

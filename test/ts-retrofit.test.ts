@@ -4,7 +4,7 @@ import { app } from "./server";
 import { ServiceBuilder } from "../src";
 import {
   TEST_SERVER_ENDPOINT, API_PREFIX, TOKEN, UserService, SearchService,
-  PostService, AuthService, FileService, User, SearchQuery, Auth, IPost,
+  PostService, AuthService, FileService, User, SearchQuery, Auth, Post,
   TEST_SERVER_PORT,
 } from "./fixtures";
 
@@ -153,7 +153,7 @@ describe("Test ts-retrofit.", () => {
     const postService = new ServiceBuilder()
       .setEndpoint(TEST_SERVER_ENDPOINT)
       .build(PostService);
-    const post: IPost = { title: "hello", content: "world" };
+    const post: Post = { title: "hello", content: "world" };
     const response = await postService.createPost3({ 'X-Foo': 'foo', 'X-Bar': 'bar'}, post);
     expect(response.config.headers["X-Foo"]).toEqual('foo');
     expect(response.config.headers["X-Bar"]).toEqual('bar');
