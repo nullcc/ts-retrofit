@@ -5,7 +5,7 @@ import { HttpMethod } from "./constants";
 
 axios.defaults.withCredentials = true;
 
-export type Response = AxiosResponse;
+export interface Response<T = any> extends AxiosResponse {}
 
 const NON_HTTP_REQUEST_PROPERTY_NAME = "__nonHTTPRequestMethod__";
 
@@ -70,7 +70,7 @@ export class BaseService {
   }
 
   @nonHTTPRequestMethod
-  private _wrap(methodName: string, args: any[]): Promise<Response> {
+  private _wrap(methodName: string, args: any[]): Promise<Response<any>> {
     const url = this._resolveUrl(methodName, args);
     const method = this._resolveHttpMethod(methodName);
     let headers = this._resolveHeaders(methodName, args);
@@ -221,7 +221,7 @@ export class ServiceBuilder {
 }
 
 class HttpClient {
-  public async sendRequest(config: AxiosRequestConfig): Promise<Response> {
+  public async sendRequest(config: AxiosRequestConfig): Promise<Response<any>> {
     try {
       return await axios(config);
     } catch (err) {
