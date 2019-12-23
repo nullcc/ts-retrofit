@@ -144,7 +144,8 @@ See [test](test/ts-retrofit.test.ts) to get more examples.
 | Header Parameters |    @HeaderMap    |                     Parameterized header                     |  Method Parameter  |                          @HeaderMap                           |
 |  Path Parameter  |      @Path      |             Specifying parameter in path of API              |  Method Parameter  |                     @PathParam("userId")                     |
 |       Body       |      @Body      |                     Specifying body data                     |  Method Parameter  |                            @Body                             |
-|   Static Query   |     @Query      |                 Specifying static query data                 |       Method       |  @Query({ page: 1,   size: 20,   sort: "createdAt:desc" })   |
+|   Static Query   |     @Queries     |                 Specifying static query data                 |       Method       | @Queries({ page: 1,   size: 20,   sort: "createdAt:desc" }) |
+| Query Parameter | @Query | Parameterized query | Method Parameter | @Query("group") |
 | Query Parameters |    @QueryMap    |                     Parameterized query                     |  Method Parameter  |                          @QueryMap                           |
 |  Static Headers  | @FormUrlEncoded | Specifying "content-type" to be "application/x-www-form-urlencoded" |       Method       |                       @FormUrlEncoded                        |
 | Field Parameter  |     @Field      | Specifying field in method parameter, only effective when method has been decorated by @FormUrlEncoded |  Method Parameter  |                        @Field("name")                        |

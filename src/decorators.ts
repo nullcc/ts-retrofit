@@ -200,13 +200,29 @@ export const HeaderMap = (target: any, methodName: string, paramIndex: number) =
  * @return {(target: any, methodName: string, descriptor: PropertyDescriptor) => void}
  * @constructor
  */
-export const Query = (query: Query) => {
+export const Queries = (query: Query) => {
   return (target: any, methodName: string, descriptor: PropertyDescriptor) => {
     ensureMeta(target, methodName);
     if (!target.__meta__[methodName].headers) {
       target.__meta__[methodName].query = {};
     }
     target.__meta__[methodName].query = query;
+  };
+};
+
+/**
+ * Set query as variable in API method.
+ * @param {string} paramName
+ * @return {(target: any, methodName: string, paramIndex: number) => void}
+ * @constructor
+ */
+export const Query = (paramName: string) => {
+  return (target: any, methodName: string, paramIndex: number) => {
+    ensureMeta(target, methodName);
+    if (!target.__meta__[methodName].queryParams) {
+      target.__meta__[methodName].queryParams = {};
+    }
+    target.__meta__[methodName].queryParams[paramIndex] = paramName;
   };
 };
 

@@ -159,7 +159,7 @@ describe("Test ts-retrofit.", () => {
     expect(response.config.headers["X-Bar"]).toEqual('bar');
   });
 
-  test("Test `@Query` decorator.", async () => {
+  test("Test `@Queries` decorator.", async () => {
     const postService = new ServiceBuilder()
       .setEndpoint(TEST_SERVER_ENDPOINT)
       .build(PostService);
@@ -169,6 +169,14 @@ describe("Test ts-retrofit.", () => {
       size: 20,
       sort: "createdAt:desc"
     });
+  });
+
+  test("Test `@Query` decorator.", async () => {
+    const postService = new ServiceBuilder()
+      .setEndpoint(TEST_SERVER_ENDPOINT)
+      .build(PostService);
+    const response = await postService.getPosts1('typescript');
+    expect(response.config.params.group).toEqual('typescript');
   });
 
   test("Test `@QueryMap` decorator.", async () => {

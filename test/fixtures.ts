@@ -1,6 +1,6 @@
 import {
-  GET, POST, PUT, PATCH, DELETE, HEAD, OPTIONS, BasePath, Header, Query,
-  Headers, Path, QueryMap, Body, FormUrlEncoded, Field, FieldMap, Multipart,
+  GET, POST, PUT, PATCH, DELETE, HEAD, OPTIONS, BasePath, Header, Queries,
+  Headers, Path, Query, QueryMap, Body, FormUrlEncoded, Field, FieldMap, Multipart,
   Part, PartDescriptor, BaseService, Response, HeaderMap,
 } from "../src";
 
@@ -79,12 +79,20 @@ export class AuthService extends BaseService {
 @BasePath(API_PREFIX)
 export class PostService extends BaseService {
   @GET("/posts")
-  @Query({
+  @Queries({
     page: 1,
     size: 20,
     sort: "createdAt:desc",
   })
   async getPosts(): Promise<Response> { return <Response> {} };
+
+  @GET("/posts")
+  @Queries({
+    page: 1,
+    size: 20,
+    sort: "createdAt:desc",
+  })
+  async getPosts1(@Query('group') group: string): Promise<Response> { return <Response> {} };
 
   @POST("/posts")
   @FormUrlEncoded
