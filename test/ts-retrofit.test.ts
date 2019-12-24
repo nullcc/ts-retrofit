@@ -4,7 +4,7 @@ import { app } from "./server";
 import { ServiceBuilder } from "../src";
 import {
   TEST_SERVER_ENDPOINT, API_PREFIX, TOKEN, UserService, SearchService,
-  PostService, AuthService, FileService, User, SearchQuery, Auth, Post,
+  PostService, AuthService, FileService, MessagingService, User, SearchQuery, Auth, Post,
   TEST_SERVER_PORT,
 } from "./fixtures";
 
@@ -247,6 +247,16 @@ describe("Test ts-retrofit.", () => {
       }
     ];
     const response = await fileService.uploadMulti(bucket, files);
+    expect(response.config.headers["Content-Type"]).toContain("multipart/form-data");
+  });
+
+  test("Test `@Multipart` decorator 2.", async () => {
+    const messagingService = new ServiceBuilder()
+      .setEndpoint(TEST_SERVER_ENDPOINT)
+      .build(MessagingService);
+    const from = { value: '+11111111' };
+    const to = { value: [ '+22222222', '+33333333' ] };
+    const response = await messagingService.createSMS(from, to);
     expect(response.config.headers["Content-Type"]).toContain("multipart/form-data");
   });
 });

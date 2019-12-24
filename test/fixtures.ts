@@ -117,3 +117,10 @@ export class FileService extends BaseService {
   @Multipart
   async uploadMulti(@Part("bucket") bucket: PartDescriptor<string>, @Part("files") files: PartDescriptor<Buffer>[]): Promise<Response> { return <Response> {} };
 }
+
+@BasePath(API_PREFIX)
+export class MessagingService extends BaseService {
+  @POST("/sms")
+  @Multipart
+  async createSMS(@Part("from") from: PartDescriptor<string>, @Part("to") to: PartDescriptor<string[]>): Promise<Response> { return <Response> {} };
+}

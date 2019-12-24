@@ -34,7 +34,7 @@ class MultiPartResolver extends BaseDataResolver {
             formData.append(key, element.value);
           }
         } else {
-          formData.append(key, data[key].value);
+          formData.append(key, JSON.stringify(data[key].value));
         }
       }
     }
