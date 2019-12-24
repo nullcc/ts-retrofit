@@ -14,7 +14,7 @@ $ npm i ts-retrofit
 
 ```typescript
 import {
-  GET, POST, PUT, PATCH, DELETE, HEAD, OPTIONS, BasePath, Header, Query,
+  GET, POST, PUT, PATCH, DELETE, HEAD, OPTIONS, BasePath, Header, Queries, Query,
   Headers, Path, QueryMap, Body, FormUrlEncoded, Field, FieldMap,
   BaseService, ServiceBuilder, Response
 } from "ts-retrofit";
@@ -93,13 +93,21 @@ export class AuthService extends BaseService {
 @BasePath(API_PREFIX)
 export class PostService extends BaseService {
   @GET("/posts")
-  @Query({
+  @Queries({
     page: 1,
     size: 20,
     sort: "createdAt:desc",
   })
   async getPosts(): Promise<Response> { return <Response> {} };
 
+  @GET("/posts")
+  @Queries({
+    page: 1,
+    size: 20,
+    sort: "createdAt:desc",
+  })
+  async getPosts1(@Query('group') group: string): Promise<Response> { return <Response> {} };
+  
   @POST("/posts")
   @FormUrlEncoded
   async createPost(@Field("title") title: string, @Field("content") content: string): Promise<Response> { return <Response> {} };
@@ -113,7 +121,11 @@ export class PostService extends BaseService {
 export class FileService extends BaseService {
   @POST("/upload")
   @Multipart
-  async upload(@Part("bucket") bucket: PartDescriptor, @Part("file") file: PartDescriptor): Promise<Response> { return <Response> {} };
+  async upload(@Part("bucket") bucket: PartDescriptor<string>, @Part("file") file: PartDescriptor<Buffer>): Promise<Response> { return <Response> {} };
+  
+  @POST("/upload")
+  @Multipart
+  async uploadMulti(@Part("bucket") bucket: PartDescriptor<string>, @Part("files") files: PartDescriptor<Buffer>[]): Promise<Response> { return <Response> {} };
 }
 
 (async () => {
