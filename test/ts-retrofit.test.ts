@@ -232,4 +232,21 @@ describe("Test ts-retrofit.", () => {
     const response = await fileService.upload(bucket, file);
     expect(response.config.headers["Content-Type"]).toContain("multipart/form-data");
   });
+
+  test("Test `@Multipart` decorator 1.", async () => {
+    const fileService = new ServiceBuilder()
+      .setEndpoint(TEST_SERVER_ENDPOINT)
+      .build(FileService);
+    const bucket = {
+      value: "test-bucket",
+    };
+    const files = [
+      {
+        value: fs.readFileSync('test/pic.png'),
+        filename: "pic.png",
+      }
+    ];
+    const response = await fileService.uploadMulti(bucket, files);
+    expect(response.config.headers["Content-Type"]).toContain("multipart/form-data");
+  });
 });

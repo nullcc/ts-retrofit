@@ -112,4 +112,8 @@ export class FileService extends BaseService {
   @POST("/upload")
   @Multipart
   async upload(@Part("bucket") bucket: PartDescriptor, @Part("file") file: PartDescriptor): Promise<Response> { return <Response> {} };
+
+  @POST("/upload")
+  @Multipart
+  async uploadMulti(@Part("bucket") bucket: PartDescriptor, @Part("file") file: PartDescriptor[]): Promise<Response> { return <Response> {} };
 }
