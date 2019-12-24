@@ -33,8 +33,7 @@ class MultiPartResolver extends BaseDataResolver {
           for (const element of data[key].value) {
             formData.append(key, element);
           }
-        }
-        else {
+        } else {
           formData.append(key, data[key].value);
         }
       }
