@@ -29,12 +29,13 @@ class MultiPartResolver extends BaseDataResolver {
       if (data[key].filename) {
         formData.append(key, data[key].value, { filename: data[key].filename });
       } else {
-        if (Array.isArray(data[key])) {
-          for (const element of data[key]) {
-            formData.append(key, element.value);
+        if (Array.isArray(data[key].value)) {
+          for (const element of data[key].value) {
+            formData.append(key, element);
           }
-        } else {
-          formData.append(key, JSON.stringify(data[key].value));
+        }
+        else {
+          formData.append(key, data[key].value);
         }
       }
     }
