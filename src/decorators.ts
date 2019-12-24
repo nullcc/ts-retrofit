@@ -306,7 +306,7 @@ export const Part = (paramName: string) => {
   };
 };
 
-export interface PartDescriptor {
-  value: any;
+export interface PartDescriptor<T> {
+  value: T;
   filename?: string;
 }
