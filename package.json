@@ -23,7 +23,7 @@
   "license": "MIT",
   "husky": {
     "hooks": {
-      "pre-commit": "npm test && npm run make-badges && git add 'README.md'"
+      "pre-commit": "npm test && npm run make-badges && git add './README.md'"
     }
   },
   "dependencies": {
