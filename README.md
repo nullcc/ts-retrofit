@@ -1,14 +1,15 @@
 # ts-retrofit
 
 [![build status](https://travis-ci.org/nullcc/ts-retrofit.svg?branch=master)](https://travis-ci.org/nullcc/ts-retrofit)
+[![](https://img.shields.io/npm/dm/ts-retrofit.svg?style=flat)](https://www.npmjs.org/package/ts-retrofit)
 
 | Statements | Branches | Functions | Lines |
 | -----------|----------|-----------|-------|
 | ![Statements](https://img.shields.io/badge/Coverage-97.15%25-brightgreen.svg "Make me better!") | ![Branches](https://img.shields.io/badge/Coverage-80.52%25-yellow.svg "Make me better!") | ![Functions](https://img.shields.io/badge/Coverage-93.55%25-brightgreen.svg "Make me better!") | ![Lines](https://img.shields.io/badge/Coverage-97.15%25-brightgreen.svg "Make me better!") |
 
-An axios based retrofit implementation for TypeScript.
+> A declarative and axios based retrofit implementation for JavaScript and TypeScript.
 
-## Installing
+## Install
 
 ```bash
 $ npm i ts-retrofit

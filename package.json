@@ -1,7 +1,7 @@
 {
   "name": "ts-retrofit",
   "version": "1.3.8",
-  "description": "An axios based retrofit implementation for TypeScript.",
+  "description": "A declarative and axios based retrofit implementation for JavaScript and TypeScript.",
   "repository": "https://github.com/nullcc/ts-retrofit",
   "main": "lib/index.js",
   "types": "lib/types/index.d.ts",
@@ -16,8 +16,11 @@
     "test": "jest --coverage",
     "tslint": "tslint -c tslint.json --project . src/**/*.ts src/**/*.tsx test/**/*.test.ts test/**/*.test.tsx",
     "build": "tsc",
-    "prepublish": "npm run build",
-    "make-badges": "node_modules/.bin/jest-badges-readme"
+    "make-badges": "node_modules/.bin/jest-badges-readme",
+    "prepare": "npm run build",
+    "prepublishOnly": "npm run lint",
+    "preversion": "npm run lint",
+    "postversion": "git push && git push --tags"
   },
   "author": "Ethan Zhang",
   "license": "MIT",
