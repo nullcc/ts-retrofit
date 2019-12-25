@@ -14,7 +14,7 @@
   "bugs": "https://github.com/nullcc/ts-retrofit/issues",
   "scripts": {
     "test": "jest --coverage",
-    "tslint": "tslint -c tslint.json --project . src/**/*.ts src/**/*.tsx test/**/*.test.ts test/**/*.test.tsx",
+    "tslint": "tslint -c tslint.json --project . src/**/*.ts test/**/*.test.ts",
     "build": "tsc",
     "make-badges": "node_modules/.bin/jest-badges-readme",
     "prepare": "npm run build",
