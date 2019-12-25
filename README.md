@@ -6,7 +6,7 @@
 | -----------|----------|-----------|-------|
 | ![Statements](https://img.shields.io/badge/Coverage-97.15%25-brightgreen.svg "Make me better!") | ![Branches](https://img.shields.io/badge/Coverage-80.52%25-yellow.svg "Make me better!") | ![Functions](https://img.shields.io/badge/Coverage-93.55%25-brightgreen.svg "Make me better!") | ![Lines](https://img.shields.io/badge/Coverage-97.15%25-brightgreen.svg "Make me better!") |
 
-A axios based retrofit implementation for TypeScript.
+An axios based retrofit implementation for TypeScript.
 
 ## Installing
 
