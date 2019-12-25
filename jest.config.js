@@ -9,5 +9,10 @@ module.exports = {
   testURL: "http://localhost/",
   testEnvironment: "node",
   rootDir: ".",
-  setupFilesAfterEnv: ["./test/testSetupFile.js"]
+  setupFilesAfterEnv: ["./test/testSetupFile.js"],
+  "coverageReporters": [
+    "json-summary",
+    "text",
+    "lcov"
+  ]
 };

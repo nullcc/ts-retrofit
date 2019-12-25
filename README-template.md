@@ -1,6 +1,6 @@
 | Statements | Branches | Functions | Lines |
 | -----------|----------|-----------|-------|
-| ![Statements](https://img.shields.io/badge/Coverage-97.15%25-brightgreen.svg "Make me better!") | ![Branches](https://img.shields.io/badge/Coverage-80.52%25-yellow.svg "Make me better!") | ![Functions](https://img.shields.io/badge/Coverage-93.55%25-brightgreen.svg "Make me better!") | ![Lines](https://img.shields.io/badge/Coverage-97.15%25-brightgreen.svg "Make me better!") |
+| ![Statements](#statements# "Make me better!") | ![Branches](#branches# "Make me better!") | ![Functions](#functions# "Make me better!") | ![Lines](#lines# "Make me better!") |
 
 # ts-retrofit
 
