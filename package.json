@@ -18,8 +18,8 @@
     "build": "tsc",
     "make-badges": "node_modules/.bin/jest-badges-readme",
     "prepare": "npm run build",
-    "prepublishOnly": "npm run lint",
-    "preversion": "npm run lint",
+    "prepublishOnly": "npm run tslint",
+    "preversion": "npm run tslint",
     "postversion": "git push && git push --tags"
   },
   "author": "Ethan Zhang",
