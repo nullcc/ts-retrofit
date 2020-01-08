@@ -14,7 +14,21 @@ class FormUrlencodedResolver extends BaseDataResolver {
   }
 
   public resolve(headers: any, data: any): any {
-    return qs.stringify(data);
+    const deepStringify = (obj: any) => {
+      const res = {};
+      for (const key in obj) {
+        if (!obj.hasOwnProperty(key)) {
+          continue;
+        }
+        if (typeof obj[key] === "object") {
+          res[key] = JSON.stringify(obj[key]);
+        } else {
+          res[key] = obj[key];
+        }
+      }
+      return qs.stringify(res);
+    };
+    return deepStringify(data);
   }
 }
 
