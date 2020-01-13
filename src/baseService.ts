@@ -48,9 +48,6 @@ export class BaseService {
             return self._wrap(methodName, args);
           };
         },
-        set(value: Function) {
-          self[methodName] = value;
-        },
       };
       Object.defineProperty(this, methodName, descriptor);
     }

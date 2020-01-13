@@ -2,13 +2,13 @@ import * as qs from "qs";
 import FormData from "form-data";
 import { DATA_CONTENT_TYPES } from "./constants";
 
-class BaseDataResolver {
+export class BaseDataResolver {
   public resolve(headers: any, data: any): any {
     throw new Error("Can not call this method in BaseDataResolver.");
   }
 }
 
-class FormUrlencodedResolver extends BaseDataResolver {
+export class FormUrlencodedResolver extends BaseDataResolver {
   constructor() {
     super();
   }
@@ -32,7 +32,7 @@ class FormUrlencodedResolver extends BaseDataResolver {
   }
 }
 
-class MultiPartResolver extends BaseDataResolver {
+export class MultiPartResolver extends BaseDataResolver {
   constructor() {
     super();
   }
@@ -56,7 +56,7 @@ class MultiPartResolver extends BaseDataResolver {
   }
 }
 
-class JsonResolver extends BaseDataResolver {
+export class JsonResolver extends BaseDataResolver {
   constructor() {
     super();
   }
@@ -66,7 +66,7 @@ class JsonResolver extends BaseDataResolver {
   }
 }
 
-class TextXmlResolver extends BaseDataResolver {
+export class TextXmlResolver extends BaseDataResolver {
   constructor() {
     super();
   }

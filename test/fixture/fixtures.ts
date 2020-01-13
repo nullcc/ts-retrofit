@@ -2,7 +2,7 @@ import {
   GET, POST, PUT, PATCH, DELETE, HEAD, OPTIONS, BasePath, Header, Queries,
   Headers, Path, Query, QueryMap, Body, FormUrlEncoded, Field, FieldMap, Multipart,
   Part, PartDescriptor, BaseService, Response, HeaderMap,
-} from "../src";
+} from "../../src/index";
 
 export const TEST_SERVER_HOST = "http://localhost";
 export const TEST_SERVER_PORT = 12345;
@@ -31,6 +31,13 @@ export interface Auth {
 export interface Post {
   title: string;
   content: string;
+}
+
+export interface Group {
+  name: string;
+  description: string;
+  members: number[];
+  tags: string[];
 }
 
 @BasePath(API_PREFIX)
@@ -119,4 +126,11 @@ export class MessagingService extends BaseService {
   @POST("/sms")
   @Multipart
   async createSMS(@Part("from") from: PartDescriptor<string>, @Part("to") to: PartDescriptor<string[]>): Promise<Response> { return <Response> {} };
+}
+
+@BasePath(API_PREFIX)
+export class GroupService extends BaseService {
+  @POST("/groups")
+  @FormUrlEncoded
+  async createGroup(@Body body: Group): Promise<Response> { return <Response> {} };
 }

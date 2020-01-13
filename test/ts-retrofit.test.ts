@@ -1,12 +1,11 @@
 import * as http from "http";
 import * as fs from "fs";
-import { app } from "./server";
+import { app } from "./fixture/server";
 import { ServiceBuilder } from "../src";
 import {
-  TEST_SERVER_ENDPOINT, API_PREFIX, TOKEN, UserService, SearchService,
-  PostService, AuthService, FileService, MessagingService, User, SearchQuery, Auth, Post,
-  TEST_SERVER_PORT,
-} from "./fixtures";
+  TEST_SERVER_ENDPOINT, TEST_SERVER_PORT, API_PREFIX, TOKEN, UserService, SearchService, GroupService, PostService,
+  AuthService, FileService, MessagingService, User, SearchQuery, Auth, Post, Group,
+} from "./fixture/fixtures";
 
 describe("Test ts-retrofit.", () => {
 
@@ -154,9 +153,9 @@ describe("Test ts-retrofit.", () => {
       .setEndpoint(TEST_SERVER_ENDPOINT)
       .build(PostService);
     const post: Post = { title: "hello", content: "world" };
-    const response = await postService.createPost3({ 'X-Foo': 'foo', 'X-Bar': 'bar'}, post);
-    expect(response.config.headers["X-Foo"]).toEqual('foo');
-    expect(response.config.headers["X-Bar"]).toEqual('bar');
+    const response = await postService.createPost3({ "X-Foo": "foo", "X-Bar": "bar"}, post);
+    expect(response.config.headers["X-Foo"]).toEqual("foo");
+    expect(response.config.headers["X-Bar"]).toEqual("bar");
   });
 
   test("Test `@Queries` decorator.", async () => {
@@ -175,8 +174,8 @@ describe("Test ts-retrofit.", () => {
     const postService = new ServiceBuilder()
       .setEndpoint(TEST_SERVER_ENDPOINT)
       .build(PostService);
-    const response = await postService.getPosts1('typescript');
-    expect(response.config.params.group).toEqual('typescript');
+    const response = await postService.getPosts1("typescript");
+    expect(response.config.params.group).toEqual("typescript");
   });
 
   test("Test `@QueryMap` decorator.", async () => {
@@ -198,6 +197,20 @@ describe("Test ts-retrofit.", () => {
       .build(PostService);
     const response = await postService.createPost("hello", "world");
     expect(response.config.headers["Content-Type"]).toEqual("application/x-www-form-urlencoded;charset=utf-8");
+  });
+
+  test("Test `@FormUrlEncoded` decorator with nested object.", async () => {
+    const groupService = new ServiceBuilder()
+      .setEndpoint(TEST_SERVER_ENDPOINT)
+      .build(GroupService);
+    const group: Group = {
+      name: "Video Game",
+      description: "Video game group!",
+      members: [1, 2, 3],
+      tags: ["video", "game", "PS4", "XBox"],
+    };
+    const response = await groupService.createGroup(group);
+    expect(response.config.data).toEqual("name=Video%20Game&description=Video%20game%20group%21&members=%5B1%2C2%2C3%5D&tags=%5B%22video%22%2C%22game%22%2C%22PS4%22%2C%22XBox%22%5D");
   });
 
   test("Test `@Field` decorator.", async () => {
@@ -226,7 +239,7 @@ describe("Test ts-retrofit.", () => {
       value: "test-bucket",
     };
     const file = {
-      value: fs.readFileSync('test/pic.png'),
+      value: fs.readFileSync("test/fixture/pic.png"),
       filename: "pic.png",
     };
     const response = await fileService.upload(bucket, file);
@@ -237,8 +250,8 @@ describe("Test ts-retrofit.", () => {
     const messagingService = new ServiceBuilder()
       .setEndpoint(TEST_SERVER_ENDPOINT)
       .build(MessagingService);
-    const from = { value: '+11111111' };
-    const to = { value: [ '+22222222', '+33333333' ] };
+    const from = { value: "+11111111" };
+    const to = { value: [ "+22222222", "+33333333" ] };
     const response = await messagingService.createSMS(from, to);
     expect(response.config.headers["Content-Type"]).toContain("multipart/form-data");
   });

@@ -62,7 +62,13 @@ app.post("/api/v1/upload", upload.any(), function(req, res) {
   res.status(200).json({});
 });
 
-app.post("/api/v1/sms", upload.any(), function(req, res) {
+app.post("/api/v1/sms", jsonParser, function(req, res) {
+  // get fields of form data from `req.body`
+  // get files from req.files array
+  res.status(200).json({});
+});
+
+app.post("/api/v1/groups", jsonParser, function(req, res) {
   // get fields of form data from `req.body`
   // get files from req.files array
   res.status(200).json({});

@@ -115,9 +115,7 @@ export const OPTIONS = (url: string) => {
  */
 export const BasePath = (path: string) => {
   return (target: typeof BaseService) => {
-    if (!target.prototype.__meta__) {
-      target.prototype.__meta__ = {};
-    }
+    ensureMeta(target.prototype, "basePath");
     target.prototype.__meta__.basePath = path;
   };
 };
@@ -203,7 +201,7 @@ export const HeaderMap = (target: any, methodName: string, paramIndex: number) =
 export const Queries = (query: Query) => {
   return (target: any, methodName: string, descriptor: PropertyDescriptor) => {
     ensureMeta(target, methodName);
-    if (!target.__meta__[methodName].headers) {
+    if (!target.__meta__[methodName].query) {
       target.__meta__[methodName].query = {};
     }
     target.__meta__[methodName].query = query;
