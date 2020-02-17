@@ -1,11 +1,11 @@
-import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
+import axios, { AxiosRequestConfig, AxiosResponse, AxiosInstance } from "axios";
 import FormData from "form-data";
 import { DataResolverFactory } from "./dataResolver";
 import { HttpMethod } from "./constants";
 
 axios.defaults.withCredentials = true;
 
-export interface Response<T = any> extends AxiosResponse<T> {}
+export interface Response<T = any> extends AxiosResponse<T> { }
 
 const NON_HTTP_REQUEST_PROPERTY_NAME = "__nonHTTPRequestMethod__";
 
@@ -25,7 +25,7 @@ export class BaseService {
 
   constructor(serviceBuilder: ServiceBuilder) {
     this._endpoint = serviceBuilder.endpoint;
-    this._httpClient = new HttpClient();
+    this._httpClient = new HttpClient(serviceBuilder);
     this._methodMap = new Map<string, Function>();
 
     const methodNames = this._getInstanceMethodNames();
@@ -206,10 +206,26 @@ export class BaseService {
   }
 }
 
+export type RequestInterceptorFunction = (value: AxiosRequestConfig) => AxiosRequestConfig | Promise<AxiosRequestConfig>;
+export type ResponseInterceptorFunction = (value: AxiosResponse<any>) => AxiosResponse<any> | Promise<AxiosResponse<any>>;
+
+export abstract class RequestInterceptor {
+  onFulfilled?: RequestInterceptorFunction;
+  onRejected?: ((error: any) => any);
+}
+
+export abstract class ResponseInterceptor {
+  onFulfilled?: ResponseInterceptorFunction;
+  onRejected?: ((error: any) => any);
+}
+
 export class ServiceBuilder {
   private _endpoint: string = "";
+  private _standalone: boolean | AxiosInstance = false;
+  private _requestInterceptors: (RequestInterceptorFunction | RequestInterceptor)[] = [];
+  private _responseInterceptors: (ResponseInterceptorFunction | ResponseInterceptor)[] = [];
 
-  public build<T>(service: new(builder: ServiceBuilder) => T): T {
+  public build<T>(service: new (builder: ServiceBuilder) => T): T {
     return new service(this);
   }
 
@@ -218,15 +234,75 @@ export class ServiceBuilder {
     return this;
   }
 
+  // 单例模式
+  public setStandalone(standalone: boolean | AxiosInstance) {
+    this._standalone = standalone;
+    return this;
+  }
+
+  // 插入请求拦截器
+  public setRequestInterceptors(...interceptors: (RequestInterceptorFunction | RequestInterceptor)[]) {
+    this._requestInterceptors.push(...interceptors);
+    return this;
+  }
+
+  // 插入应答拦截器
+  public setResponseInterceptors(...interceptors: (ResponseInterceptorFunction | ResponseInterceptor)[]) {
+    this._responseInterceptors.push(...interceptors);
+    return this;
+  }
+
   get endpoint(): string {
     return this._endpoint;
   }
+
+  get standalone(): boolean | AxiosInstance {
+    return this._standalone;
+  }
+
+  get requestInterceptors(): (RequestInterceptorFunction | RequestInterceptor)[] {
+    return this._requestInterceptors;
+  }
+
+  get responseInterceptors(): (ResponseInterceptorFunction | ResponseInterceptor)[] {
+    return this._responseInterceptors;
+  }
+
 }
 
 class HttpClient {
+
+  axios: AxiosInstance = axios;
+
+  constructor(builder: ServiceBuilder) {
+
+    if (builder.standalone === true) {
+      this.axios = axios.create();
+    } else if (typeof builder.standalone === 'function') {
+      this.axios = builder.standalone;
+    }
+
+    builder.requestInterceptors.forEach((interceptor) => {
+      if (interceptor instanceof RequestInterceptor) {
+        this.axios.interceptors.request.use(interceptor.onFulfilled, interceptor.onRejected);
+      } else {
+        this.axios.interceptors.request.use(interceptor);
+      }
+    });
+
+    builder.responseInterceptors.forEach((interceptor) => {
+      if (interceptor instanceof ResponseInterceptor) {
+        this.axios.interceptors.response.use(interceptor.onFulfilled, interceptor.onRejected);
+      } else {
+        this.axios.interceptors.response.use(interceptor);
+      }
+    });
+
+  }
+
   public async sendRequest(config: AxiosRequestConfig): Promise<Response> {
     try {
-      return await axios(config);
+      return await this.axios(config);
     } catch (err) {
       throw err;
     }
