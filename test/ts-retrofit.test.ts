@@ -1,11 +1,19 @@
 import * as http from "http";
 import * as fs from "fs";
+import axios from "axios";
 import { app } from "./fixture/server";
-import { ServiceBuilder } from "../src";
+import { ServiceBuilder, RequestInterceptorFunction, ResponseInterceptorFunction } from "../src";
 import {
   TEST_SERVER_ENDPOINT, TEST_SERVER_PORT, API_PREFIX, TOKEN, UserService, SearchService, GroupService, PostService,
-  AuthService, FileService, MessagingService, User, SearchQuery, Auth, Post, Group,
+  AuthService, FileService, MessagingService, User, SearchQuery, Auth, Post, Group, InterceptorService,
 } from "./fixture/fixtures";
+import { DATA_CONTENT_TYPES, HttpContentType } from "../src/constants";
+
+declare module 'axios' {
+  interface AxiosRequestConfig {
+    standaloneId?: string;
+  }
+}
 
 describe("Test ts-retrofit.", () => {
 
@@ -153,7 +161,7 @@ describe("Test ts-retrofit.", () => {
       .setEndpoint(TEST_SERVER_ENDPOINT)
       .build(PostService);
     const post: Post = { title: "hello", content: "world" };
-    const response = await postService.createPost3({ "X-Foo": "foo", "X-Bar": "bar"}, post);
+    const response = await postService.createPost3({ "X-Foo": "foo", "X-Bar": "bar" }, post);
     expect(response.config.headers["X-Foo"]).toEqual("foo");
     expect(response.config.headers["X-Bar"]).toEqual("bar");
   });
@@ -251,8 +259,123 @@ describe("Test ts-retrofit.", () => {
       .setEndpoint(TEST_SERVER_ENDPOINT)
       .build(MessagingService);
     const from = { value: "+11111111" };
-    const to = { value: [ "+22222222", "+33333333" ] };
+    const to = { value: ["+22222222", "+33333333"] };
     const response = await messagingService.createSMS(from, to);
     expect(response.config.headers["Content-Type"]).toContain("multipart/form-data");
   });
+
+  test("Test multi-standalone services", async () => {
+    const standaloneId1 = Math.random().toString()
+    const axiosInstance1 = axios.create();
+    axiosInstance1.interceptors.response.use((value) => {
+      value.config.standaloneId = standaloneId1;
+      return value;
+    });
+    const userService1 = new ServiceBuilder()
+      .setStandalone(axiosInstance1)
+      .setEndpoint(TEST_SERVER_ENDPOINT)
+      .build(UserService);
+
+    const response1 = await userService1.getUsers(TOKEN);
+    expect(response1.config.standaloneId).toEqual(standaloneId1);
+
+    const standaloneId2 = Math.random().toString()
+    const axiosInstance2 = axios.create();
+    axiosInstance2.interceptors.response.use((value) => {
+      value.config.standaloneId = standaloneId2;
+      return value;
+    });
+    const userService2 = new ServiceBuilder()
+      .setStandalone(axiosInstance2)
+      .setEndpoint(TEST_SERVER_ENDPOINT)
+      .build(UserService);
+
+    const response2 = await userService2.getUsers(TOKEN);
+    expect(response2.config.standaloneId).toEqual(standaloneId2);
+
+    const standaloneId3 = Math.random().toString()
+    const axiosInstance3 = axios.create();
+    axiosInstance3.interceptors.response.use((value) => {
+      value.config.standaloneId = standaloneId3;
+      return value;
+    });
+    const userService3 = new ServiceBuilder()
+      .setStandalone(axiosInstance3)
+      .setEndpoint(TEST_SERVER_ENDPOINT)
+      .build(UserService);
+
+    const response3 = await userService3.getUsers(TOKEN);
+    expect(response3.config.standaloneId).toEqual(standaloneId3);
+  });
+
+  test("Test Request Interceptors", async () => {
+    const requestInterceptor: RequestInterceptorFunction = (config) => {
+      switch (config.method) {
+        case 'GET':
+        case 'get':
+          if (typeof config.params !== 'object') config.params = {};
+          config.params.role = 'interceptor';
+          break;
+        case 'POST':
+        case 'post':
+          if (config.headers?.post['Content-Type'] === HttpContentType.urlencoded) {
+            const data = config.data;
+            console.log(data);
+            const body: { [key: string]: string } = {};
+            if (typeof data === 'string' && data.length) {
+              const list = data.split('&').map(v => v.split('='));
+              for (const [key, value] of list) {
+                body[key] = value;
+              }
+            } else if (typeof data === 'object') {
+              for (const key in data) {
+                if (data.hasOwnProperty(key)) {
+                  const element = data[key];
+                  body[key] = element;
+                }
+              }
+            }
+            body['role'] = 'interceptor';
+            console.log(body);
+            config.data = Object.entries(body).map(v => v.join('=')).join('&');
+          }
+          break;
+        default:
+          break;
+      }
+      return config;
+    };
+
+    const interceptorService = new ServiceBuilder()
+      .setStandalone(true)
+      .setRequestInterceptors(requestInterceptor)
+      .setEndpoint(TEST_SERVER_ENDPOINT)
+      .build(InterceptorService);
+
+    const response1 = await interceptorService.getParams();
+    expect(response1.config.params.role).toEqual('interceptor');
+    expect(response1.data.role).toEqual('interceptor');
+
+    const response2 = await interceptorService.createParams({ title: 'title', content: 'content' });
+    expect(response2.data.role).toEqual('interceptor');
+  });
+
+  test("Test Response Interceptors", async () => {
+    const standaloneId = 'im a interceptor';
+
+    const responseInterceptor: ResponseInterceptorFunction = (response) => {
+      response.config.standaloneId = standaloneId;
+      return response;
+    };
+
+    const userService = new ServiceBuilder()
+      .setStandalone(true)
+      .setResponseInterceptors(responseInterceptor)
+      .setEndpoint(TEST_SERVER_ENDPOINT)
+      .build(UserService);
+
+    const response = await userService.getUsers(TOKEN);
+    expect(response.config.standaloneId).toEqual(standaloneId);
+  });
+
 });
