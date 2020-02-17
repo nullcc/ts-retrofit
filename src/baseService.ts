@@ -206,24 +206,26 @@ export class BaseService {
   }
 }
 
-export type RequestInterceptorFunction = (value: AxiosRequestConfig) => AxiosRequestConfig | Promise<AxiosRequestConfig>;
-export type ResponseInterceptorFunction = (value: AxiosResponse<any>) => AxiosResponse<any> | Promise<AxiosResponse<any>>;
+export type RequestInterceptorFunction =
+  (value: AxiosRequestConfig) => AxiosRequestConfig | Promise<AxiosRequestConfig>;
+export type ResponseInterceptorFunction =
+  (value: AxiosResponse<any>) => AxiosResponse<any> | Promise<AxiosResponse<any>>;
 
 export abstract class RequestInterceptor {
-  onFulfilled?: RequestInterceptorFunction;
-  onRejected?: ((error: any) => any);
+  public onFulfilled?: RequestInterceptorFunction;
+  public onRejected?: ((error: any) => any);
 }
 
 export abstract class ResponseInterceptor {
-  onFulfilled?: ResponseInterceptorFunction;
-  onRejected?: ((error: any) => any);
+  public onFulfilled?: ResponseInterceptorFunction;
+  public onRejected?: ((error: any) => any);
 }
 
 export class ServiceBuilder {
   private _endpoint: string = "";
   private _standalone: boolean | AxiosInstance = false;
-  private _requestInterceptors: (RequestInterceptorFunction | RequestInterceptor)[] = [];
-  private _responseInterceptors: (ResponseInterceptorFunction | ResponseInterceptor)[] = [];
+  private _requestInterceptors: Array<RequestInterceptorFunction | RequestInterceptor> = [];
+  private _responseInterceptors: Array<ResponseInterceptorFunction | ResponseInterceptor> = [];
 
   public build<T>(service: new (builder: ServiceBuilder) => T): T {
     return new service(this);
@@ -241,13 +243,13 @@ export class ServiceBuilder {
   }
 
   // 插入请求拦截器
-  public setRequestInterceptors(...interceptors: (RequestInterceptorFunction | RequestInterceptor)[]) {
+  public setRequestInterceptors(...interceptors: Array<RequestInterceptorFunction | RequestInterceptor>) {
     this._requestInterceptors.push(...interceptors);
     return this;
   }
 
   // 插入应答拦截器
-  public setResponseInterceptors(...interceptors: (ResponseInterceptorFunction | ResponseInterceptor)[]) {
+  public setResponseInterceptors(...interceptors: Array<ResponseInterceptorFunction | ResponseInterceptor>) {
     this._responseInterceptors.push(...interceptors);
     return this;
   }
@@ -260,11 +262,11 @@ export class ServiceBuilder {
     return this._standalone;
   }
 
-  get requestInterceptors(): (RequestInterceptorFunction | RequestInterceptor)[] {
+  get requestInterceptors(): Array<RequestInterceptorFunction | RequestInterceptor> {
     return this._requestInterceptors;
   }
 
-  get responseInterceptors(): (ResponseInterceptorFunction | ResponseInterceptor)[] {
+  get responseInterceptors(): Array<ResponseInterceptorFunction | ResponseInterceptor> {
     return this._responseInterceptors;
   }
 
@@ -272,13 +274,13 @@ export class ServiceBuilder {
 
 class HttpClient {
 
-  axios: AxiosInstance = axios;
+  private axios: AxiosInstance = axios;
 
   constructor(builder: ServiceBuilder) {
 
     if (builder.standalone === true) {
       this.axios = axios.create();
-    } else if (typeof builder.standalone === 'function') {
+    } else if (typeof builder.standalone === "function") {
       this.axios = builder.standalone;
     }
 
