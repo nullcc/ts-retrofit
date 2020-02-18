@@ -208,17 +208,19 @@ export class BaseService {
 
 export type RequestInterceptorFunction =
   (value: AxiosRequestConfig) => AxiosRequestConfig | Promise<AxiosRequestConfig>;
-export type ResponseInterceptorFunction =
-  (value: AxiosResponse<any>) => AxiosResponse<any> | Promise<AxiosResponse<any>>;
+export type ResponseInterceptorFunction<T = any> =
+  (value: AxiosResponse<T>) => AxiosResponse<T> | Promise<AxiosResponse<T>>;
 
-export abstract class RequestInterceptor {
-  public onFulfilled?: RequestInterceptorFunction;
-  public onRejected?: ((error: any) => any);
+abstract class BaseInterceptor {
+  public onRejected(error: any): any { };
 }
 
-export abstract class ResponseInterceptor {
-  public onFulfilled?: ResponseInterceptorFunction;
-  public onRejected?: ((error: any) => any);
+export abstract class RequestInterceptor extends BaseInterceptor {
+  public abstract onFulfilled(value: AxiosRequestConfig): AxiosRequestConfig | Promise<AxiosRequestConfig>;
+}
+
+export abstract class ResponseInterceptor<T = any> extends BaseInterceptor {
+  public abstract onFulfilled(value: AxiosResponse<T>): AxiosResponse<T> | Promise<AxiosResponse<T>>;
 }
 
 export class ServiceBuilder {
