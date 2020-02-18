@@ -1,8 +1,8 @@
 import * as http from "http";
 import * as fs from "fs";
-import axios from "axios";
+import axios, { AxiosRequestConfig } from "axios";
 import { app } from "./fixture/server";
-import { ServiceBuilder, RequestInterceptorFunction, ResponseInterceptorFunction } from "../src";
+import { ServiceBuilder, RequestInterceptorFunction, ResponseInterceptorFunction, RequestInterceptor } from "../src";
 import {
   TEST_SERVER_ENDPOINT, TEST_SERVER_PORT, API_PREFIX, TOKEN, UserService, SearchService, GroupService, PostService,
   AuthService, FileService, MessagingService, User, SearchQuery, Auth, Post, Group, InterceptorService,
@@ -320,7 +320,6 @@ describe("Test ts-retrofit.", () => {
         case 'post':
           if (config.headers?.post['Content-Type'] === HttpContentType.urlencoded) {
             const data = config.data;
-            console.log(data);
             const body: { [key: string]: string } = {};
             if (typeof data === 'string' && data.length) {
               const list = data.split('&').map(v => v.split('='));
@@ -336,7 +335,6 @@ describe("Test ts-retrofit.", () => {
               }
             }
             body['role'] = 'interceptor';
-            console.log(body);
             config.data = Object.entries(body).map(v => v.join('=')).join('&');
           }
           break;
@@ -376,6 +374,35 @@ describe("Test ts-retrofit.", () => {
 
     const response = await userService.getUsers(TOKEN);
     expect(response.config.standaloneId).toEqual(standaloneId);
+  });
+
+
+  test("Test Interceptor Abstract Class", async () => {
+    class AddHeaderInterceptor extends RequestInterceptor {
+      onFulfilled(config: AxiosRequestConfig) {
+        switch (config.method) {
+          case 'get':
+          case 'GET':
+            if (typeof config.headers?.get === 'object') {
+              config.headers.get['X-Role'] = 'interceptor';
+            }
+            break;
+
+          default:
+            break;
+        }
+        return config;
+      }
+    }
+
+    const interceptorService = new ServiceBuilder()
+      .setStandalone(true)
+      .setRequestInterceptors(new AddHeaderInterceptor)
+      .setEndpoint(TEST_SERVER_ENDPOINT)
+      .build(InterceptorService);
+
+    const response = await interceptorService.getHeader();
+    expect(response.data.role).toEqual('interceptor');
   });
 
 });
