@@ -212,7 +212,7 @@ export type ResponseInterceptorFunction<T = any> =
   (value: AxiosResponse<T>) => AxiosResponse<T> | Promise<AxiosResponse<T>>;
 
 abstract class BaseInterceptor {
-  public onRejected(error: any): any { };
+  public onRejected(error: any) { return; }
 }
 
 export abstract class RequestInterceptor extends BaseInterceptor {
