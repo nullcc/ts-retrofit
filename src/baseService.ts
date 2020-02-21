@@ -288,7 +288,10 @@ class HttpClient {
 
     builder.requestInterceptors.forEach((interceptor) => {
       if (interceptor instanceof RequestInterceptor) {
-        this.axios.interceptors.request.use(interceptor.onFulfilled.bind(interceptor), interceptor.onRejected.bind(interceptor));
+        this.axios.interceptors.request.use(
+          interceptor.onFulfilled.bind(interceptor),
+          interceptor.onRejected.bind(interceptor),
+        );
       } else {
         this.axios.interceptors.request.use(interceptor);
       }
@@ -296,7 +299,10 @@ class HttpClient {
 
     builder.responseInterceptors.forEach((interceptor) => {
       if (interceptor instanceof ResponseInterceptor) {
-        this.axios.interceptors.response.use(interceptor.onFulfilled.bind(interceptor), interceptor.onRejected.bind(interceptor));
+        this.axios.interceptors.response.use(
+          interceptor.onFulfilled.bind(interceptor),
+          interceptor.onRejected.bind(interceptor),
+        );
       } else {
         this.axios.interceptors.response.use(interceptor);
       }
