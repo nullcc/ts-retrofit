@@ -379,12 +379,15 @@ describe("Test ts-retrofit.", () => {
 
   test("Test Interceptor Abstract Class", async () => {
     class AddHeaderInterceptor extends RequestInterceptor {
+
+      role = 'interceptor';
+
       onFulfilled(config: AxiosRequestConfig) {
         switch (config.method) {
           case 'get':
           case 'GET':
             if (typeof config.headers?.get === 'object') {
-              config.headers.get['X-Role'] = 'interceptor';
+              config.headers.get['X-Role'] = this.role;
             }
             break;
 
