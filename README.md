@@ -5,7 +5,7 @@
 
 | Statements | Branches | Functions | Lines |
 | -----------|----------|-----------|-------|
-| ![Statements](https://img.shields.io/badge/Coverage-98.97%25-brightgreen.svg "Make me better!") | ![Branches](https://img.shields.io/badge/Coverage-83.15%25-yellow.svg "Make me better!") | ![Functions](https://img.shields.io/badge/Coverage-98.63%25-brightgreen.svg "Make me better!") | ![Lines](https://img.shields.io/badge/Coverage-98.97%25-brightgreen.svg "Make me better!") |
+| ![Statements](https://img.shields.io/badge/Coverage-98.99%25-brightgreen.svg "Make me better!") | ![Branches](https://img.shields.io/badge/Coverage-83.52%25-yellow.svg "Make me better!") | ![Functions](https://img.shields.io/badge/Coverage-98.67%25-brightgreen.svg "Make me better!") | ![Lines](https://img.shields.io/badge/Coverage-98.99%25-brightgreen.svg "Make me better!") |
 
 > A declarative and axios based retrofit implementation for JavaScript and TypeScript.
 
@@ -169,6 +169,7 @@ See [test](test/ts-retrofit.test.ts) to get more examples.
 | Field Parameters |    @FieldMap    | Specifying field map in method parameter, only effective when method has been decorated by @FormUrlEncoded |  Method Parameter  |                          @FieldMap                           |
 |  Static Headers  |   @Multipart    |    Specifying "content-type" to be "multipart/form-data"     |       Method       |                          @Multipart                          |
 | Part Parameters  |      @Part      | Specifying field map in method parameter, only effective when method has been decorated by @Multipart |  Method Parameter  |                        @Part("name")                         |
+| Response  |      @ResponseType      | Specifying the response type in axios config|  Method  |                        @ResponseType("stream")                         |
 
 ## Test
 

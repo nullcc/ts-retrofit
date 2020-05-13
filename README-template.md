@@ -169,6 +169,7 @@ See [test](test/ts-retrofit.test.ts) to get more examples.
 | Field Parameters |    @FieldMap    | Specifying field map in method parameter, only effective when method has been decorated by @FormUrlEncoded |  Method Parameter  |                          @FieldMap                           |
 |  Static Headers  |   @Multipart    |    Specifying "content-type" to be "multipart/form-data"     |       Method       |                          @Multipart                          |
 | Part Parameters  |      @Part      | Specifying field map in method parameter, only effective when method has been decorated by @Multipart |  Method Parameter  |                        @Part("name")                         |
+| Response  |      @ResponseType      | Specifying the response type in axios config|  Method  |                        @ResponseType("stream")                         |
 
 ## Test
 
