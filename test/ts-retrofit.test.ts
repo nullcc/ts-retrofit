@@ -376,7 +376,6 @@ describe("Test ts-retrofit.", () => {
     expect(response.config.standaloneId).toEqual(standaloneId);
   });
 
-
   test("Test Interceptor Abstract Class", async () => {
     class AddHeaderInterceptor extends RequestInterceptor {
 
@@ -408,4 +407,11 @@ describe("Test ts-retrofit.", () => {
     expect(response.data.role).toEqual('interceptor');
   });
 
+  test("Test `@ResponseType` decorator.", async () => {
+    const fileService = new ServiceBuilder()
+      .setEndpoint(TEST_SERVER_ENDPOINT)
+      .build(FileService);
+    const response = await fileService.getFile("x-y-z");
+    expect(response.config.responseType).toEqual("stream");
+  });
 });

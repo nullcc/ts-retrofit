@@ -73,11 +73,9 @@ export class BaseService {
     let headers = this._resolveHeaders(methodName, args);
     const query = this._resolveQuery(methodName, args);
     const data = this._resolveData(methodName, headers, args);
-
     if (headers["content-type"] && headers["content-type"].indexOf("multipart/form-data") !== -1) {
       headers = { ...headers, ...(data as FormData).getHeaders() };
     }
-
     const config: AxiosRequestConfig = {
       url,
       method,
@@ -85,6 +83,9 @@ export class BaseService {
       params: query,
       data,
     };
+    if (this.__meta__[methodName].responseType) {
+      config.responseType = this.__meta__[methodName].responseType;
+    }
     return this._httpClient.sendRequest(config);
   }
 
