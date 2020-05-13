@@ -1,6 +1,6 @@
 import {
-  GET, POST, PUT, PATCH, DELETE, HEAD, OPTIONS, BasePath, Header, Queries,
-  Headers, Path, Query, QueryMap, Body, FormUrlEncoded, Field, FieldMap, Multipart,
+  GET, POST, PUT, PATCH, DELETE, HEAD, OPTIONS, BasePath, Header, Queries, Headers, Path, Query, QueryMap, Body,
+  FormUrlEncoded, Field, FieldMap, Multipart, ResponseType,
   Part, PartDescriptor, BaseService, Response, HeaderMap,
 } from "../../src/index";
 
@@ -119,6 +119,10 @@ export class FileService extends BaseService {
   @POST("/upload")
   @Multipart
   async upload(@Part("bucket") bucket: PartDescriptor<string>, @Part("file") file: PartDescriptor<Buffer>): Promise<Response> { return <Response>{} };
+
+  @GET("/file")
+  @ResponseType("stream")
+  async getFile(@Path("fileId") fileId: string): Promise<Response> { return <Response>{} };
 }
 
 @BasePath(API_PREFIX)

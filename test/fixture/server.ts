@@ -62,6 +62,10 @@ app.post("/api/v1/upload", upload.any(), function (req, res) {
   res.status(200).json({});
 });
 
+app.get("/api/v1/file", upload.any(), function (req, res) {
+  res.status(200).json({});
+});
+
 app.post("/api/v1/sms", jsonParser, function (req, res) {
   // get fields of form data from `req.body`
   // get files from req.files array

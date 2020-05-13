@@ -304,6 +304,19 @@ export const Part = (paramName: string) => {
   };
 };
 
+/**
+ * Specify the response type in axios.
+ * @param responseType
+ * @returns {(target:any, methodName:string, paramIndex:number)=>undefined}
+ * @constructor
+ */
+export const ResponseType = (responseType: string) => {
+  return (target: any, methodName: string) => {
+    ensureMeta(target, methodName);
+    target.__meta__[methodName].responseType = responseType;
+  };
+};
+
 export interface PartDescriptor<T> {
   value: T;
   filename?: string;
