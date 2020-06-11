@@ -96,7 +96,8 @@ export class BaseService {
     const basePath = meta.basePath;
     const path = meta[methodName].path;
     const pathParams = meta[methodName].pathParams;
-    let url = [endpoint, basePath, path].join("");
+    const isAbsoluteURL = /^([a-z][a-z\d\+\-\.]*:)?\/\//i.test(path);
+    let url = isAbsoluteURL ? path : [endpoint, basePath, path].join("");
     for (const pos in pathParams) {
       if (pathParams[pos]) {
         url = url.replace(new RegExp(`\{${pathParams[pos]}}`), args[pos]);
