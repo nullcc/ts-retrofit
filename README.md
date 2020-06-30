@@ -5,7 +5,7 @@
 
 | Statements | Branches | Functions | Lines |
 | -----------|----------|-----------|-------|
-| ![Statements](https://img.shields.io/badge/Coverage-98.99%25-brightgreen.svg "Make me better!") | ![Branches](https://img.shields.io/badge/Coverage-83.52%25-yellow.svg "Make me better!") | ![Functions](https://img.shields.io/badge/Coverage-98.67%25-brightgreen.svg "Make me better!") | ![Lines](https://img.shields.io/badge/Coverage-98.99%25-brightgreen.svg "Make me better!") |
+| ![Statements](https://img.shields.io/badge/Coverage-99.05%25-brightgreen.svg "Make me better!") | ![Branches](https://img.shields.io/badge/Coverage-85.15%25-yellow.svg "Make me better!") | ![Functions](https://img.shields.io/badge/Coverage-98.8%25-brightgreen.svg "Make me better!") | ![Lines](https://img.shields.io/badge/Coverage-99.05%25-brightgreen.svg "Make me better!") |
 
 > A declarative and axios based retrofit implementation for JavaScript and TypeScript.
 

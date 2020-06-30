@@ -5,7 +5,13 @@ import { HttpMethod } from "./constants";
 
 axios.defaults.withCredentials = true;
 
-export interface Response<T = any> extends AxiosResponse<T> { }
+export interface Response<T = any> extends AxiosResponse<T> {}
+export interface IFilter {
+  invoke(
+    config: AxiosRequestConfig,
+    continuation: () => Promise<Response>
+  ): Promise<Response>;
+}
 
 const NON_HTTP_REQUEST_PROPERTY_NAME = "__nonHTTPRequestMethod__";
 
@@ -14,7 +20,11 @@ export const nonHTTPRequestMethod = (target: any, methodName: string) => {
     value: true,
     writable: false,
   };
-  Object.defineProperty(target[methodName], NON_HTTP_REQUEST_PROPERTY_NAME, descriptor);
+  Object.defineProperty(
+    target[methodName],
+    NON_HTTP_REQUEST_PROPERTY_NAME,
+    descriptor
+  );
 };
 
 export class BaseService {
@@ -40,8 +50,14 @@ export class BaseService {
         configurable: true,
         get(): Function {
           const method = self._methodMap[methodName];
-          const methodOriginalDescriptor = Object.getOwnPropertyDescriptor(method, NON_HTTP_REQUEST_PROPERTY_NAME);
-          if (methodOriginalDescriptor && methodOriginalDescriptor.value === true) {
+          const methodOriginalDescriptor = Object.getOwnPropertyDescriptor(
+            method,
+            NON_HTTP_REQUEST_PROPERTY_NAME
+          );
+          if (
+            methodOriginalDescriptor &&
+            methodOriginalDescriptor.value === true
+          ) {
             return method;
           }
           return (...args: any[]) => {
@@ -66,14 +82,21 @@ export class BaseService {
     });
   }
 
+  _filters: IFilter[] = []; //TODO
+
   @nonHTTPRequestMethod
-  private _wrap(methodName: string, args: any[]): Promise<Response> {
+  private async _wrap(methodName: string, args: any[]): Promise<Response> {
     const url = this._resolveUrl(methodName, args);
     const method = this._resolveHttpMethod(methodName);
     let headers = this._resolveHeaders(methodName, args);
     const query = this._resolveQuery(methodName, args);
     const data = this._resolveData(methodName, headers, args);
-    if (headers["content-type"] && headers["content-type"].indexOf("multipart/form-data") !== -1) {
+    const filters = this._resolveActionFilters(methodName);
+    this._filters = filters; // we need like as acitoncontext property to...what?
+    if (
+      headers["content-type"] &&
+      headers["content-type"].indexOf("multipart/form-data") !== -1
+    ) {
       headers = { ...headers, ...(data as FormData).getHeaders() };
     }
     const config: AxiosRequestConfig = {
@@ -86,7 +109,27 @@ export class BaseService {
     if (this.__meta__[methodName].responseType) {
       config.responseType = this.__meta__[methodName].responseType;
     }
-    return this._httpClient.sendRequest(config);
+    return this._sendRequesetWithFilter(config, 0, async () => {
+      return await this._httpClient.sendRequest(config);
+    });
+  }
+
+  @nonHTTPRequestMethod
+  private async _sendRequesetWithFilter(
+    config: AxiosRequestConfig,
+    index: number,
+    continuation: () => Promise<Response>
+  ): Promise<Response> {
+    if (this._filters?.length && this._filters[index]) {
+      const filter = this._filters[index];
+      return await filter.invoke(
+        config,
+        async () =>
+          await this._sendRequesetWithFilter(config, index + 1, continuation)
+      );
+    } else {
+      return await continuation();
+    }
   }
 
   @nonHTTPRequestMethod
@@ -205,30 +248,48 @@ export class BaseService {
     const dataResolver = dataResolverFactory.createDataResolver(contentType);
     return dataResolver.resolve(headers, data);
   }
+
+  @nonHTTPRequestMethod
+  private _resolveActionFilters(methodName: string): IFilter[] {
+    const meta = this.__meta__;
+    return meta[methodName].Filters;
+  }
 }
 
-export type RequestInterceptorFunction =
-  (value: AxiosRequestConfig) => AxiosRequestConfig | Promise<AxiosRequestConfig>;
-export type ResponseInterceptorFunction<T = any> =
-  (value: AxiosResponse<T>) => AxiosResponse<T> | Promise<AxiosResponse<T>>;
+export type RequestInterceptorFunction = (
+  value: AxiosRequestConfig
+) => AxiosRequestConfig | Promise<AxiosRequestConfig>;
+export type ResponseInterceptorFunction<T = any> = (
+  value: AxiosResponse<T>
+) => AxiosResponse<T> | Promise<AxiosResponse<T>>;
 
 abstract class BaseInterceptor {
-  public onRejected(error: any) { return; }
+  public onRejected(error: any) {
+    return;
+  }
 }
 
 export abstract class RequestInterceptor extends BaseInterceptor {
-  public abstract onFulfilled(value: AxiosRequestConfig): AxiosRequestConfig | Promise<AxiosRequestConfig>;
+  public abstract onFulfilled(
+    value: AxiosRequestConfig
+  ): AxiosRequestConfig | Promise<AxiosRequestConfig>;
 }
 
 export abstract class ResponseInterceptor<T = any> extends BaseInterceptor {
-  public abstract onFulfilled(value: AxiosResponse<T>): AxiosResponse<T> | Promise<AxiosResponse<T>>;
+  public abstract onFulfilled(
+    value: AxiosResponse<T>
+  ): AxiosResponse<T> | Promise<AxiosResponse<T>>;
 }
 
 export class ServiceBuilder {
   private _endpoint: string = "";
   private _standalone: boolean | AxiosInstance = false;
-  private _requestInterceptors: Array<RequestInterceptorFunction | RequestInterceptor> = [];
-  private _responseInterceptors: Array<ResponseInterceptorFunction | ResponseInterceptor> = [];
+  private _requestInterceptors: Array<
+    RequestInterceptorFunction | RequestInterceptor
+  > = [];
+  private _responseInterceptors: Array<
+    ResponseInterceptorFunction | ResponseInterceptor
+  > = [];
 
   public build<T>(service: new (builder: ServiceBuilder) => T): T {
     return new service(this);
@@ -246,13 +307,17 @@ export class ServiceBuilder {
   }
 
   // 插入请求拦截器
-  public setRequestInterceptors(...interceptors: Array<RequestInterceptorFunction | RequestInterceptor>) {
+  public setRequestInterceptors(
+    ...interceptors: Array<RequestInterceptorFunction | RequestInterceptor>
+  ) {
     this._requestInterceptors.push(...interceptors);
     return this;
   }
 
   // 插入应答拦截器
-  public setResponseInterceptors(...interceptors: Array<ResponseInterceptorFunction | ResponseInterceptor>) {
+  public setResponseInterceptors(
+    ...interceptors: Array<ResponseInterceptorFunction | ResponseInterceptor>
+  ) {
     this._responseInterceptors.push(...interceptors);
     return this;
   }
@@ -265,22 +330,23 @@ export class ServiceBuilder {
     return this._standalone;
   }
 
-  get requestInterceptors(): Array<RequestInterceptorFunction | RequestInterceptor> {
+  get requestInterceptors(): Array<
+    RequestInterceptorFunction | RequestInterceptor
+  > {
     return this._requestInterceptors;
   }
 
-  get responseInterceptors(): Array<ResponseInterceptorFunction | ResponseInterceptor> {
+  get responseInterceptors(): Array<
+    ResponseInterceptorFunction | ResponseInterceptor
+  > {
     return this._responseInterceptors;
   }
-
 }
 
 class HttpClient {
-
   private axios: AxiosInstance = axios;
 
   constructor(builder: ServiceBuilder) {
-
     if (builder.standalone === true) {
       this.axios = axios.create();
     } else if (typeof builder.standalone === "function") {
@@ -291,7 +357,7 @@ class HttpClient {
       if (interceptor instanceof RequestInterceptor) {
         this.axios.interceptors.request.use(
           interceptor.onFulfilled.bind(interceptor),
-          interceptor.onRejected.bind(interceptor),
+          interceptor.onRejected.bind(interceptor)
         );
       } else {
         this.axios.interceptors.request.use(interceptor);
@@ -302,13 +368,12 @@ class HttpClient {
       if (interceptor instanceof ResponseInterceptor) {
         this.axios.interceptors.response.use(
           interceptor.onFulfilled.bind(interceptor),
-          interceptor.onRejected.bind(interceptor),
+          interceptor.onRejected.bind(interceptor)
         );
       } else {
         this.axios.interceptors.response.use(interceptor);
       }
     });
-
   }
 
   public async sendRequest(config: AxiosRequestConfig): Promise<Response> {
