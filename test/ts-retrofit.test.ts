@@ -329,7 +329,7 @@ describe("Test ts-retrofit.", () => {
       .build(UserService);
     const userId = 1;
     const response = await userService.getUser(TOKEN, userId);
-    expect(response.config.headers["FilterDoesWork"]).toEqual(true);
+    expect(response.headers["FilterDoesWork"]).toEqual(true);
   });
 
   test("Test multi-standalone services", async () => {
