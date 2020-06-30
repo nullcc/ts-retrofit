@@ -5,11 +5,11 @@ import { HttpMethod } from "./constants";
 
 axios.defaults.withCredentials = true;
 
-export interface Response<T = any> extends AxiosResponse<T> {}
+export interface Response<T = any> extends AxiosResponse<T> { }
 export interface Filter {
   invoke(
     config: AxiosRequestConfig,
-    continuation: () => Promise<Response>
+    continuation: () => Promise<Response>,
   ): Promise<Response>;
 }
 
@@ -23,7 +23,7 @@ export const nonHTTPRequestMethod = (target: any, methodName: string) => {
   Object.defineProperty(
     target[methodName],
     NON_HTTP_REQUEST_PROPERTY_NAME,
-    descriptor
+    descriptor,
   );
 };
 
@@ -52,7 +52,7 @@ export class BaseService {
           const method = self._methodMap[methodName];
           const methodOriginalDescriptor = Object.getOwnPropertyDescriptor(
             method,
-            NON_HTTP_REQUEST_PROPERTY_NAME
+            NON_HTTP_REQUEST_PROPERTY_NAME,
           );
           if (
             methodOriginalDescriptor &&
@@ -116,12 +116,12 @@ export class BaseService {
     config: AxiosRequestConfig,
     filters: Filter[],
     index: number,
-    continuation: () => Promise<Response>
+    continuation: () => Promise<Response>,
   ): Promise<Response> {
     if (filters?.length && filters[index]) {
       const filter = filters[index];
       return await filter.invoke(config, () =>
-        this._sendRequesetWithFilter(config, filters, index + 1, continuation)
+        this._sendRequesetWithFilter(config, filters, index + 1, continuation),
       );
     } else {
       return await continuation();
@@ -253,10 +253,10 @@ export class BaseService {
 }
 
 export type RequestInterceptorFunction = (
-  value: AxiosRequestConfig
+  value: AxiosRequestConfig,
 ) => AxiosRequestConfig | Promise<AxiosRequestConfig>;
 export type ResponseInterceptorFunction<T = any> = (
-  value: AxiosResponse<T>
+  value: AxiosResponse<T>,
 ) => AxiosResponse<T> | Promise<AxiosResponse<T>>;
 
 abstract class BaseInterceptor {
@@ -267,13 +267,13 @@ abstract class BaseInterceptor {
 
 export abstract class RequestInterceptor extends BaseInterceptor {
   public abstract onFulfilled(
-    value: AxiosRequestConfig
+    value: AxiosRequestConfig,
   ): AxiosRequestConfig | Promise<AxiosRequestConfig>;
 }
 
 export abstract class ResponseInterceptor<T = any> extends BaseInterceptor {
   public abstract onFulfilled(
-    value: AxiosResponse<T>
+    value: AxiosResponse<T>,
   ): AxiosResponse<T> | Promise<AxiosResponse<T>>;
 }
 
@@ -353,7 +353,7 @@ class HttpClient {
       if (interceptor instanceof RequestInterceptor) {
         this.axios.interceptors.request.use(
           interceptor.onFulfilled.bind(interceptor),
-          interceptor.onRejected.bind(interceptor)
+          interceptor.onRejected.bind(interceptor),
         );
       } else {
         this.axios.interceptors.request.use(interceptor);
@@ -364,7 +364,7 @@ class HttpClient {
       if (interceptor instanceof ResponseInterceptor) {
         this.axios.interceptors.response.use(
           interceptor.onFulfilled.bind(interceptor),
-          interceptor.onRejected.bind(interceptor)
+          interceptor.onRejected.bind(interceptor),
         );
       } else {
         this.axios.interceptors.response.use(interceptor);

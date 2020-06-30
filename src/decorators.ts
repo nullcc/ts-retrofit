@@ -33,7 +33,7 @@ const registerMethod = (method: HttpMethod, url: string) => {
   return (
     target: BaseService,
     methodName: string,
-    descriptor: PropertyDescriptor
+    descriptor: PropertyDescriptor,
   ) => {
     ensureMeta(target, methodName);
     target.__meta__[methodName].method = method;
@@ -194,7 +194,7 @@ export const Header = (paramName: string) => {
 export const HeaderMap = (
   target: any,
   methodName: string,
-  paramIndex: number
+  paramIndex: number,
 ) => {
   ensureMeta(target, methodName);
   target.__meta__[methodName].headerMapIndex = paramIndex;
@@ -242,7 +242,7 @@ export const Query = (paramName: string) => {
 export const QueryMap = (
   target: any,
   methodName: string,
-  paramIndex: number
+  paramIndex: number,
 ) => {
   ensureMeta(target, methodName);
   target.__meta__[methodName].queryMapIndex = paramIndex;
@@ -258,7 +258,7 @@ export const QueryMap = (
 export const FormUrlEncoded = (
   target: any,
   methodName: string,
-  descriptor: PropertyDescriptor
+  descriptor: PropertyDescriptor,
 ) => {
   Headers({
     "content-type": "application/x-www-form-urlencoded;charset=utf-8",
@@ -292,7 +292,7 @@ export const Field = (paramName: string) => {
 export const FieldMap = (
   target: any,
   methodName: string,
-  paramIndex: number
+  paramIndex: number,
 ) => {
   ensureMeta(target, methodName);
   target.__meta__[methodName].fieldMapIndex = paramIndex;
@@ -308,12 +308,12 @@ export const FieldMap = (
 export const Multipart = (
   target: any,
   methodName: string,
-  descriptor: PropertyDescriptor
+  descriptor: PropertyDescriptor,
 ) => {
   Headers({ "content-type": "multipart/form-data" })(
     target,
     methodName,
-    descriptor
+    descriptor,
   );
 };
 
@@ -356,9 +356,10 @@ export const ResponseType = (responseType: string) => {
 export const ActionFilter = (filter: Filter) => {
   return (target: any, methodName: string) => {
     ensureMeta(target, methodName);
-    //init filters array
-    !target.__meta__[methodName].Filters &&
-      (target.__meta__[methodName].Filters = []);
+    // init filters array
+    if (!target.__meta__[methodName].Filters) {
+      target.__meta__[methodName].Filters = [];
+    }
     target.__meta__[methodName].Filters.push(filter);
   };
 };

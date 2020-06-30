@@ -76,8 +76,14 @@ export class TextXmlResolver extends BaseDataResolver {
   }
 }
 
-const dataResolverMap: Map<string, typeof BaseDataResolver> = new Map<string, typeof BaseDataResolver>();
-dataResolverMap.set("application/x-www-form-urlencoded", FormUrlencodedResolver);
+const dataResolverMap: Map<string, typeof BaseDataResolver> = new Map<
+  string,
+  typeof BaseDataResolver
+>();
+dataResolverMap.set(
+  "application/x-www-form-urlencoded",
+  FormUrlencodedResolver,
+);
 dataResolverMap.set("multipart/form-data", MultiPartResolver);
 dataResolverMap.set("application/json", JsonResolver);
 dataResolverMap.set("text/xml", TextXmlResolver);
@@ -94,7 +100,9 @@ export class DataResolverFactory {
     return new (this._getDataResolverCls("application/json"))();
   }
 
-  private _getDataResolverCls(dataContentType: string): typeof BaseDataResolver {
+  private _getDataResolverCls(
+    dataContentType: string,
+  ): typeof BaseDataResolver {
     return dataResolverMap.get(dataContentType) || JsonResolver;
   }
 }
