@@ -25,7 +25,7 @@ import {
   Response,
   HeaderMap,
   ActionFilter,
-  IFilter,
+  Filter,
 } from "../../src/index";
 import { AxiosRequestConfig } from "axios";
 
@@ -34,7 +34,7 @@ export const TEST_SERVER_PORT = 12345;
 export const TEST_SERVER_ENDPOINT = `${TEST_SERVER_HOST}:${TEST_SERVER_PORT}`;
 export const API_PREFIX = "/api/v1";
 export const TOKEN = "abcdef123456";
-export const testFilter: IFilter = {
+export const testFilter: Filter = {
   invoke: async function (
     config: AxiosRequestConfig,
     continuation: () => Promise<Response>
