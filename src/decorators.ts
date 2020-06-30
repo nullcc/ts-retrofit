@@ -1,5 +1,5 @@
 import { HttpMethod } from "./constants";
-import { BaseService, IFilter } from "./baseService";
+import { BaseService, Filter } from "./baseService";
 
 interface Headers {
   [x: string]: string | number;
@@ -352,7 +352,7 @@ export interface PartDescriptor<T> {
   filename?: string;
 }
 
-export const ActionFilter = (filter: IFilter) => {
+export const ActionFilter = (filter: Filter) => {
   return (target: any, methodName: string) => {
     ensureMeta(target, methodName);
     //init filters array

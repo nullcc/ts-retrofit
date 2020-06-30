@@ -6,7 +6,7 @@ import { HttpMethod } from "./constants";
 axios.defaults.withCredentials = true;
 
 export interface Response<T = any> extends AxiosResponse<T> {}
-export interface IFilter {
+export interface Filter {
   invoke(
     config: AxiosRequestConfig,
     continuation: () => Promise<Response>
@@ -114,7 +114,7 @@ export class BaseService {
   @nonHTTPRequestMethod
   private async _sendRequesetWithFilter(
     config: AxiosRequestConfig,
-    filters: IFilter[],
+    filters: Filter[],
     index: number,
     continuation: () => Promise<Response>
   ): Promise<Response> {
@@ -246,7 +246,7 @@ export class BaseService {
   }
 
   @nonHTTPRequestMethod
-  private _resolveActionFilters(methodName: string): IFilter[] {
+  private _resolveActionFilters(methodName: string): Filter[] {
     const meta = this.__meta__;
     return meta[methodName].Filters;
   }
