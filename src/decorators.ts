@@ -347,11 +347,12 @@ export const ResponseType = (responseType: string) => {
   };
 };
 
-export interface PartDescriptor<T> {
-  value: T;
-  filename?: string;
-}
-
+/**
+ * Allow code to be run before or after in axios request
+ * @param {Filter} ActionFilter
+ * @returns {(target:any, methodName:string, paramIndex:number)=>undefined}
+ * @constructor
+ */
 export const ActionFilter = (filter: Filter) => {
   return (target: any, methodName: string) => {
     ensureMeta(target, methodName);
@@ -361,3 +362,9 @@ export const ActionFilter = (filter: Filter) => {
     target.__meta__[methodName].Filters.push(filter);
   };
 };
+
+export interface PartDescriptor<T> {
+  value: T;
+  filename?: string;
+}
+
