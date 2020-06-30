@@ -34,6 +34,17 @@ export const TEST_SERVER_PORT = 12345;
 export const TEST_SERVER_ENDPOINT = `${TEST_SERVER_HOST}:${TEST_SERVER_PORT}`;
 export const API_PREFIX = "/api/v1";
 export const TOKEN = "abcdef123456";
+export const testFilter: IFilter = {
+  invoke: async function (
+    config: AxiosRequestConfig,
+    continuation: () => Promise<Response>
+  ) {
+    const response = await continuation();
+    response.headers = [];
+    response.headers["FilterDoesWork"] = true;
+    return response;
+  },
+};
 
 export interface User {
   id?: number;
@@ -64,18 +75,6 @@ export interface Group {
   members: number[];
   tags: string[];
 }
-
-const testFilter: IFilter = {
-  invoke: async function (
-    config: AxiosRequestConfig,
-    continuation: () => Promise<Response>
-  ) {
-    const response = await continuation();
-    response.headers = [];
-    response.headers["FilterDoesWork"] = true;
-    return response;
-  },
-};
 
 @BasePath(API_PREFIX)
 export class UserService extends BaseService {

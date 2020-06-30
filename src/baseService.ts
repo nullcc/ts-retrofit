@@ -82,8 +82,6 @@ export class BaseService {
     });
   }
 
-  _filters: IFilter[] = []; //TODO
-
   @nonHTTPRequestMethod
   private async _wrap(methodName: string, args: any[]): Promise<Response> {
     const url = this._resolveUrl(methodName, args);
@@ -92,7 +90,6 @@ export class BaseService {
     const query = this._resolveQuery(methodName, args);
     const data = this._resolveData(methodName, headers, args);
     const filters = this._resolveActionFilters(methodName);
-    this._filters = filters; // we need like as acitoncontext property to...what?
     if (
       headers["content-type"] &&
       headers["content-type"].indexOf("multipart/form-data") !== -1
@@ -109,23 +106,22 @@ export class BaseService {
     if (this.__meta__[methodName].responseType) {
       config.responseType = this.__meta__[methodName].responseType;
     }
-    return this._sendRequesetWithFilter(config, 0, async () => {
-      return await this._httpClient.sendRequest(config);
+    return this._sendRequesetWithFilter(config, filters, 0, () => {
+      return this._httpClient.sendRequest(config);
     });
   }
 
   @nonHTTPRequestMethod
   private async _sendRequesetWithFilter(
     config: AxiosRequestConfig,
+    filters: IFilter[],
     index: number,
     continuation: () => Promise<Response>
   ): Promise<Response> {
-    if (this._filters?.length && this._filters[index]) {
-      const filter = this._filters[index];
-      return await filter.invoke(
-        config,
-        async () =>
-          await this._sendRequesetWithFilter(config, index + 1, continuation)
+    if (filters?.length && filters[index]) {
+      const filter = filters[index];
+      return await filter.invoke(config, () =>
+        this._sendRequesetWithFilter(config, filters, index + 1, continuation)
       );
     } else {
       return await continuation();
