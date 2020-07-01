@@ -106,13 +106,11 @@ export class BaseService {
     if (this.__meta__[methodName].responseType) {
       config.responseType = this.__meta__[methodName].responseType;
     }
-    return this._sendRequesetWithFilter(config, filters, 0, () => {
-      return this._httpClient.sendRequest(config);
-    });
+    return this._sendRequestWithFilter(config, filters, 0, () => this._httpClient.sendRequest(config));
   }
 
   @nonHTTPRequestMethod
-  private async _sendRequesetWithFilter(
+  private _sendRequestWithFilter(
     config: AxiosRequestConfig,
     filters: Filter[],
     index: number,
@@ -120,11 +118,11 @@ export class BaseService {
   ): Promise<Response> {
     if (filters?.length && filters[index]) {
       const filter = filters[index];
-      return await filter.invoke(config, () =>
-        this._sendRequesetWithFilter(config, filters, index + 1, continuation),
+      return filter.invoke(config, () =>
+        this._sendRequestWithFilter(config, filters, index + 1, continuation),
       );
     } else {
-      return await continuation();
+      return continuation();
     }
   }
 

@@ -34,14 +34,14 @@ export const TEST_SERVER_PORT = 12345;
 export const TEST_SERVER_ENDPOINT = `${TEST_SERVER_HOST}:${TEST_SERVER_PORT}`;
 export const API_PREFIX = "/api/v1";
 export const TOKEN = "abcdef123456";
-export const testFilter: Filter = {
-  invoke: async function (
+export const TEST_FILTER: Filter = {
+  async invoke(
     config: AxiosRequestConfig,
     continuation: () => Promise<Response>
   ) {
     const response = await continuation();
     response.headers = [];
-    response.headers["FilterDoesWork"] = true;
+    response.headers["Filter-Does-Work"] = true;
     return response;
   },
 };
@@ -87,7 +87,7 @@ export class UserService extends BaseService {
   async getUsersOther(@Header("X-Token") token: string): Promise<Response> { return <Response>{} };
 
   @GET("/users/{userId}")
-  @ActionFilter(testFilter)
+  @ActionFilter(TEST_FILTER)
   async getUser(
     @Header("X-Token") token: string,
     @Path("userId") userId: number

@@ -323,13 +323,13 @@ describe("Test ts-retrofit.", () => {
     );
   });
 
-  test("Test `@ActionFilter` decorator 1.", async () => {
+  test("Test `@ActionFilter` decorator.", async () => {
     const userService = new ServiceBuilder()
       .setEndpoint(TEST_SERVER_ENDPOINT)
       .build(UserService);
     const userId = 1;
     const response = await userService.getUser(TOKEN, userId);
-    expect(response.headers["FilterDoesWork"]).toEqual(true);
+    expect(response.headers["Filter-Does-Work"]).toEqual(true);
   });
 
   test("Test multi-standalone services", async () => {
