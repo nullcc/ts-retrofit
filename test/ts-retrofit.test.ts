@@ -488,4 +488,14 @@ describe("Test ts-retrofit.", () => {
     const response = await fileService.getFile("x-y-z");
     expect(response.config.responseType).toEqual("stream");
   });
+
+  test("Test `@Get` decorator and path is absolute URL.", async () => {
+    const service = new ServiceBuilder()
+      .setEndpoint(TEST_SERVER_ENDPOINT)
+      .build(UserService);
+    const response = await service.getUsersOther(TOKEN);
+    console.log('url', response.config.url);
+    expect(response.config.method).toEqual("get");
+    expect(response.config.url).toEqual(`${TEST_SERVER_ENDPOINT}/users`);
+  })
 });

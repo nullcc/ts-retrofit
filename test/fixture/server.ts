@@ -12,6 +12,10 @@ app.get("/api/v1/users", function (req, res) {
   res.status(200).json({});
 });
 
+app.get("/users", function (req, res) {
+  res.status(200).json({});
+});
+
 app.get("/api/v1/users/:userId", jsonParser, function (req, res) {
   res.status(200).json({});
 });
