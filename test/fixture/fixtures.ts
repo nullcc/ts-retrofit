@@ -45,6 +45,9 @@ export class UserService extends BaseService {
   @GET("/users")
   async getUsers(@Header("X-Token") token: string): Promise<Response> { return <Response>{} };
 
+  @GET(`${TEST_SERVER_ENDPOINT}/users`)
+  async getUsersOther(@Header("X-Token") token: string): Promise<Response> { return <Response>{} };
+
   @GET("/users/{userId}")
   async getUser(@Header("X-Token") token: string, @Path("userId") userId: number): Promise<Response> { return <Response>{} };
 
