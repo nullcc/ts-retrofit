@@ -6,6 +6,7 @@ import { ServiceBuilder, RequestInterceptorFunction, ResponseInterceptorFunction
 import {
   TEST_SERVER_ENDPOINT, TEST_SERVER_PORT, API_PREFIX, TOKEN, UserService, SearchService, GroupService, PostService,
   AuthService, FileService, MessagingService, User, SearchQuery, Auth, Post, Group, InterceptorService,
+  TransformerService,
 } from "./fixture/fixtures";
 import { DATA_CONTENT_TYPES, HttpContentType } from "../src/constants";
 
@@ -420,8 +421,23 @@ describe("Test ts-retrofit.", () => {
       .setEndpoint(TEST_SERVER_ENDPOINT)
       .build(UserService);
     const response = await service.getUsersOther(TOKEN);
-    console.log('url', response.config.url);
     expect(response.config.method).toEqual("get");
     expect(response.config.url).toEqual(`${TEST_SERVER_ENDPOINT}/users`);
-  })
+  });
+
+  test("Test `@RequestTransformer` decorator.", async () => {
+    const service = new ServiceBuilder()
+      .setEndpoint(TEST_SERVER_ENDPOINT)
+      .build(TransformerService);
+    const response = await service.createSomething({ name: "ts-retrofit" });
+    expect(response.config.data).toEqual('{"name":"ts-retrofit","foo":"foo"}');
+  });
+
+  test("Test `@ResponseTransformer` decorator.", async () => {
+    const service = new ServiceBuilder()
+      .setEndpoint(TEST_SERVER_ENDPOINT)
+      .build(TransformerService);
+    const response = await service.getSomething();
+    expect(response.data).toEqual({ foo: 'foo' });
+  });
 });

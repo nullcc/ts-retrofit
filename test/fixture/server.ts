@@ -93,3 +93,11 @@ app.post("/api/v1/interceptor", function (req, res) {
 app.get("/api/v1/header", function (req, res) {
   res.status(200).json({ role: req.header('X-Role') });
 });
+
+app.post("/api/v1/request-transformer", function (req, res) {
+  res.status(200).json({});
+});
+
+app.get("/api/v1/response-transformer", function (req, res) {
+  res.status(200).json({});
+});
