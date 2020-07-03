@@ -1,3 +1,7 @@
+import {
+  ResponseType as AxiosResponseType,
+  AxiosTransformer,
+} from 'axios';
 import { HttpMethod } from "./constants";
 import { BaseService } from "./baseService";
 
@@ -9,10 +13,15 @@ interface Query {
   [x: string]: string | number | boolean;
 }
 
+export interface PartDescriptor<T> {
+  value: T;
+  filename?: string;
+}
+
 /**
  * Ensure the `__meta__` attribute is in the target object and `methodName` has been initialized.
- * @param {BaseService} target
- * @param {string} methodName
+ * @param target
+ * @param methodName
  */
 const ensureMeta = (target: BaseService, methodName: string) => {
   if (!target.__meta__) {
@@ -25,9 +34,8 @@ const ensureMeta = (target: BaseService, methodName: string) => {
 
 /**
  * Register HTTP method and path in API method.
- * @param {HttpMethod} method
- * @param {string} url
- * @return {(target: BaseService, methodName: string, descriptor: PropertyDescriptor) => void}
+ * @param method
+ * @param url
  */
 const registerMethod = (method: HttpMethod, url: string) => {
   return (target: BaseService, methodName: string, descriptor: PropertyDescriptor) => {
@@ -39,8 +47,7 @@ const registerMethod = (method: HttpMethod, url: string) => {
 
 /**
  * GET decorator.
- * @param {string} url
- * @return {(target: BaseService, methodName: string, descriptor: PropertyDescriptor) => void}
+ * @param url
  * @constructor
  */
 export const GET = (url: string) => {
@@ -49,8 +56,7 @@ export const GET = (url: string) => {
 
 /**
  * POST decorator.
- * @param {string} url
- * @return {(target: BaseService, methodName: string, descriptor: PropertyDescriptor) => void}
+ * @param url
  * @constructor
  */
 export const POST = (url: string) => {
@@ -59,8 +65,7 @@ export const POST = (url: string) => {
 
 /**
  * PUT decorator.
- * @param {string} url
- * @return {(target: BaseService, methodName: string, descriptor: PropertyDescriptor) => void}
+ * @param url
  * @constructor
  */
 export const PUT = (url: string) => {
@@ -69,8 +74,7 @@ export const PUT = (url: string) => {
 
 /**
  * PATCH decorator.
- * @param {string} url
- * @return {(target: BaseService, methodName: string, descriptor: PropertyDescriptor) => void}
+ * @param url
  * @constructor
  */
 export const PATCH = (url: string) => {
@@ -79,8 +83,7 @@ export const PATCH = (url: string) => {
 
 /**
  * DELETE decorator.
- * @param {string} url
- * @return {(target: BaseService, methodName: string, descriptor: PropertyDescriptor) => void}
+ * @param url
  * @constructor
  */
 export const DELETE = (url: string) => {
@@ -89,8 +92,7 @@ export const DELETE = (url: string) => {
 
 /**
  * HEAD decorator.
- * @param {string} url
- * @return {(target: BaseService, methodName: string, descriptor: PropertyDescriptor) => void}
+ * @param url
  * @constructor
  */
 export const HEAD = (url: string) => {
@@ -98,9 +100,8 @@ export const HEAD = (url: string) => {
 };
 
 /**
- * OPTIONS decorator
- * @param {string} url
- * @return {(target: BaseService, methodName: string, descriptor: PropertyDescriptor) => void}
+ * OPTIONS decorator.
+ * @param url
  * @constructor
  */
 export const OPTIONS = (url: string) => {
@@ -109,8 +110,7 @@ export const OPTIONS = (url: string) => {
 
 /**
  * Set base path for API service.
- * @param {string} path
- * @return {(target: BaseService) => void}
+ * @param path
  * @constructor
  */
 export const BasePath = (path: string) => {
@@ -122,8 +122,7 @@ export const BasePath = (path: string) => {
 
 /**
  * Set path parameter for API endpoint.
- * @param {string} paramName
- * @return {(target: any, methodName: string, paramIndex: number) => void}
+ * @param paramName
  * @constructor
  */
 export const Path = (paramName: string) => {
@@ -139,8 +138,8 @@ export const Path = (paramName: string) => {
 /**
  * Set body for API endpoint.
  * @param target
- * @param {string} methodName
- * @param {number} paramIndex
+ * @param methodName
+ * @param paramIndex
  * @constructor
  */
 export const Body = (target: any, methodName: string, paramIndex: number) => {
@@ -150,8 +149,7 @@ export const Body = (target: any, methodName: string, paramIndex: number) => {
 
 /**
  * Set static HTTP headers for API endpoint.
- * @param {Headers} headers
- * @return {(target: any, methodName: string, descriptor: PropertyDescriptor) => void}
+ * @param headers
  * @constructor
  */
 export const Headers = (headers: Headers) => {
@@ -166,8 +164,7 @@ export const Headers = (headers: Headers) => {
 
 /**
  * Set HTTP header as variable in API method.
- * @param {string} paramName
- * @return {(target: any, methodName: string, paramIndex: number) => void}
+ * @param paramName
  * @constructor
  */
 export const Header = (paramName: string) => {
@@ -183,8 +180,8 @@ export const Header = (paramName: string) => {
 /**
  * Set header map for API endpoint.
  * @param target
- * @param {string} methodName
- * @param {number} paramIndex
+ * @param methodName
+ * @param paramIndex
  * @constructor
  */
 export const HeaderMap = (target: any, methodName: string, paramIndex: number) => {
@@ -194,8 +191,7 @@ export const HeaderMap = (target: any, methodName: string, paramIndex: number) =
 
 /**
  * Set static query for API endpoint.
- * @param {Query} query
- * @return {(target: any, methodName: string, descriptor: PropertyDescriptor) => void}
+ * @param query
  * @constructor
  */
 export const Queries = (query: Query) => {
@@ -210,8 +206,7 @@ export const Queries = (query: Query) => {
 
 /**
  * Set query as variable in API method.
- * @param {string} paramName
- * @return {(target: any, methodName: string, paramIndex: number) => void}
+ * @param paramName
  * @constructor
  */
 export const Query = (paramName: string) => {
@@ -227,8 +222,8 @@ export const Query = (paramName: string) => {
 /**
  * Set query map for API endpoint.
  * @param target
- * @param {string} methodName
- * @param {number} paramIndex
+ * @param methodName
+ * @param paramIndex
  * @constructor
  */
 export const QueryMap = (target: any, methodName: string, paramIndex: number) => {
@@ -237,10 +232,10 @@ export const QueryMap = (target: any, methodName: string, paramIndex: number) =>
 };
 
 /**
- * 'content-type': 'application/x-www-form-urlencoded;charset=utf-8' will be added
+ * 'content-type': 'application/x-www-form-urlencoded;charset=utf-8' will be added.
  * @param target
- * @param {string} methodName
- * @param {PropertyDescriptor} descriptor
+ * @param methodName
+ * @param descriptor
  * @constructor
  */
 export const FormUrlEncoded = (target: any, methodName: string, descriptor: PropertyDescriptor) => {
@@ -248,10 +243,8 @@ export const FormUrlEncoded = (target: any, methodName: string, descriptor: Prop
 };
 
 /**
- * Set field of form for API endpoint. Only effective when method has been
- * decorated by @FormUrlEncoded.
- * @param {string} paramName
- * @return {(target: any, methodName: string, paramIndex: number) => void}
+ * Set field of form for API endpoint. Only effective when method has been decorated by @FormUrlEncoded.
+ * @param paramName
  * @constructor
  */
 export const Field = (paramName: string) => {
@@ -267,8 +260,8 @@ export const Field = (paramName: string) => {
 /**
  * Set field map for API endpoint.
  * @param target
- * @param {string} methodName
- * @param {number} paramIndex
+ * @param methodName
+ * @param paramIndex
  * @constructor
  */
 export const FieldMap = (target: any, methodName: string, paramIndex: number) => {
@@ -279,8 +272,8 @@ export const FieldMap = (target: any, methodName: string, paramIndex: number) =>
 /**
  * 'content-type': 'multipart/form-data' will be added to HTTP headers.
  * @param target
- * @param {string} methodName
- * @param {PropertyDescriptor} descriptor
+ * @param methodName
+ * @param descriptor
  * @constructor
  */
 export const Multipart = (target: any, methodName: string, descriptor: PropertyDescriptor) => {
@@ -288,10 +281,8 @@ export const Multipart = (target: any, methodName: string, descriptor: PropertyD
 };
 
 /**
- * Set part of form data for API endpoint. Only effective when method has been
- * decorated by @Multipart.
- * @param {string} paramName
- * @return {(target: any, methodName: string, paramIndex: number) => void}
+ * Set part of form data for API endpoint. Only effective when method has been decorated by @Multipart.
+ * @param paramName
  * @constructor
  */
 export const Part = (paramName: string) => {
@@ -305,19 +296,37 @@ export const Part = (paramName: string) => {
 };
 
 /**
- * Specify the response type in axios.
+ * Set the response type for method.
  * @param responseType
- * @returns {(target:any, methodName:string, paramIndex:number)=>undefined}
  * @constructor
  */
-export const ResponseType = (responseType: string) => {
+export const ResponseType = (responseType: AxiosResponseType) => {
   return (target: any, methodName: string) => {
     ensureMeta(target, methodName);
     target.__meta__[methodName].responseType = responseType;
   };
 };
 
-export interface PartDescriptor<T> {
-  value: T;
-  filename?: string;
-}
+/**
+ * Set request transformer for method.
+ * @param transformer
+ * @constructor
+ */
+export const RequestTransformer = (transformer: AxiosTransformer) => {
+  return (target: any, methodName: string) => {
+    ensureMeta(target, methodName);
+    target.__meta__[methodName].requestTransformer = transformer;
+  };
+};
+
+/**
+ * Set response transformer for method.
+ * @param transformer
+ * @constructor
+ */
+export const ResponseTransformer = (transformer: AxiosTransformer) => {
+  return (target: any, methodName: string) => {
+    ensureMeta(target, methodName);
+    target.__meta__[methodName].responseTransformer = transformer;
+  };
+};

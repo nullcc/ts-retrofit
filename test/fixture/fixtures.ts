@@ -1,8 +1,8 @@
 import {
   GET, POST, PUT, PATCH, DELETE, HEAD, OPTIONS, BasePath, Header, Queries, Headers, Path, Query, QueryMap, Body,
-  FormUrlEncoded, Field, FieldMap, Multipart, ResponseType,
-  Part, PartDescriptor, BaseService, Response, HeaderMap,
-} from "../../src/index";
+  FormUrlEncoded, Field, FieldMap, Multipart, ResponseType, Part, PartDescriptor, BaseService, Response, HeaderMap,
+  RequestTransformer, ResponseTransformer,
+} from "../../src";
 
 export const TEST_SERVER_HOST = "http://localhost";
 export const TEST_SERVER_PORT = 12345;
@@ -38,6 +38,10 @@ export interface Group {
   description: string;
   members: number[];
   tags: string[];
+}
+
+export interface Something {
+  name: string;
 }
 
 @BasePath(API_PREFIX)
@@ -152,4 +156,22 @@ export class InterceptorService extends BaseService {
   
   @GET("/header")
   async getHeader(): Promise<Response> { return <Response>{} };
+}
+
+@BasePath(API_PREFIX)
+export class TransformerService extends BaseService {
+  @POST("/request-transformer")
+  @RequestTransformer((data: any, headers?: any) => {
+    data.foo = 'foo';
+    return JSON.stringify(data);
+  })
+  async createSomething(@Body body: Something): Promise<Response> { return <Response>{} };
+
+  @GET("/response-transformer")
+  @ResponseTransformer((data: any, headers?: any) => {
+    const json = JSON.parse(data);
+    json.foo = 'foo';
+    return json;
+  })
+  async getSomething(): Promise<Response<Something>> { return <Response<Something>>{} };
 }

@@ -83,8 +83,17 @@ export class BaseService {
       params: query,
       data,
     };
+    // response type
     if (this.__meta__[methodName].responseType) {
       config.responseType = this.__meta__[methodName].responseType;
+    }
+    // request transformer
+    if (this.__meta__[methodName].requestTransformer) {
+      config.transformRequest = this.__meta__[methodName].requestTransformer;
+    }
+    // response transformer
+    if (this.__meta__[methodName].responseTransformer) {
+      config.transformResponse = this.__meta__[methodName].responseTransformer;
     }
     return this._httpClient.sendRequest(config);
   }
