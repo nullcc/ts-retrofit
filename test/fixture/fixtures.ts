@@ -1,7 +1,7 @@
 import {
   GET, POST, PUT, PATCH, DELETE, HEAD, OPTIONS, BasePath, Header, Queries, Headers, Path, Query, QueryMap, Body,
   FormUrlEncoded, Field, FieldMap, Multipart, ResponseType, Part, PartDescriptor, BaseService, Response, HeaderMap,
-  RequestTransformer, ResponseTransformer,
+  RequestTransformer, ResponseTransformer, Timeout,
 } from "../../src";
 
 export const TEST_SERVER_HOST = "http://localhost";
@@ -174,4 +174,18 @@ export class TransformerService extends BaseService {
     return json;
   })
   async getSomething(): Promise<Response<Something>> { return <Response<Something>>{} };
+}
+
+@BasePath(API_PREFIX)
+export class TimeoutService extends BaseService {
+  @GET("/sleep-5000")
+  async sleep5000(): Promise<Response> { return <Response>{} };
+
+  @GET("/sleep-5000")
+  @Timeout(3000)
+  async timeoutIn3000(): Promise<Response> { return <Response>{} };
+
+  @GET("/sleep-5000")
+  @Timeout(6000)
+  async timeoutIn6000(): Promise<Response> { return <Response>{} };
 }
