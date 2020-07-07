@@ -6,7 +6,7 @@ import { ServiceBuilder, RequestInterceptorFunction, ResponseInterceptorFunction
 import {
   TEST_SERVER_ENDPOINT, TEST_SERVER_PORT, API_PREFIX, TOKEN, UserService, SearchService, GroupService, PostService,
   AuthService, FileService, MessagingService, User, SearchQuery, Auth, Post, Group, InterceptorService,
-  TransformerService,
+  TransformerService, TimeoutService,
 } from "./fixture/fixtures";
 import { DATA_CONTENT_TYPES, HttpContentType } from "../src/constants";
 
@@ -40,7 +40,6 @@ describe("Test ts-retrofit.", () => {
     const userService = new ServiceBuilder()
       .setEndpoint(TEST_SERVER_ENDPOINT)
       .build(UserService);
-
     const response = await userService.getUsers(TOKEN);
     expect(response.config.method).toEqual("get");
     expect(response.config.url).toEqual(`${TEST_SERVER_ENDPOINT}${API_PREFIX}/users`);
@@ -439,5 +438,29 @@ describe("Test ts-retrofit.", () => {
       .build(TransformerService);
     const response = await service.getSomething();
     expect(response.data).toEqual({ foo: 'foo' });
+  });
+
+  test("Test `setTimeout` method.", async () => {
+    const service = new ServiceBuilder()
+      .setEndpoint(TEST_SERVER_ENDPOINT)
+      .setTimeout(3000)
+      .build(TimeoutService);
+    await expect(service.sleep5000()).rejects.toThrow(/timeout/);
+  });
+
+  test("Test `@Timeout` decorator.", async () => {
+    const service = new ServiceBuilder()
+      .setEndpoint(TEST_SERVER_ENDPOINT)
+      .build(TimeoutService);
+    await expect(service.timeoutIn3000()).rejects.toThrow(/timeout/);
+  });
+
+  test("The timeout in `@Timeout` decorator should shield the value in `setTimeout` method.", async () => {
+    const service = new ServiceBuilder()
+      .setEndpoint(TEST_SERVER_ENDPOINT)
+      .setTimeout(3000)
+      .build(TimeoutService);
+    const response = await service.timeoutIn6000();
+    expect(response.data).toEqual({});
   });
 });

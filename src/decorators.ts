@@ -330,3 +330,15 @@ export const ResponseTransformer = (transformer: AxiosTransformer) => {
     target.__meta__[methodName].responseTransformer = transformer;
   };
 };
+
+/**
+ * Set timeout for method, this config will shield service timeout.
+ * @param timeout
+ * @constructor
+ */
+export const Timeout = (timeout: number) => {
+  return (target: any, methodName: string) => {
+    ensureMeta(target, methodName);
+    target.__meta__[methodName].timeout = timeout;
+  };
+};

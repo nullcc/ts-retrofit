@@ -22,11 +22,13 @@ export class BaseService {
   private _endpoint: string;
   private _httpClient: HttpClient;
   private _methodMap: Map<string, Function>;
+  private _timeout: number;
 
   constructor(serviceBuilder: ServiceBuilder) {
     this._endpoint = serviceBuilder.endpoint;
     this._httpClient = new HttpClient(serviceBuilder);
     this._methodMap = new Map<string, Function>();
+    this._timeout = serviceBuilder.timeout;
 
     const methodNames = this._getInstanceMethodNames();
     methodNames.forEach((methodName) => {
@@ -95,6 +97,7 @@ export class BaseService {
     if (this.__meta__[methodName].responseTransformer) {
       config.transformResponse = this.__meta__[methodName].responseTransformer;
     }
+    config.timeout = this.__meta__[methodName].timeout || this._timeout;
     return this._httpClient.sendRequest(config);
   }
 
@@ -239,6 +242,7 @@ export class ServiceBuilder {
   private _standalone: boolean | AxiosInstance = false;
   private _requestInterceptors: Array<RequestInterceptorFunction | RequestInterceptor> = [];
   private _responseInterceptors: Array<ResponseInterceptorFunction | ResponseInterceptor> = [];
+  private _timeout: number = 60;
 
   public build<T>(service: new (builder: ServiceBuilder) => T): T {
     return new service(this);
@@ -250,20 +254,25 @@ export class ServiceBuilder {
   }
 
   // 单例模式
-  public setStandalone(standalone: boolean | AxiosInstance) {
+  public setStandalone(standalone: boolean | AxiosInstance): ServiceBuilder {
     this._standalone = standalone;
     return this;
   }
 
   // 插入请求拦截器
-  public setRequestInterceptors(...interceptors: Array<RequestInterceptorFunction | RequestInterceptor>) {
+  public setRequestInterceptors(...interceptors: Array<RequestInterceptorFunction | RequestInterceptor>): ServiceBuilder {
     this._requestInterceptors.push(...interceptors);
     return this;
   }
 
   // 插入应答拦截器
-  public setResponseInterceptors(...interceptors: Array<ResponseInterceptorFunction | ResponseInterceptor>) {
+  public setResponseInterceptors(...interceptors: Array<ResponseInterceptorFunction | ResponseInterceptor>): ServiceBuilder {
     this._responseInterceptors.push(...interceptors);
+    return this;
+  }
+
+  public setTimeout(timeout: number): ServiceBuilder {
+    this._timeout = timeout;
     return this;
   }
 
@@ -283,6 +292,9 @@ export class ServiceBuilder {
     return this._responseInterceptors;
   }
 
+  get timeout(): number {
+    return this._timeout;
+  }
 }
 
 class HttpClient {

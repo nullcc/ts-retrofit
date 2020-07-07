@@ -172,6 +172,7 @@ See [test](test/ts-retrofit.test.ts) to get more examples.
 | Response  |      @ResponseType      | Specifying the response type in axios config|  Method  |                        @ResponseType("stream")                         |
 | RequestTransformer  |      @RequestTransformer      | Specifying the request transformer in axios config|  Method  | @RequestTransformer((data: any, headers?: any) => { data.foo = 'foo'; return JSON.stringify(data); })                         |
 | ResponseTransformer  |      @ResponseTransformer      | Specifying the response transformer in axios config|  Method  | @ResponseTransformer((data: any, headers?: any) => { const json = JSON.parse(data); json.foo = 'foo'; return json; })                         |
+| Timeout  |      @Timeout      | Specifying the timeout in axios config|  Method  | @Timeout(5000)                         |
 
 ## Test
 
