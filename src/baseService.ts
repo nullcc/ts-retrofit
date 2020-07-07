@@ -260,13 +260,15 @@ export class ServiceBuilder {
   }
 
   // 插入请求拦截器
-  public setRequestInterceptors(...interceptors: Array<RequestInterceptorFunction | RequestInterceptor>): ServiceBuilder {
+  public setRequestInterceptors(...interceptors: Array<RequestInterceptorFunction | RequestInterceptor>)
+    : ServiceBuilder {
     this._requestInterceptors.push(...interceptors);
     return this;
   }
 
   // 插入应答拦截器
-  public setResponseInterceptors(...interceptors: Array<ResponseInterceptorFunction | ResponseInterceptor>): ServiceBuilder {
+  public setResponseInterceptors(...interceptors: Array<ResponseInterceptorFunction | ResponseInterceptor>)
+    : ServiceBuilder {
     this._responseInterceptors.push(...interceptors);
     return this;
   }
