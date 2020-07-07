@@ -461,6 +461,7 @@ describe("Test ts-retrofit.", () => {
       .setTimeout(3000)
       .build(TimeoutService);
     const response = await service.timeoutIn6000();
+    expect(response.config.timeout).toEqual(6000);
     expect(response.data).toEqual({});
   });
 });
