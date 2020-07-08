@@ -70,6 +70,13 @@ export class BaseService {
 
   @nonHTTPRequestMethod
   private _wrap(methodName: string, args: any[]): Promise<Response> {
+    const { url, method, headers, query, data } = this._resolveParameters(methodName, args);
+    const config = this._makeConfig(methodName, url, method, headers, query, data);
+    return this._httpClient.sendRequest(config);
+  }
+
+  @nonHTTPRequestMethod
+  private _resolveParameters(methodName: string, args: any[]): any {
     const url = this._resolveUrl(methodName, args);
     const method = this._resolveHttpMethod(methodName);
     let headers = this._resolveHeaders(methodName, args);
@@ -78,6 +85,12 @@ export class BaseService {
     if (headers["content-type"] && headers["content-type"].indexOf("multipart/form-data") !== -1) {
       headers = { ...headers, ...(data as FormData).getHeaders() };
     }
+    return { url, method, headers, query, data };
+  }
+
+  @nonHTTPRequestMethod
+  private _makeConfig(methodName: string, url: string, method: HttpMethod, headers: any, query: any, data: any)
+    : AxiosRequestConfig {
     const config: AxiosRequestConfig = {
       url,
       method,
@@ -97,8 +110,9 @@ export class BaseService {
     if (this.__meta__[methodName].responseTransformer) {
       config.transformResponse = this.__meta__[methodName].responseTransformer;
     }
+    // timeout
     config.timeout = this.__meta__[methodName].timeout || this._timeout;
-    return this._httpClient.sendRequest(config);
+    return config;
   }
 
   @nonHTTPRequestMethod
