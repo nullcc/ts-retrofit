@@ -342,3 +342,15 @@ export const Timeout = (timeout: number) => {
     target.__meta__[methodName].timeout = timeout;
   };
 };
+
+/**
+ * Declare response status code for method, do nothing just a declaration.
+ * @param responseStatus
+ * @constructor
+ */
+export const ResponseStatus = (responseStatus: number) => {
+  return (target: any, methodName: string) => {
+    ensureMeta(target, methodName);
+    target.__meta__[methodName].responseStatus = responseStatus;
+  };
+};

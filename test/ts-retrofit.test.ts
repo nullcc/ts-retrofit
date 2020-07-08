@@ -6,7 +6,7 @@ import { ServiceBuilder, RequestInterceptorFunction, ResponseInterceptorFunction
 import {
   TEST_SERVER_ENDPOINT, TEST_SERVER_PORT, API_PREFIX, TOKEN, UserService, SearchService, GroupService, PostService,
   AuthService, FileService, MessagingService, User, SearchQuery, Auth, Post, Group, InterceptorService,
-  TransformerService, TimeoutService,
+  TransformerService, TimeoutService, ResponseStatusService,
 } from "./fixture/fixtures";
 import { DATA_CONTENT_TYPES, HttpContentType } from "../src/constants";
 
@@ -463,5 +463,12 @@ describe("Test ts-retrofit.", () => {
     const response = await service.timeoutIn6000();
     expect(response.config.timeout).toEqual(6000);
     expect(response.data).toEqual({});
+  });
+
+  test("Test `@ResponseStatus` decorator.", async () => {
+    const service = new ServiceBuilder()
+      .setEndpoint(TEST_SERVER_ENDPOINT)
+      .build(ResponseStatusService);
+    expect(service.__meta__.getSomething.responseStatus).toEqual(200);
   });
 });
