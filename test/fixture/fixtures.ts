@@ -1,7 +1,7 @@
 import {
   GET, POST, PUT, PATCH, DELETE, HEAD, OPTIONS, BasePath, Header, Queries, Headers, Path, Query, QueryMap, Body,
   FormUrlEncoded, Field, FieldMap, Multipart, ResponseType, Part, PartDescriptor, BaseService, Response, HeaderMap,
-  RequestTransformer, ResponseTransformer, Timeout, ResponseStatus,
+  RequestTransformer, ResponseTransformer, Timeout, ResponseStatus, Config,
 } from "../../src";
 
 export const TEST_SERVER_HOST = "http://localhost";
@@ -195,4 +195,14 @@ export class ResponseStatusService extends BaseService {
   @GET("/response-status")
   @ResponseStatus(200)
   async getSomething(): Promise<Response> { return <Response>{} };
+}
+
+@BasePath(API_PREFIX)
+export class ConfigService extends BaseService {
+  @GET("/config")
+  @Config({
+    maxRedirects: 1,
+  })
+  @ResponseStatus(200)
+  async getConfig(): Promise<Response> { return <Response>{} };
 }

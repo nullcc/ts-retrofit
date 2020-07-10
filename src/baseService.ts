@@ -91,7 +91,7 @@ export class BaseService {
   @nonHTTPRequestMethod
   private _makeConfig(methodName: string, url: string, method: HttpMethod, headers: any, query: any, data: any)
     : AxiosRequestConfig {
-    const config: AxiosRequestConfig = {
+    let config: AxiosRequestConfig = {
       url,
       method,
       headers,
@@ -112,6 +112,11 @@ export class BaseService {
     }
     // timeout
     config.timeout = this.__meta__[methodName].timeout || this._timeout;
+    // mix in config set by @Config
+    config = {
+      ...config,
+      ...this.__meta__[methodName].config,
+    };
     return config;
   }
 
