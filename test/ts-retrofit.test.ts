@@ -123,6 +123,15 @@ describe("Test ts-retrofit.", () => {
     expect(response.config.url).toEqual(`${TEST_SERVER_ENDPOINT}${API_PREFIX}/users/${userId}`);
   });
 
+  test("Test `@Path` decorator 1.", async () => {
+    const userService = new ServiceBuilder()
+      .setEndpoint(TEST_SERVER_ENDPOINT)
+      .build(UserService);
+    const userId = 1;
+    const response = await userService.getUser1(TOKEN, userId);
+    expect(response.config.url).toEqual(`${TEST_SERVER_ENDPOINT}${API_PREFIX}/users/uid-${userId}`);
+  });
+
   test("Test `@Body` decorator.", async () => {
     const userService = new ServiceBuilder()
       .setEndpoint(TEST_SERVER_ENDPOINT)

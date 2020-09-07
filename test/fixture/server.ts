@@ -28,6 +28,10 @@ app.get("/api/v1/users/:userId", jsonParser, function (req, res) {
   res.status(200).json({});
 });
 
+app.get("/api/v1/users/user-:userId", jsonParser, function (req, res) {
+  res.status(200).json({});
+});
+
 app.post("/api/v1/users", jsonParser, function (req, res) {
   res.status(200).json({});
 });
