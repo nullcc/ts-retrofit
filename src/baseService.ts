@@ -56,6 +56,26 @@ export class BaseService {
   }
 
   @nonHTTPRequestMethod
+  public useRequestInterceptor(interceptor: RequestInterceptorFunction): number {
+    return this._httpClient.useRequestInterceptor(interceptor);
+  }
+
+  @nonHTTPRequestMethod
+  public useResponseInterceptor(interceptor: ResponseInterceptorFunction): number {
+    return this._httpClient.useResponseInterceptor(interceptor);
+  }
+
+  @nonHTTPRequestMethod
+  public ejectRequestInterceptor(id: number): void {
+    this._httpClient.ejectRequestInterceptor(id);
+  }
+
+  @nonHTTPRequestMethod
+  public ejectResponseInterceptor(id: number): void {
+    this._httpClient.ejectResponseInterceptor(id);
+  }
+
+  @nonHTTPRequestMethod
   private _getInstanceMethodNames(): string[] {
     let properties: string[] = [];
     let obj = this;
@@ -319,11 +339,9 @@ export class ServiceBuilder {
 }
 
 class HttpClient {
-
   private axios: AxiosInstance = axios;
 
   constructor(builder: ServiceBuilder) {
-
     if (builder.standalone === true) {
       this.axios = axios.create();
     } else if (typeof builder.standalone === "function") {
@@ -351,7 +369,6 @@ class HttpClient {
         this.axios.interceptors.response.use(interceptor);
       }
     });
-
   }
 
   public async sendRequest(config: AxiosRequestConfig): Promise<Response> {
@@ -360,5 +377,21 @@ class HttpClient {
     } catch (err) {
       throw err;
     }
+  }
+
+  public useRequestInterceptor(interceptor: RequestInterceptorFunction): number {
+    return this.axios.interceptors.request.use(interceptor);
+  }
+
+  public useResponseInterceptor(interceptor: ResponseInterceptorFunction): number {
+    return this.axios.interceptors.response.use(interceptor);
+  }
+
+  public ejectRequestInterceptor(id: number): void {
+    this.axios.interceptors.request.eject(id);
+  }
+
+  public ejectResponseInterceptor(id: number): void {
+    this.axios.interceptors.response.eject(id);
   }
 }
