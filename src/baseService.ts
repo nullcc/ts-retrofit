@@ -56,6 +56,11 @@ export class BaseService {
   }
 
   @nonHTTPRequestMethod
+  public isClientStandalone(): boolean {
+    return this._httpClient.isStandalone();
+  }
+
+  @nonHTTPRequestMethod
   public useRequestInterceptor(interceptor: RequestInterceptorFunction): number {
     return this._httpClient.useRequestInterceptor(interceptor);
   }
@@ -340,10 +345,12 @@ export class ServiceBuilder {
 
 class HttpClient {
   private axios: AxiosInstance = axios;
+  private standalone: boolean = false;
 
   constructor(builder: ServiceBuilder) {
     if (builder.standalone === true) {
       this.axios = axios.create();
+      this.standalone = true;
     } else if (typeof builder.standalone === "function") {
       this.axios = builder.standalone;
     }
@@ -369,6 +376,10 @@ class HttpClient {
         this.axios.interceptors.response.use(interceptor);
       }
     });
+  }
+
+  public isStandalone(): boolean {
+    return this.standalone;
   }
 
   public async sendRequest(config: AxiosRequestConfig): Promise<Response> {
