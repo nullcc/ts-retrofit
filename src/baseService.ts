@@ -81,6 +81,11 @@ export class BaseService {
   }
 
   @nonHTTPRequestMethod
+  public setEndpoint(endpoint: string): void {
+    this._endpoint = endpoint;
+  }
+
+  @nonHTTPRequestMethod
   private _getInstanceMethodNames(): string[] {
     let properties: string[] = [];
     let obj = this;
