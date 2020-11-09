@@ -226,7 +226,11 @@ export class BaseService {
 
     // @Body
     if (bodyIndex >= 0) {
-      data = { ...data, ...args[bodyIndex] };
+      if (Array.isArray(args[bodyIndex])) {
+        data = args[bodyIndex];
+      } else {
+        data = { ...data, ...args[bodyIndex] };
+      }
     }
 
     // @Field
