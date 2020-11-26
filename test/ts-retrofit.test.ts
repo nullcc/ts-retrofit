@@ -513,9 +513,11 @@ describe("Test ts-retrofit.", () => {
     const service = new ServiceBuilder()
       .setEndpoint(TEST_SERVER_ENDPOINT)
       .build(AbsoluteURLService);
-    const response = await service.getGitHubAPIStatus();
-    expect(response.config.url).toEqual("https://api.github.com/status");
-    expect(response.data).toHaveProperty("message");
+    try {
+      const response = await service.getSomethingAbsolute();
+    } catch (err) {
+      expect(err.config.url).toEqual("https://absolute-foobar.com");
+    }
   });
 
   test("Test `ignoreBasePath` in HTTP method option.", async () => {
