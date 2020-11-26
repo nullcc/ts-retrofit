@@ -209,3 +209,17 @@ export class ConfigService extends BaseService {
   @ResponseStatus(200)
   async getConfig(): Promise<Response> { return <Response>{} };
 }
+
+@BasePath(API_PREFIX)
+export class AbsoluteURLService extends BaseService {
+  @GET("https://api.github.com/status")
+  @ResponseStatus(200)
+  async getGitHubAPIStatus(): Promise<Response> { return <Response>{} };
+}
+
+@BasePath(API_PREFIX)
+export class HttpMethodOptionsService extends BaseService {
+  @GET("/ping", { ignoreBasePath: true })
+  @ResponseStatus(200)
+  async ping(): Promise<Response> { return <Response>{} };
+}

@@ -4,9 +4,29 @@ import axios, { AxiosRequestConfig } from "axios";
 import { app } from "./fixture/server";
 import { ServiceBuilder, RequestInterceptorFunction, ResponseInterceptorFunction, RequestInterceptor } from "../src";
 import {
-  TEST_SERVER_ENDPOINT, TEST_SERVER_PORT, API_PREFIX, TOKEN, UserService, SearchService, GroupService, PostService,
-  AuthService, FileService, MessagingService, User, SearchQuery, Auth, Post, Group, InterceptorService,
-  TransformerService, TimeoutService, ResponseStatusService, ConfigService,
+  TEST_SERVER_ENDPOINT,
+  TEST_SERVER_PORT,
+  API_PREFIX,
+  TOKEN,
+  UserService,
+  SearchService,
+  GroupService,
+  PostService,
+  AuthService,
+  FileService,
+  MessagingService,
+  User,
+  SearchQuery,
+  Auth,
+  Post,
+  Group,
+  InterceptorService,
+  TransformerService,
+  TimeoutService,
+  ResponseStatusService,
+  ConfigService,
+  AbsoluteURLService,
+  HttpMethodOptionsService,
 } from "./fixture/fixtures";
 import { DATA_CONTENT_TYPES, HttpContentType } from "../src/constants";
 
@@ -487,5 +507,23 @@ describe("Test ts-retrofit.", () => {
       .build(ConfigService);
     const response = await service.getConfig();
     expect(response.config.maxRedirects).toEqual(1);
+  });
+
+  test("Test absolute URL.", async () => {
+    const service = new ServiceBuilder()
+      .setEndpoint(TEST_SERVER_ENDPOINT)
+      .build(AbsoluteURLService);
+    const response = await service.getGitHubAPIStatus();
+    expect(response.config.url).toEqual("https://api.github.com/status");
+    expect(response.data).toHaveProperty("message");
+  });
+
+  test("Test `ignoreBasePath` in HTTP method option.", async () => {
+    const service = new ServiceBuilder()
+      .setEndpoint(TEST_SERVER_ENDPOINT)
+      .build(HttpMethodOptionsService);
+    const response = await service.ping();
+    expect(response.config.url).toEqual(`${TEST_SERVER_ENDPOINT}/ping`);
+    expect(response.data).toEqual({ result: "pong" });
   });
 });

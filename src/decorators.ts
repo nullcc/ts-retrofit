@@ -18,6 +18,10 @@ export interface PartDescriptor<T> {
   filename?: string;
 }
 
+export interface HttpMethodOptions {
+  ignoreBasePath?: boolean;
+}
+
 /**
  * Ensure the `__meta__` attribute is in the target object and `methodName` has been initialized.
  * @param target
@@ -36,83 +40,92 @@ const ensureMeta = (target: BaseService, methodName: string) => {
  * Register HTTP method and path in API method.
  * @param method
  * @param url
+ * @param options
  */
-const registerMethod = (method: HttpMethod, url: string) => {
+const registerMethod = (method: HttpMethod, url: string, options?: HttpMethodOptions) => {
   return (target: BaseService, methodName: string, descriptor: PropertyDescriptor) => {
     ensureMeta(target, methodName);
     target.__meta__[methodName].method = method;
     target.__meta__[methodName].path = url;
+    target.__meta__[methodName].options = options;
   };
 };
 
 /**
  * GET decorator.
  * @param url
+ * @param options
  * @sample @GET("/users")
  * @constructor
  */
-export const GET = (url: string) => {
-  return registerMethod("GET", url);
+export const GET = (url: string, options?: HttpMethodOptions) => {
+  return registerMethod("GET", url, options);
 };
 
 /**
  * POST decorator.
  * @param url
+ * @param options
  * @sample @POST("/users")
  * @constructor
  */
-export const POST = (url: string) => {
-  return registerMethod("POST", url);
+export const POST = (url: string, options?: HttpMethodOptions) => {
+  return registerMethod("POST", url, options);
 };
 
 /**
  * PUT decorator.
  * @param url
+ * @param options
  * @sample @PUT("/users/{userId}")
  * @constructor
  */
-export const PUT = (url: string) => {
-  return registerMethod("PUT", url);
+export const PUT = (url: string, options?: HttpMethodOptions) => {
+  return registerMethod("PUT", url, options);
 };
 
 /**
  * PATCH decorator.
  * @param url
+ * @param options
  * @sample @PATCH("/users/{userId}")
  * @constructor
  */
-export const PATCH = (url: string) => {
-  return registerMethod("PATCH", url);
+export const PATCH = (url: string, options?: HttpMethodOptions) => {
+  return registerMethod("PATCH", url, options);
 };
 
 /**
  * DELETE decorator.
  * @param url
+ * @param options
  * @sample @DELETE("/users/{userId}")
  * @constructor
  */
-export const DELETE = (url: string) => {
-  return registerMethod("DELETE", url);
+export const DELETE = (url: string, options?: HttpMethodOptions) => {
+  return registerMethod("DELETE", url, options);
 };
 
 /**
  * HEAD decorator.
  * @param url
+ * @param options
  * @sample @HEAD("/users/{userId}")
  * @constructor
  */
-export const HEAD = (url: string) => {
-  return registerMethod("HEAD", url);
+export const HEAD = (url: string, options?: HttpMethodOptions) => {
+  return registerMethod("HEAD", url, options);
 };
 
 /**
  * OPTIONS decorator.
  * @param url
+ * @param options
  * @sample @OPTIONS("/users/{userId}")
  * @constructor
  */
-export const OPTIONS = (url: string) => {
-  return registerMethod("OPTIONS", url);
+export const OPTIONS = (url: string, options?: HttpMethodOptions) => {
+  return registerMethod("OPTIONS", url, options);
 };
 
 /**

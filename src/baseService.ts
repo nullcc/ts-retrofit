@@ -2,6 +2,7 @@ import axios, { AxiosRequestConfig, AxiosResponse, AxiosInstance } from "axios";
 import FormData from "form-data";
 import { DataResolverFactory } from "./dataResolver";
 import { HttpMethod } from "./constants";
+import { HttpMethodOptions } from "./decorators";
 
 axios.defaults.withCredentials = true;
 
@@ -157,14 +158,26 @@ export class BaseService {
     const basePath = meta.basePath;
     const path = meta[methodName].path;
     const pathParams = meta[methodName].pathParams;
-    const isAbsoluteURL = /^([a-z][a-z\d\+\-\.]*:)?\/\//i.test(path);
-    let url = isAbsoluteURL ? path : [endpoint, basePath, path].join("");
+    const options = meta[methodName].options || {};
+    let url = this.makeURL(endpoint, basePath, path, options);
     for (const pos in pathParams) {
       if (pathParams[pos]) {
         url = url.replace(new RegExp(`\{${pathParams[pos]}}`), args[pos]);
       }
     }
     return url;
+  }
+
+  @nonHTTPRequestMethod
+  private makeURL(endpoint: string, basePath: string, path: string, options: HttpMethodOptions): string {
+    const isAbsoluteURL = /^([a-z][a-z\d\+\-\.]*:)?\/\//i.test(path);
+    if (isAbsoluteURL) {
+      return path;
+    }
+    if (options.ignoreBasePath) {
+      return [endpoint, path].join("");
+    }
+    return [endpoint, basePath, path].join("");
   }
 
   @nonHTTPRequestMethod
