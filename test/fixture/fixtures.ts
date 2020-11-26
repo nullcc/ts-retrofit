@@ -212,9 +212,9 @@ export class ConfigService extends BaseService {
 
 @BasePath(API_PREFIX)
 export class AbsoluteURLService extends BaseService {
-  @GET("https://api.github.com/status")
+  @GET("https://absolute-foobar.com")
   @ResponseStatus(200)
-  async getGitHubAPIStatus(): Promise<Response> { return <Response>{} };
+  async getSomethingAbsolute(): Promise<Response> { return <Response>{} };
 }
 
 @BasePath(API_PREFIX)
