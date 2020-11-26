@@ -123,3 +123,7 @@ app.get("/api/v1/config", async function (req, res) {
   await sleep(5000);
   res.status(200).json({});
 });
+
+app.get("/ping", async function (req, res) {
+  res.status(200).json({ result: "pong" });
+});
