@@ -3,6 +3,7 @@ import FormData from "form-data";
 import { DataResolverFactory } from "./dataResolver";
 import { HttpMethod } from "./constants";
 import { HttpMethodOptions } from "./decorators";
+import { isNode } from "./util";
 
 axios.defaults.withCredentials = true;
 
@@ -113,7 +114,7 @@ export class BaseService {
     let headers = this._resolveHeaders(methodName, args);
     const query = this._resolveQuery(methodName, args);
     const data = this._resolveData(methodName, headers, args);
-    if (headers["content-type"] && headers["content-type"].indexOf("multipart/form-data") !== -1) {
+    if (headers["content-type"] && headers["content-type"].indexOf("multipart/form-data") !== -1 && isNode) {
       headers = { ...headers, ...(data as FormData).getHeaders() };
     }
     return { url, method, headers, query, data };
