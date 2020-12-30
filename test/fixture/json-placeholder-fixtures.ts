@@ -22,8 +22,8 @@ export class TodosService extends BaseService {
     @GET("/")
     public async getAll(): ApiResponse<Todo[]> { return STUB_RESPONSE(); }
 
-    @GET("/{userId}")
-    public async getSingle(@Path("userId") userId: number): ApiResponse<Todo> { return STUB_RESPONSE(); }
+    @GET("/{id}")
+    public async getSingle(@Path("id") id: number): ApiResponse<Todo> { return STUB_RESPONSE(); }
 
     @GET(URL_DOES_NOT_EXIST)
     public async getForError(): ApiResponse<unknown> { return STUB_RESPONSE(); }
