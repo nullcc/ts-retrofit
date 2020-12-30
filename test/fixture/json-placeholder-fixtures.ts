@@ -1,4 +1,12 @@
-import {BasePath, BaseService, GET, Path, ReducedResponse, ApiResponse, STUB_RESPONSE} from "../../src";
+import {
+    BasePath,
+    BaseService,
+    GET,
+    Path,
+    InlinedResponse,
+    ApiResponse,
+    STUB_RESPONSE,
+} from "../../src";
 export const JSON_PLACEHOLDER_ENDPOINT = `https://jsonplaceholder.typicode.com`;
 export const URL_DOES_NOT_EXIST = `/does-not-exist`;
 
@@ -18,5 +26,5 @@ export class TodosService extends BaseService {
     public async getSingle(@Path("userId") userId: number): ApiResponse<Todo> { return STUB_RESPONSE(); }
 
     @GET(URL_DOES_NOT_EXIST)
-    public async getForError(): ApiResponse<never> { return STUB_RESPONSE(); }
+    public async getForError(): ApiResponse<unknown> { return STUB_RESPONSE(); }
 }

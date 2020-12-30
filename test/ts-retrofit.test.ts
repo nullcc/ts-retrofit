@@ -542,6 +542,21 @@ describe("Test ts-retrofit.", () => {
       expect(todo.__response.config.url).toEqual(`${JSON_PLACEHOLDER_ENDPOINT}/todos/1`);
     });
 
+    test("Array", async () => {
+      const todoService = new ServiceBuilder()
+          .setEndpoint(JSON_PLACEHOLDER_ENDPOINT)
+          .withInlinedResponse()
+          .build(TodosService);
+
+      const todos = await todoService.getAll();
+      expect(todos).not.toHaveLength(0);
+
+      const singleTodo = todos[0];
+      expect(singleTodo.id).toBe(1);
+
+      expect(todos.__response.config.url).toEqual(`${JSON_PLACEHOLDER_ENDPOINT}/todos/`);
+    });
+
     test("Url not found", async () => {
       const todoService = new ServiceBuilder()
           .setEndpoint(JSON_PLACEHOLDER_ENDPOINT)

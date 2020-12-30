@@ -1,15 +1,24 @@
 import axios, {AxiosInstance, AxiosRequestConfig, AxiosResponse} from "axios";
 import FormData from "form-data";
-import { DataResolverFactory } from "./dataResolver";
-import { HttpMethod } from "./constants";
-import { HttpMethodOptions } from "./decorators";
-import { isNode } from "./util";
+import {DataResolverFactory} from "./dataResolver";
+import {HttpMethod} from "./constants";
+import {HttpMethodOptions} from "./decorators";
+import {isNode} from "./util";
 
 axios.defaults.withCredentials = true;
 
-export interface Response<T = any> extends AxiosResponse<T> { }
-export type ReducedResponse<T = any, R = any> = Readonly<T> & {__response: Response<R>};
-export type ApiResponse<T> = Promise<ReducedResponse<T>>;
+interface WithInternalResponseField<R = any> {
+    __response: Response<R>;
+}
+
+export interface Response<T = any> extends AxiosResponse<T> {
+}
+
+export type InlinedResponse<T = any, R = any> = Readonly<T> & WithInternalResponseField<R>;
+export type InlinedResponseArray<T = any, R = any> = Array<InlinedResponse<T>> & WithInternalResponseField<R>;
+
+export type ApiResponse<T> = T extends any[] ? Promise<InlinedResponseArray<T[number]>> : Promise<InlinedResponse<T>>;
+
 export const STUB_RESPONSE = <T>() => ({} as T);
 
 const NON_HTTP_REQUEST_PROPERTY_NAME = "__nonHTTPRequestMethod__";
@@ -114,10 +123,18 @@ export class BaseService {
     return this._httpClient.sendRequest(config);
   }
 
-  @nonHTTPRequestMethod
-  private _wrapToInlinedResponse(methodName: string, args: any[]): Promise<ReducedResponse> {
-    return this._wrapToAxiosResponse(methodName, args).then((r) => ({...r.data, __response: r}));
-  }
+    @nonHTTPRequestMethod
+    private _wrapToInlinedResponse(methodName: string, args: any[]): Promise<InlinedResponse | InlinedResponseArray> {
+        return this._wrapToAxiosResponse(methodName, args).then((r) => {
+            if (Array.isArray(r.data)) {
+                const result = r.data as InlinedResponseArray;
+                result.__response = r;
+                return result;
+            } else {
+                return {...r.data, __response: r};
+            }
+        });
+    }
 
   @nonHTTPRequestMethod
   private _resolveParameters(methodName: string, args: any[]): any {
