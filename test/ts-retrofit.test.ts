@@ -29,6 +29,7 @@ import {
   HttpMethodOptionsService,
 } from "./fixture/fixtures";
 import { DATA_CONTENT_TYPES, HttpContentType } from "../src/constants";
+import {JSON_PLACEHOLDER_ENDPOINT, TodosService, URL_DOES_NOT_EXIST} from "./fixture/json-placeholder-fixtures";
 
 declare module 'axios' {
   interface AxiosRequestConfig {
@@ -527,5 +528,33 @@ describe("Test ts-retrofit.", () => {
     const response = await service.ping();
     expect(response.config.url).toEqual(`${TEST_SERVER_ENDPOINT}/ping`);
     expect(response.data).toEqual({ result: "pong" });
+  });
+
+  describe("Inlined response",  () => {
+    test("Get all", async () => {
+      const todoService = new ServiceBuilder()
+          .setEndpoint(JSON_PLACEHOLDER_ENDPOINT)
+          .withInlinedResponse()
+          .build(TodosService);
+
+      const todo = await todoService.getSingle(1);
+      expect(todo.id).toBe(1);
+      expect(todo.__response.config.url).toEqual(`${JSON_PLACEHOLDER_ENDPOINT}/todos/1`);
+    });
+
+    test("Url not found", async () => {
+      const todoService = new ServiceBuilder()
+          .setEndpoint(JSON_PLACEHOLDER_ENDPOINT)
+          .withInlinedResponse()
+          .build(TodosService);
+
+      try {
+        await todoService.getForError();
+      } catch (err) {
+        expect(err.config.url).toEqual(`${JSON_PLACEHOLDER_ENDPOINT}/todos${URL_DOES_NOT_EXIST}`);
+        return;
+      }
+      fail("Exception expected");
+    });
   });
 });

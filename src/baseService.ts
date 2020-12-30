@@ -1,4 +1,4 @@
-import axios, { AxiosRequestConfig, AxiosResponse, AxiosInstance } from "axios";
+import axios, {AxiosInstance, AxiosRequestConfig, AxiosResponse} from "axios";
 import FormData from "form-data";
 import { DataResolverFactory } from "./dataResolver";
 import { HttpMethod } from "./constants";
@@ -8,6 +8,9 @@ import { isNode } from "./util";
 axios.defaults.withCredentials = true;
 
 export interface Response<T = any> extends AxiosResponse<T> { }
+export type ReducedResponse<T = any, R = any> = Readonly<T> & {__response: Response<R>};
+export type ApiResponse<T> = Promise<ReducedResponse<T>>;
+export const STUB_RESPONSE = <T>() => ({} as T);
 
 const NON_HTTP_REQUEST_PROPERTY_NAME = "__nonHTTPRequestMethod__";
 
@@ -49,7 +52,11 @@ export class BaseService {
             return method;
           }
           return (...args: any[]) => {
-            return self._wrap(methodName, args);
+            if (serviceBuilder.inlineResponse) {
+              return self._wrapToInlinedResponse(methodName, args);
+            } else {
+              return self._wrapToAxiosResponse(methodName, args);
+            }
           };
         },
       };
@@ -101,10 +108,15 @@ export class BaseService {
   }
 
   @nonHTTPRequestMethod
-  private _wrap(methodName: string, args: any[]): Promise<Response> {
+  private _wrapToAxiosResponse(methodName: string, args: any[]): Promise<Response> {
     const { url, method, headers, query, data } = this._resolveParameters(methodName, args);
     const config = this._makeConfig(methodName, url, method, headers, query, data);
     return this._httpClient.sendRequest(config);
+  }
+
+  @nonHTTPRequestMethod
+  private _wrapToInlinedResponse(methodName: string, args: any[]): Promise<ReducedResponse> {
+    return this._wrapToAxiosResponse(methodName, args).then((r) => ({...r.data, __response: r}));
   }
 
   @nonHTTPRequestMethod
@@ -307,6 +319,7 @@ export abstract class ResponseInterceptor<T = any> extends BaseInterceptor {
 export class ServiceBuilder {
   private _endpoint: string = "";
   private _standalone: boolean | AxiosInstance = false;
+  private _inlineResponse: boolean = false;
   private _requestInterceptors: Array<RequestInterceptorFunction | RequestInterceptor> = [];
   private _responseInterceptors: Array<ResponseInterceptorFunction | ResponseInterceptor> = [];
   private _timeout: number = 60000;
@@ -323,6 +336,15 @@ export class ServiceBuilder {
   // 单例模式
   public setStandalone(standalone: boolean | AxiosInstance): ServiceBuilder {
     this._standalone = standalone;
+    return this;
+  }
+
+  public withInlinedResponse(): ServiceBuilder {
+    return this.setInlineResponse(true);
+  }
+
+  public setInlineResponse(inlineResponse: boolean): ServiceBuilder {
+    this._inlineResponse = inlineResponse;
     return this;
   }
 
@@ -363,6 +385,10 @@ export class ServiceBuilder {
 
   get timeout(): number {
     return this._timeout;
+  }
+
+  get inlineResponse(): boolean {
+    return this._inlineResponse;
   }
 }
 
