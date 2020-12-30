@@ -17,7 +17,7 @@ export interface Response<T = any> extends AxiosResponse<T> {
 export type InlinedResponse<T = any, R = any> = Readonly<T> & WithInternalResponseField<R>;
 export type InlinedResponseArray<T = any, R = any> = Array<InlinedResponse<T>> & WithInternalResponseField<R>;
 
-export type ApiResponse<T> = T extends any[] ? Promise<InlinedResponseArray<T[number]>> : Promise<InlinedResponse<T>>;
+export type ApiResponse<T> = Promise<T extends any[] ? InlinedResponseArray<T[number]> : InlinedResponse<T>>;
 
 export const STUB_RESPONSE = <T>() => ({} as T);
 
