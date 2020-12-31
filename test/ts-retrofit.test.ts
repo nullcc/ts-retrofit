@@ -531,38 +531,29 @@ describe("Test ts-retrofit.", () => {
   });
 
   describe("Inlined response",  () => {
-    test("Get all", async () => {
-      const todoService = new ServiceBuilder()
+    let todoService: TodosService;
+
+    beforeEach(() => {
+      todoService = new ServiceBuilder()
           .setEndpoint(JSON_PLACEHOLDER_ENDPOINT)
           .withInlinedResponse()
           .build(TodosService);
+    });
 
+    test("Get all", async () => {
       const todo = await todoService.getSingle(1);
       expect(todo.id).toBe(1);
-      expect(todo.__response.config.url).toEqual(`${JSON_PLACEHOLDER_ENDPOINT}/todos/1`);
     });
 
     test("Array", async () => {
-      const todoService = new ServiceBuilder()
-          .setEndpoint(JSON_PLACEHOLDER_ENDPOINT)
-          .withInlinedResponse()
-          .build(TodosService);
-
       const todos = await todoService.getAll();
       expect(todos).not.toHaveLength(0);
 
-      const singleTodo = todos[0];
-      expect(singleTodo.id).toBe(1);
-
-      expect(todos.__response.config.url).toEqual(`${JSON_PLACEHOLDER_ENDPOINT}/todos/`);
+      expect(todos.find((e) => e.id === 1)?.id).toBe(1);
+      expect(todos[0].id).toBe(1);
     });
 
     test("Url not found", async () => {
-      const todoService = new ServiceBuilder()
-          .setEndpoint(JSON_PLACEHOLDER_ENDPOINT)
-          .withInlinedResponse()
-          .build(TodosService);
-
       try {
         await todoService.getForError();
       } catch (err) {

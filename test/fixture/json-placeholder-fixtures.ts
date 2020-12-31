@@ -3,8 +3,6 @@ import {
     BaseService,
     GET,
     Path,
-    InlinedResponse,
-    ApiResponse,
     STUB_RESPONSE,
 } from "../../src";
 export const JSON_PLACEHOLDER_ENDPOINT = `https://jsonplaceholder.typicode.com`;
@@ -20,11 +18,11 @@ export interface Todo {
 @BasePath("/todos")
 export class TodosService extends BaseService {
     @GET("/")
-    public async getAll(): ApiResponse<Todo[]> { return STUB_RESPONSE(); }
+    public async getAll(): Promise<Todo[]> { return STUB_RESPONSE(); }
 
     @GET("/{id}")
-    public async getSingle(@Path("id") id: number): ApiResponse<Todo> { return STUB_RESPONSE(); }
+    public async getSingle(@Path("id") id: number): Promise<Todo> { return STUB_RESPONSE(); }
 
     @GET(URL_DOES_NOT_EXIST)
-    public async getForError(): ApiResponse<never> { return STUB_RESPONSE(); }
+    public async getForError(): Promise<never> { return STUB_RESPONSE(); }
 }

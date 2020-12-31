@@ -7,18 +7,8 @@ import {isNode} from "./util";
 
 axios.defaults.withCredentials = true;
 
-interface WithInternalResponseField<R = any> {
-    __response: Response<R>;
-}
-
 export interface Response<T = any> extends AxiosResponse<T> {
 }
-
-export type InlinedResponse<T = any, R = any> = Readonly<T> & WithInternalResponseField<R>;
-export type InlinedResponseArray<T = any, R = any> = Array<InlinedResponse<T>> & WithInternalResponseField<R>;
-
-export type ApiResponse<T> = Promise<T extends any[] ? InlinedResponseArray<T[number]> : InlinedResponse<T>>;
-
 export const STUB_RESPONSE = <T>() => ({} as T);
 
 const NON_HTTP_REQUEST_PROPERTY_NAME = "__nonHTTPRequestMethod__";
@@ -117,23 +107,15 @@ export class BaseService {
   }
 
   @nonHTTPRequestMethod
-  private _wrapToAxiosResponse(methodName: string, args: any[]): Promise<Response> {
+  private _wrapToAxiosResponse<T = any>(methodName: string, args: any[]): Promise<Response<T>> {
     const { url, method, headers, query, data } = this._resolveParameters(methodName, args);
     const config = this._makeConfig(methodName, url, method, headers, query, data);
     return this._httpClient.sendRequest(config);
   }
 
     @nonHTTPRequestMethod
-    private _wrapToInlinedResponse(methodName: string, args: any[]): Promise<InlinedResponse | InlinedResponseArray> {
-        return this._wrapToAxiosResponse(methodName, args).then((r) => {
-            if (Array.isArray(r.data)) {
-                const result = r.data as InlinedResponseArray;
-                result.__response = r;
-                return result;
-            } else {
-                return {...r.data, __response: r};
-            }
-        });
+    private _wrapToInlinedResponse<T = any>(methodName: string, args: any[]): Promise<T> {
+        return this._wrapToAxiosResponse(methodName, args).then((r) => (r.data));
     }
 
   @nonHTTPRequestMethod
