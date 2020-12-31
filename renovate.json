@@ -1,0 +1,19 @@
+{
+  "extends": [
+    "config:base"
+  ],
+  "baseBranches": ["develop"],
+  "automerge": true,
+  "major": {
+    "automerge": false
+  },
+  "packageRules": [
+    {
+      "packageNames": ["@types/node"],
+      "allowedVersions": "<15"
+    }
+  ],
+  "schedule": ["after 1am and before 7am on friday"],
+  "timezone": "Europe/Paris",
+  "prHourlyLimit": 0
+}

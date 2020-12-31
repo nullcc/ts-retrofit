@@ -1,7 +1,4 @@
-import {
-  ResponseType as AxiosResponseType,
-  AxiosTransformer, AxiosRequestConfig,
-} from "axios";
+import { ResponseType as AxiosResponseType, AxiosTransformer, AxiosRequestConfig } from "axios";
 import { HttpMethod } from "./constants";
 import { BaseService } from "./baseService";
 

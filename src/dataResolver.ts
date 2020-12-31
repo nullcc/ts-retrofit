@@ -85,7 +85,7 @@ dataResolverMap.set("text/xml", TextXmlResolver);
 export class DataResolverFactory {
   public createDataResolver(contentType: string): BaseDataResolver {
     const contentTypeLowCased = contentType.toLowerCase();
-    for (const dataContentType of DATA_CONTENT_TYPES) {
+    for (const dataContentType of Object.values(DATA_CONTENT_TYPES)) {
       if (contentTypeLowCased.includes(dataContentType)) {
         const resolverCls = this._getDataResolverCls(dataContentType);
         return new resolverCls();

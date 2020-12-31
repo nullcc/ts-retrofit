@@ -1,5 +1,10 @@
 import {
-  BaseDataResolver, FormUrlencodedResolver, MultiPartResolver, JsonResolver, TextXmlResolver, DataResolverFactory,
+  BaseDataResolver,
+  FormUrlencodedResolver,
+  MultiPartResolver,
+  JsonResolver,
+  TextXmlResolver,
+  DataResolverFactory
 } from "../src/dataResolver";
 import * as fs from "fs";
 
@@ -15,10 +20,10 @@ describe("Test data resolver.", () => {
   test("Test FormUrlencodedResolver with flat object.", async () => {
     const formUrlencodedResolver = new FormUrlencodedResolver();
     const headers = {
-      "content-type": "application/x-www-form-urlencoded",
+      "content-type": "application/x-www-form-urlencoded"
     };
     const obj = {
-      foo: 'bar',
+      foo: "bar"
     };
     const data = Object.create(obj);
     data.a = 1;
@@ -32,14 +37,14 @@ describe("Test data resolver.", () => {
   test("Test FormUrlencodedResolver with nested object.", async () => {
     const formUrlencodedResolver = new FormUrlencodedResolver();
     const headers = {
-      "content-type": "application/x-www-form-urlencoded",
+      "content-type": "application/x-www-form-urlencoded"
     };
     const data = {
       a: 1,
       b: "hello",
       c: true,
       d: null,
-      e: ["foo", "bar"],
+      e: ["foo", "bar"]
     };
     const resolvedData = formUrlencodedResolver.resolve(headers, data);
     expect(resolvedData).toEqual("a=1&b=hello&c=true&d=null&e=%5B%22foo%22%2C%22bar%22%5D");
@@ -48,18 +53,18 @@ describe("Test data resolver.", () => {
   test("Test MultiPartResolver.", async () => {
     const multiPartResolver = new MultiPartResolver();
     const headers = {
-      "content-type": "multipart/form-data",
+      "content-type": "multipart/form-data"
     };
     const bucket = {
-      value: "test-bucket",
+      value: "test-bucket"
     };
     const file = {
       value: fs.readFileSync("test/fixture/pic.png"),
-      filename: "pic.png",
+      filename: "pic.png"
     };
     const data = {
       bucket,
-      file,
+      file
     };
     const resolvedData = multiPartResolver.resolve(headers, data);
     expect(resolvedData._streams).toContain("test-bucket");
@@ -68,18 +73,18 @@ describe("Test data resolver.", () => {
   test("Test JsonResolver.", async () => {
     const jsonResolver = new JsonResolver();
     const headers = {
-      "content-type": "application/json",
+      "content-type": "application/json"
     };
     const data = {
       a: 1,
       b: "b",
       c: true,
       d: null,
-      e: [1,2,3],
+      e: [1, 2, 3],
       f: {
         f1: 1,
-        f2: ["a", "b", "c"],
-      },
+        f2: ["a", "b", "c"]
+      }
     };
     const resolvedData = jsonResolver.resolve(headers, data);
     expect(resolvedData).toStrictEqual(resolvedData);
@@ -88,7 +93,7 @@ describe("Test data resolver.", () => {
   test("Test TextXmlResolver.", async () => {
     const textXmlResolver = new TextXmlResolver();
     const headers = {
-      "content-type": "text/xml",
+      "content-type": "text/xml"
     };
     const xmlString = `
       <?xml version="1.0" encoding="UTF-8"?>
@@ -104,7 +109,7 @@ describe("Test data resolver.", () => {
 
   test("Test DataResolverFactory.", async () => {
     const dataResolverFactory = new DataResolverFactory();
-    const dataResolver = dataResolverFactory.createDataResolver('application/user-defined-content-type');
+    const dataResolver = dataResolverFactory.createDataResolver("application/user-defined-content-type");
     expect(dataResolver instanceof JsonResolver).toBeTruthy();
   });
 });
