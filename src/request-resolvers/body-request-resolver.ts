@@ -1,8 +1,13 @@
-import { CONTENT_TYPE, CONTENT_TYPE_HEADER, MethodMetadata } from "../constants";
+import { CONTENT_TYPE, CONTENT_TYPE_HEADER, HeadersParamType, MethodMetadata } from "../constants";
 import { DataResolverFactory } from "../dataResolver";
 import { ErrorMessages } from "../baseService";
 
-export const requestBodyResolver = (metadata: MethodMetadata, methodName: string, headers: any, args: any[]): any => {
+export const requestBodyResolver = (
+  metadata: MethodMetadata,
+  methodName: string,
+  headers: HeadersParamType,
+  args: any[],
+): any => {
   const bodyIndex = metadata.bodyIndex;
   const fieldMapIndex = metadata.fieldMapIndex;
   let data = {};
@@ -19,14 +24,14 @@ export const requestBodyResolver = (metadata: MethodMetadata, methodName: string
   // @MultiPart
   data = resolveMultipart(metadata, args, data);
 
-  const contentType = headers[CONTENT_TYPE_HEADER];
+  const contentType = headers[CONTENT_TYPE_HEADER] as string;
   const dataResolverFactory = new DataResolverFactory();
   const dataResolver = dataResolverFactory.createDataResolver(contentType);
   return dataResolver.resolve(headers, data);
 };
 
 // @Body
-function resolveBody(bodyIndex: number | undefined, args: any[], data: {}) {
+function resolveBody(bodyIndex: number | undefined, args: any[], data: any) {
   if (bodyIndex === undefined) return data;
 
   const argValue = args[bodyIndex];
@@ -40,7 +45,7 @@ function resolveBody(bodyIndex: number | undefined, args: any[], data: {}) {
 }
 
 // @Field
-const resolveField = (metadata: MethodMetadata, args: any[], data: {}) => {
+const resolveField = (metadata: MethodMetadata, args: any[], data: any) => {
   if (Object.keys(metadata.fields).length === 0) return data;
 
   const result = {};
@@ -55,7 +60,7 @@ const resolveField = (metadata: MethodMetadata, args: any[], data: {}) => {
 };
 
 // @MultiPart
-const resolveMultipart = (metadata: MethodMetadata, args: any[], data: {}) => {
+const resolveMultipart = (metadata: MethodMetadata, args: any[], data: any) => {
   if (Object.keys(metadata.parts).length === 0) return data;
 
   const result = {};
@@ -69,7 +74,7 @@ const resolveMultipart = (metadata: MethodMetadata, args: any[], data: {}) => {
 };
 
 // @FieldMap
-const resolveFieldMap = (fieldMapIndex: number | undefined, args: any[], data: {}) => {
+const resolveFieldMap = (fieldMapIndex: number | undefined, args: any[], data: any) => {
   if (fieldMapIndex === undefined) return data;
 
   const fieldMap = args[fieldMapIndex];

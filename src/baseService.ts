@@ -1,6 +1,6 @@
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 import FormData from "form-data";
-import { CONTENT_TYPE_HEADER, CONTENT_TYPE, HttpMethod, HttpMethodOptions, MethodMetadata } from "./constants";
+import { CONTENT_TYPE, CONTENT_TYPE_HEADER, HttpMethod, HttpMethodOptions } from "./constants";
 import { isNode } from "./util";
 import { RetrofitHttpClient } from "./http.client";
 import { ServiceBuilder } from "./service.builder";
@@ -11,7 +11,8 @@ import { requestBodyResolver } from "./request-resolvers/body-request-resolver";
 
 axios.defaults.withCredentials = true;
 
-export interface Response<T = any> extends AxiosResponse<T> {}
+export type ApiResponse<T = unknown> = Promise<AxiosResponse<T>>;
+
 export const STUB_RESPONSE = <T>() => ({} as T);
 
 export const ErrorMessages = {
@@ -35,26 +36,21 @@ export class BaseService {
   private __meta__: ServiceMetaData<this>;
   private readonly _endpoint: string;
   private readonly _httpClient: RetrofitHttpClient;
-  private readonly _methodMap: Map<string, Function>;
   private readonly _timeout: number;
 
   constructor(serviceBuilder: ServiceBuilder) {
     this._endpoint = serviceBuilder.endpoint;
     this._httpClient = new RetrofitHttpClient(serviceBuilder);
-    this._methodMap = new Map<string, Function>();
     this._timeout = serviceBuilder.timeout;
 
     const methodNames = this._getInstanceMethodNames();
-    methodNames.forEach((methodName) => {
-      this._methodMap[methodName] = this[methodName];
-    });
 
     const self = this;
     for (const methodName of methodNames) {
       const descriptor = {
         enumerable: true,
         configurable: true,
-        get(): Function {
+        get() {
           return (...args: any[]) => {
             return self._wrap(methodName, args);
           };
@@ -82,7 +78,7 @@ export class BaseService {
     });
   }
 
-  private _wrap(methodName: string, args: any[]): Promise<Response> {
+  private _wrap<T>(methodName: string, args: any[]): ApiResponse<T> {
     const { url, method, headers, query, data } = this._resolveParameters(methodName, args);
     const config = this._makeConfig(methodName, url, method, headers, query, data);
     return this._httpClient.sendRequest(config);
@@ -98,7 +94,7 @@ export class BaseService {
     const data = requestBodyResolver(metadata, methodName, headers, args);
     if (
       headers[CONTENT_TYPE_HEADER] &&
-      headers[CONTENT_TYPE_HEADER].indexOf(CONTENT_TYPE.MULTIPART_FORM_DATA) !== -1 &&
+      (headers[CONTENT_TYPE_HEADER] as string).indexOf(CONTENT_TYPE.MULTIPART_FORM_DATA) !== -1 &&
       isNode
     ) {
       headers = { ...headers, ...(data as FormData).getHeaders() };
@@ -154,19 +150,19 @@ export class BaseService {
 
     Object.entries(pathParams).map((e) => {
       const [idx, pathParamName] = e;
-      url = url.replace(new RegExp(`\{${pathParamName}}`), args[idx]);
+      url = url.replace(new RegExp(`{${pathParamName}}`), args[idx]);
     });
 
     return url;
   }
 
   private makeURL(endpoint: string, basePath?: string, path?: string, options?: HttpMethodOptions): string {
-    let buf = [endpoint];
+    const buf = [endpoint];
 
     if (basePath) buf.push(basePath);
 
     if (path) {
-      const isAbsoluteURL = /^([a-z][a-z\d\+\-\.]*:)?\/\//i.test(path);
+      const isAbsoluteURL = /^([a-z][a-z\d+\-.]*:)?\/\//i.test(path);
       if (isAbsoluteURL) {
         return path;
       }
@@ -182,7 +178,7 @@ export class BaseService {
   }
 
   private _resolveHttpMethod(methodName: string): HttpMethod {
-    let httpMethod = this.__meta__.getMetadata(methodName).httpMethod;
+    const httpMethod = this.__meta__.getMetadata(methodName).httpMethod;
     if (!httpMethod) throw new Error(ErrorMessages.NO_HTTP_METHOD);
 
     return httpMethod;
@@ -198,7 +194,7 @@ export type ResponseInterceptorFunction<T = any> = (
 ) => AxiosResponse<T> | Promise<AxiosResponse<T>>;
 
 abstract class BaseInterceptor {
-  public onRejected(error: any) {
+  public onRejected(error: Error) {
     return;
   }
 }

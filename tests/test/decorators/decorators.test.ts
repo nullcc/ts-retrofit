@@ -1,8 +1,8 @@
 import { JSONPLACEHOLDER_URL, testServer, verifyRequest } from "../../testHelpers";
 import { ServiceBuilder } from "../../../src/service.builder";
 import { posts, PostsApiService, ServiceWithoutBasePath } from "../../fixture/fixtures";
-import { Response } from "../../../src";
 import { CONTENT_TYPE, CONTENT_TYPE_HEADER } from "../../../src/constants";
+import { AxiosResponse } from "axios";
 
 describe("Decorators", () => {
   let service: PostsApiService;
@@ -157,7 +157,7 @@ describe("Decorators", () => {
     verifyRequest(response, "get", "/posts/?userId=15&body=b&title=t");
   });
 
-  function verifyBody<T>(response: Response, expectedRequestBody?: T) {
+  function verifyBody<T>(response: AxiosResponse<T>, expectedRequestBody?: T) {
     if (!expectedRequestBody) return;
 
     expect(JSON.parse(response.config.data)).toMatchObject(expectedRequestBody);

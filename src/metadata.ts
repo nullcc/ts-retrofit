@@ -30,18 +30,19 @@ export class ServiceMetaData<T extends BaseService> {
     const meta = this.methodMetadata.get(method);
     if (meta) return meta;
 
-    return this.methodMetadata
-      .set(method, {
-        query: {},
-        fields: {},
-        queryParams: {},
-        parts: {},
-        headers: {
-          [CONTENT_TYPE_HEADER]: CONTENT_TYPE.APPLICATION_JSON,
-        },
-        pathParams: {},
-        headerParams: {},
-      })
-      .get(method)!!;
+    const initial = {
+      query: {},
+      fields: {},
+      queryParams: {},
+      parts: {},
+      headers: {
+        [CONTENT_TYPE_HEADER]: CONTENT_TYPE.APPLICATION_JSON,
+      },
+      pathParams: {},
+      headerParams: {},
+    };
+
+    this.methodMetadata.set(method, initial);
+    return initial;
   }
 }

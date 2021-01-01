@@ -7,11 +7,11 @@ import {
 } from "./baseService";
 
 export class ServiceBuilder {
-  private _endpoint: string = "";
+  private _endpoint = "";
   private _standalone: boolean | AxiosInstance = false;
   private _requestInterceptors: Array<RequestInterceptorFunction | RequestInterceptor> = [];
   private _responseInterceptors: Array<ResponseInterceptorFunction | ResponseInterceptor> = [];
-  private _timeout: number = 60000;
+  private _timeout = 60000;
 
   public build<T>(service: new (builder: ServiceBuilder) => T): T {
     return new service(this);

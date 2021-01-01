@@ -1,7 +1,7 @@
 import { ErrorMessages } from "../baseService";
-import { MethodMetadata } from "../constants";
+import { HeadersParamType, MethodMetadata } from "../constants";
 
-export const requestHeadersResolver = (metadata: MethodMetadata, methodName: string, args: any[]): any => {
+export const requestHeadersResolver = (metadata: MethodMetadata, methodName: string, args: any[]): HeadersParamType => {
   const headers = metadata.headers;
 
   Object.entries(metadata.headerParams).map((e) => {

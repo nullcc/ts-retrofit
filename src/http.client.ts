@@ -1,11 +1,5 @@
-import {
-  RequestInterceptor,
-  RequestInterceptorFunction,
-  Response,
-  ResponseInterceptor,
-  ResponseInterceptorFunction,
-} from "./baseService";
-import axios, { AxiosRequestConfig, AxiosInstance } from "axios";
+import { ApiResponse, RequestInterceptor, ResponseInterceptor } from "./baseService";
+import axios, { AxiosInstance, AxiosRequestConfig } from "axios";
 import { ServiceBuilder } from "./service.builder";
 
 export class RetrofitHttpClient {
@@ -43,11 +37,7 @@ export class RetrofitHttpClient {
     });
   }
 
-  public async sendRequest(config: AxiosRequestConfig): Promise<Response> {
-    try {
-      return await this.axios(config);
-    } catch (err) {
-      throw err;
-    }
+  public async sendRequest<T>(config: AxiosRequestConfig): ApiResponse<T> {
+    return await this.axios(config);
   }
 }

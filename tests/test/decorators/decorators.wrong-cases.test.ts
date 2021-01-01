@@ -174,7 +174,7 @@ describe("Decorators - wrong cases", () => {
     });
   });
 
-  async function verifyErrorThrown(exec: () => {}, err: string) {
+  async function verifyErrorThrown(exec: () => void, err: string) {
     try {
       await exec();
     } catch (e) {

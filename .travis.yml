@@ -20,11 +20,11 @@ jobs:
         - node --version
         - npm --version
         - echo "Linting Started ..."
-#        - npm run tslint
-#        - echo "Linting Finished."
-#        - echo "Testing Started ..."
+        - yarn lint
+        - echo "Linting Finished."
+        - echo "Testing Started ..."
         - yarn test
-#        - echo "Testing Finished."
+        - echo "Testing Finished."
 
 #    - stage: publish
 #      if: tag IS present

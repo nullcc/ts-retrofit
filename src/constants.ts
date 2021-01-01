@@ -21,6 +21,10 @@ export type QueriesParamType = {
   [x: string]: Primitive;
 };
 
+export interface TransformerType<T = any> {
+  (data: T, headers?: HeadersParamType): T;
+}
+
 export type MethodMetadata = {
   config?: Partial<AxiosRequestConfig>;
   responseType?: AxiosResponseType;

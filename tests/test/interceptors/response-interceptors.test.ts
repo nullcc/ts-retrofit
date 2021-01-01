@@ -18,7 +18,7 @@ describe("Response interceptors", () => {
 
   test("ResponseInterceptor class", async () => {
     class Interceptor<T> extends ResponseInterceptor<T> {
-      onRejected(error: any): void {}
+      onRejected(error: Error): void {}
 
       onFulfilled(value: AxiosResponse<T>): AxiosResponse<T> | Promise<AxiosResponse<T>> {
         value.data["INTERCEPTOR"] = interceptedHeaderValue;
@@ -34,7 +34,7 @@ describe("Response interceptors", () => {
       let calledRejected = false;
 
       class Interceptor<T> extends ResponseInterceptor<T> {
-        onRejected(error: any): void {
+        onRejected(error: Error): void {
           calledRejected = true;
         }
 
@@ -43,7 +43,7 @@ describe("Response interceptors", () => {
         }
       }
 
-      let interceptor = new Interceptor();
+      const interceptor = new Interceptor();
       const spy = jest.spyOn(interceptor, "onRejected");
 
       const service = new ServiceBuilder()
@@ -65,7 +65,7 @@ describe("Response interceptors", () => {
         }
       }
 
-      let interceptor = new Interceptor();
+      const interceptor = new Interceptor();
       const spy = jest.spyOn(interceptor, "onRejected");
 
       const service = new ServiceBuilder()

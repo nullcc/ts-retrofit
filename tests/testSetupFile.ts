@@ -1,5 +1,4 @@
 import http from "http";
-import { PostsApiService } from "./fixture/fixtures";
 import { app } from "./fixture/server";
 import { testServer, testServerUrl } from "./testHelpers";
 

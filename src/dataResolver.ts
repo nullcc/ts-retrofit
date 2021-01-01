@@ -1,9 +1,9 @@
 import * as qs from "qs";
 import FormData from "form-data";
-import { CONTENT_TYPE } from "./constants";
+import { CONTENT_TYPE, HeadersParamType } from "./constants";
 
 export class BaseDataResolver {
-  public resolve(headers: any, data: any): any {
+  public resolve(headers: HeadersParamType, data: any): any {
     throw new Error("Can not call this method in BaseDataResolver.");
   }
 }
@@ -13,11 +13,11 @@ export class FormUrlencodedResolver extends BaseDataResolver {
     super();
   }
 
-  public resolve(headers: any, data: any): any {
+  public resolve(headers: HeadersParamType, data: any): any {
     const deepStringify = (obj: any) => {
       const res = {};
       for (const key in obj) {
-        if (!obj.hasOwnProperty(key)) {
+        if (!Object.prototype.hasOwnProperty.call(obj, key)) {
           continue;
         }
         if (typeof obj[key] === "object") {
@@ -37,7 +37,7 @@ export class MultiPartResolver extends BaseDataResolver {
     super();
   }
 
-  public resolve(headers: any, data: any): any {
+  public resolve(headers: HeadersParamType, data: any): any {
     const formData = new FormData();
     for (const key in data) {
       if (data[key].filename) {
@@ -61,7 +61,7 @@ export class JsonResolver extends BaseDataResolver {
     super();
   }
 
-  public resolve(headers: any, data: any): any {
+  public resolve(headers: HeadersParamType, data: any): any {
     return data;
   }
 }
@@ -71,12 +71,12 @@ export class TextXmlResolver extends BaseDataResolver {
     super();
   }
 
-  public resolve(headers: any, data: any): any {
+  public resolve(headers: HeadersParamType, data: any): any {
     return data;
   }
 }
 
-const dataResolverMap: Map<string, typeof BaseDataResolver> = new Map<string, typeof BaseDataResolver>();
+const dataResolverMap = new Map<string, typeof BaseDataResolver>();
 dataResolverMap.set("application/x-www-form-urlencoded", FormUrlencodedResolver);
 dataResolverMap.set("multipart/form-data", MultiPartResolver);
 dataResolverMap.set("application/json", JsonResolver);

@@ -10,7 +10,7 @@ describe("Request transformer", () => {
       return config;
     };
 
-    let service = new ServiceBuilder()
+    const service = new ServiceBuilder()
       .setEndpoint(testServer.url)
       .setRequestInterceptors(interceptor)
       .build(TransformerApiService);

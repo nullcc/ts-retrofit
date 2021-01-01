@@ -29,7 +29,7 @@
   "license": "MIT",
   "husky": {
     "hooks": {
-      "pre-commit": "yarn test && yarn make-badges && git add README.md"
+      "pre-commit": "yarn test && yarn lint && yarn make-badges && git add README.md"
     }
   },
   "dependencies": {

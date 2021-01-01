@@ -8,6 +8,7 @@ import {
   HeadersParamType,
   QueriesParamType,
   MethodMetadata,
+  TransformerType,
 } from "./constants";
 import { BaseService } from "./baseService";
 
@@ -86,8 +87,8 @@ export const Headers = <T extends BaseService>(headers: HeadersParamType) => {
 };
 
 /** @sample @Header("X-Token") token: string */
-export const Header = (paramName: string) => {
-  return (target: any, methodName: string, paramIndex: number) => {
+export const Header = <T extends BaseService>(paramName: string) => {
+  return (target: T, methodName: string, paramIndex: number) => {
     target.__getServiceMetadata__().setMetadata(methodName, (prev: MethodMetadata) => ({
       headerParams: {
         ...prev.headerParams,
@@ -98,7 +99,7 @@ export const Header = (paramName: string) => {
 };
 
 /** @sample @HeaderMap headers: any */
-export const HeaderMap = (target: any, methodName: string, paramIndex: number) => {
+export const HeaderMap = <T extends BaseService>(target: T, methodName: string, paramIndex: number) => {
   target.__getServiceMetadata__().setMetadata(methodName, { headerMapIndex: paramIndex });
 };
 
@@ -109,15 +110,15 @@ export const HeaderMap = (target: any, methodName: string, paramIndex: number) =
  *           sort: "createdAt:desc",
  *         })
  */
-export const Queries = (query: QueriesParamType) => {
-  return (target: any, methodName: string, descriptor: PropertyDescriptor) => {
+export const Queries = <T extends BaseService>(query: QueriesParamType) => {
+  return (target: T, methodName: string, descriptor: PropertyDescriptor) => {
     target.__getServiceMetadata__().setMetadata(methodName, { query: query });
   };
 };
 
 /** @sample @Query('group') group: string */
-export const Query = (paramName: string) => {
-  return (target: any, methodName: string, paramIndex: number) => {
+export const Query = <T extends BaseService>(paramName: string) => {
+  return (target: T, methodName: string, paramIndex: number) => {
     target.__getServiceMetadata__().setMetadata(methodName, (prev: MethodMetadata) => ({
       queryParams: {
         ...prev.queryParams,
@@ -130,7 +131,7 @@ export const Query = (paramName: string) => {
 /**
  * @sample @QueryMap query: SearchQuery
  */
-export const QueryMap = (target: any, methodName: string, paramIndex: number) => {
+export const QueryMap = <T extends BaseService>(target: T, methodName: string, paramIndex: number) => {
   target.__getServiceMetadata__().setMetadata(methodName, { queryMapIndex: paramIndex });
 };
 
@@ -138,7 +139,11 @@ export const QueryMap = (target: any, methodName: string, paramIndex: number) =>
  * 'content-type': 'application/x-www-form-urlencoded;charset=utf-8' will be added.
  * @sample @FormUrlEncoded
  */
-export const FormUrlEncoded = (target: any, methodName: string, descriptor: PropertyDescriptor) => {
+export const FormUrlEncoded = <T extends BaseService>(
+  target: T,
+  methodName: string,
+  descriptor: PropertyDescriptor,
+) => {
   Headers({ [CONTENT_TYPE_HEADER]: `${CONTENT_TYPE.FORM_URL_ENCODED};${CHARSET_UTF_8}` })(
     target,
     methodName,
@@ -150,8 +155,8 @@ export const FormUrlEncoded = (target: any, methodName: string, descriptor: Prop
  * Set field of form for API endpoint. Only effective when method has been decorated by @FormUrlEncoded.
  * @sample @Field("title") title: string
  */
-export const Field = (paramName: string) => {
-  return (target: any, methodName: string, paramIndex: number) => {
+export const Field = <T extends BaseService>(paramName: string) => {
+  return (target: T, methodName: string, paramIndex: number) => {
     target.__getServiceMetadata__().setMetadata(methodName, (prev: MethodMetadata) => ({
       fields: {
         ...prev.fields,
@@ -164,7 +169,7 @@ export const Field = (paramName: string) => {
 /**
  * @sample @FieldMap post: Post
  */
-export const FieldMap = (target: any, methodName: string, paramIndex: number) => {
+export const FieldMap = <T extends BaseService>(target: T, methodName: string, paramIndex: number) => {
   target.__getServiceMetadata__().setMetadata(methodName, { fieldMapIndex: paramIndex });
 };
 
@@ -208,7 +213,7 @@ export const ResponseType = <T extends BaseService>(responseType: AxiosResponseT
  *           return JSON.stringify(data);
  *         })
  */
-export const RequestTransformer = <T extends BaseService>(transformer: AxiosTransformer) => {
+export const RequestTransformer = <T extends BaseService>(transformer: TransformerType) => {
   return (target: T, methodName: string) => {
     target.__getServiceMetadata__().setMetadata(methodName, { requestTransformer: transformer });
   };
@@ -222,7 +227,7 @@ export const RequestTransformer = <T extends BaseService>(transformer: AxiosTran
  *           return json;
  *         })
  */
-export const ResponseTransformer = <T extends BaseService>(transformer: AxiosTransformer) => {
+export const ResponseTransformer = <T extends BaseService>(transformer: TransformerType) => {
   return (target: T, methodName: string) => {
     target.__getServiceMetadata__().setMetadata(methodName, { responseTransformer: transformer });
   };

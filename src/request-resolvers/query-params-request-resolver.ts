@@ -1,7 +1,11 @@
-import { MethodMetadata } from "../constants";
+import { MethodMetadata, QueriesParamType } from "../constants";
 import { BaseService, ErrorMessages } from "../baseService";
 
-export const requestQueryParamsResolver = (metadata: MethodMetadata, methodName: string, args: any[]): any => {
+export const requestQueryParamsResolver = (
+  metadata: MethodMetadata,
+  methodName: string,
+  args: any[],
+): QueriesParamType => {
   const query = metadata.query;
 
   Object.entries(metadata.queryParams).map((e) => {

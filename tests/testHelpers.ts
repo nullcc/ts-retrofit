@@ -1,12 +1,11 @@
-import { Response } from "../src";
-import { Method } from "axios";
+import { AxiosResponse, Method } from "axios";
 import { AddressInfo } from "net";
 
 export const JSONPLACEHOLDER_URL = "https://jsonplaceholder.typicode.com";
 export const testServerUrl = (address: AddressInfo | string | null) =>
   `http://localhost:${(address as AddressInfo).port}`;
 
-export function verifyRequest<T>(response: Response, method: Method, path: string = "/posts/", status = 200) {
+export function verifyRequest<T>(response: AxiosResponse<T>, method: Method, path = "/posts/", status = 200) {
   expect(response.request.method).toBe(method.toUpperCase());
   expect(response.request.path).toBe(path);
 
@@ -14,7 +13,11 @@ export function verifyRequest<T>(response: Response, method: Method, path: strin
   expect(response.config.method).toEqual(method.toLowerCase());
 }
 
-export function verifyBody<T>(response: Response, expectedRequestBody: T, expectedResponseBody = expectedRequestBody) {
+export function verifyBody<T>(
+  response: AxiosResponse<T>,
+  expectedRequestBody: T,
+  expectedResponseBody = expectedRequestBody,
+) {
   if (!expectedRequestBody) return;
 
   expect(response.config.data).toBe(JSON.stringify(expectedRequestBody));
@@ -26,6 +29,6 @@ describe.skip("TMP", () => {
   test.skip("t", () => {});
 });
 
-export let testServer = {
+export const testServer = {
   url: "",
 };

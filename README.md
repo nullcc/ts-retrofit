@@ -4,7 +4,7 @@
 
 | Statements                  | Branches                | Functions                 | Lines                |
 | --------------------------- | ----------------------- | ------------------------- | -------------------- |
-| ![Statements](https://img.shields.io/badge/Coverage-99.27%25-brightgreen.svg) | ![Branches](https://img.shields.io/badge/Coverage-97.27%25-brightgreen.svg) | ![Functions](https://img.shields.io/badge/Coverage-99.12%25-brightgreen.svg) | ![Lines](https://img.shields.io/badge/Coverage-99.72%25-brightgreen.svg)    |
+| ![Statements](https://img.shields.io/badge/Coverage-99.26%25-brightgreen.svg) | ![Branches](https://img.shields.io/badge/Coverage-97.27%25-brightgreen.svg) | ![Functions](https://img.shields.io/badge/Coverage-99.11%25-brightgreen.svg) | ![Lines](https://img.shields.io/badge/Coverage-99.71%25-brightgreen.svg)    |
 
 This branch is a fork from [https://github.com/nullcc/ts-retrofit/](https://github.com/nullcc/ts-retrofit/)
 > A declarative and axios based retrofit implementation for JavaScript and TypeScript.
@@ -42,23 +42,23 @@ class UserService extends BaseService {
   }
 
   @POST("/users")
-  async createUser(@Header("Authorization") authorization: string, @Body user: User): Promise<Response> {
-    return <Response>{};
+  async createUser(@Header("Authorization") authorization: string, @Body user: User): ApiResponse {
+    return STUB_RESPONSE();
   }
 
   @PUT("/users/{userId}")
-  async updateUser(@Header("Authorization") authorization: string, @Path("userId") userId: number, @Body user: User): Promise<Response> {
-    return <Response>{};
+  async updateUser(@Header("Authorization") authorization: string, @Path("userId") userId: number, @Body user: User): ApiResponse {
+    return STUB_RESPONSE();
   }
 
   @PATCH("/users/{userId}")
-  async patchUser(@Header("Authorization") authorization: string, @Path("userId") userId: number, @Body user: Partial<User>): Promise<Response> {
-    return <Response>{};
+  async patchUser(@Header("Authorization") authorization: string, @Path("userId") userId: number, @Body user: Partial<User>): ApiResponse {
+    return STUB_RESPONSE();
   }
 
   @DELETE("/users/{userId}")
-  async deleteUser(@Header("Authorization") authorization: string, @Path("userId") userId: number): Promise<Response> {
-    return <Response>{};
+  async deleteUser(@Header("Authorization") authorization: string, @Path("userId") userId: number): ApiResponse {
+    return STUB_RESPONSE();
   }
 }
 
@@ -177,8 +177,8 @@ class ItemService extends BaseService {
 class ItemService extends BaseService {
   // POST ${ENDPOINT}/api/v1/items
   @POST("/items")
-  async createItem(@Body item: Item): Promise<Response> {
-    return <Response>{};
+  async createItem(@Body item: Item): ApiResponse {
+    return STUB_RESPONSE();
   }
 }
 ```
@@ -194,8 +194,8 @@ class ItemService extends BaseService {
 class ItemService extends BaseService {
   // PUT ${ENDPOINT}/api/v1/items/{itemId}
   @PUT("/items/{itemId}")
-  async updateItem(@Path("itemId") itemId: number, @Body item: Item): Promise<Response> {
-    return <Response>{};
+  async updateItem(@Path("itemId") itemId: number, @Body item: Item): ApiResponse {
+    return STUB_RESPONSE();
   }
 }
 ```
@@ -211,8 +211,8 @@ class ItemService extends BaseService {
 class ItemService extends BaseService {
   // PATCH ${ENDPOINT}/api/v1/items/{itemId}
   @PATCH("/items/{itemId}")
-  async patchItem(@Path("itemId") itemId: number, @Body item: Partial<Item>): Promise<Response> {
-    return <Response>{};
+  async patchItem(@Path("itemId") itemId: number, @Body item: Partial<Item>): ApiResponse {
+    return STUB_RESPONSE();
   }
 }
 ```
@@ -228,8 +228,8 @@ class ItemService extends BaseService {
 class ItemService extends BaseService {
   // DELETE ${ENDPOINT}/api/v1/items/{itemId}
   @DELETE("/items/{itemId}")
-  async deleteItem(@Path("itemId") itemId: number): Promise<Response> {
-    return <Response>{};
+  async deleteItem(@Path("itemId") itemId: number): ApiResponse {
+    return STUB_RESPONSE();
   }
 }
 ```
@@ -245,8 +245,8 @@ class ItemService extends BaseService {
 class FileService extends BaseService {
   // HEAD ${ENDPOINT}/api/v1/files/{fileId}
   @HEAD("/files/{fileId}")
-  async getFileMetaInfo(@Path("fileId") fileId: number): Promise<Response> {
-    return <Response>{};
+  async getFileMetaInfo(@Path("fileId") fileId: number): ApiResponse {
+    return STUB_RESPONSE();
   }
 }
 ```
@@ -262,8 +262,8 @@ class FileService extends BaseService {
 class ItemService extends BaseService {
   // OPTIONS ${ENDPOINT}/api/v1/items/{itemId}
   @OPTIONS("/items/{itemId}")
-  async getFileMetaInfo(@Path("itemId") itemId: number): Promise<Response> {
-    return <Response>{};
+  async getFileMetaInfo(@Path("itemId") itemId: number): ApiResponse {
+    return STUB_RESPONSE();
   }
 }
 ```
@@ -348,8 +348,8 @@ class ItemService extends BaseService {
 class ItemService extends BaseService {
   // POST ${ENDPOINT}/api/v1/items
   @POST("/items")
-  async createItem(@Body item: Item): Promise<Response> {
-    return <Response>{};
+  async createItem(@Body item: Item): ApiResponse {
+    return STUB_RESPONSE();
   }
 }
 ```
@@ -473,8 +473,8 @@ export class AuthService extends BaseService {
 export class FileService extends BaseService {
   @POST("/upload")
   @Multipart
-  async upload(@Part("bucket") bucket: PartDescriptor<string>, @Part("file") file: PartDescriptor<Buffer>): Promise<Response> {
-    return <Response>{};
+  async upload(@Part("bucket") bucket: PartDescriptor<string>, @Part("file") file: PartDescriptor<Buffer>): ApiResponse {
+    return STUB_RESPONSE();
   }
 }
 ```
@@ -490,8 +490,8 @@ export class FileService extends BaseService {
 export class FileService extends BaseService {
   @POST("/upload")
   @Multipart
-  async upload(@Part("bucket") bucket: PartDescriptor<string>, @Part("file") file: PartDescriptor<Buffer>): Promise<Response> {
-    return <Response>{};
+  async upload(@Part("bucket") bucket: PartDescriptor<string>, @Part("file") file: PartDescriptor<Buffer>): ApiResponse {
+    return STUB_RESPONSE();
   }
 }
 ```
@@ -508,8 +508,8 @@ export class FileService extends BaseService {
 export class FileService extends BaseService {
   @GET("/file")
   @ResponseType("stream")
-  async getFile(@Path("fileId") fileId: string): Promise<Response> {
-    return <Response>{};
+  async getFile(@Path("fileId") fileId: string): ApiResponse {
+    return STUB_RESPONSE();
   }
 }
 ```
@@ -528,8 +528,8 @@ export class TransformerService extends BaseService {
     data.foo = "foo"; // add something to request data
     return JSON.stringify(data);
   })
-  async createSomething(@Body body: Something): Promise<Response> {
-    return <Response>{};
+  async createSomething(@Body body: Something): ApiResponse {
+    return STUB_RESPONSE();
   }
 }
 ```
@@ -548,8 +548,8 @@ export class TransformerService extends BaseService {
     data.foo = "foo"; // add something to response data
     return JSON.stringify(data);
   })
-  async createSomething(@Body body: Something): Promise<Response> {
-    return <Response>{};
+  async createSomething(@Body body: Something): ApiResponse {
+    return STUB_RESPONSE();
   }
 }
 ```
@@ -603,8 +603,8 @@ export class ConfigService extends BaseService {
   @Config({
     maxRedirects: 1
   })
-  async getConfig(): Promise<Response> {
-    return <Response>{};
+  async getConfig(): ApiResponse {
+    return STUB_RESPONSE();
   }
 }
 ```
