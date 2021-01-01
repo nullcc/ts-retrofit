@@ -22,13 +22,11 @@ export class ServiceBuilder {
     return this;
   }
 
-  // 单例模式
   public setStandalone(standalone: boolean | AxiosInstance): ServiceBuilder {
     this._standalone = standalone;
     return this;
   }
 
-  // 插入请求拦截器
   public setRequestInterceptors(
     ...interceptors: Array<RequestInterceptorFunction | RequestInterceptor>
   ): ServiceBuilder {
@@ -36,7 +34,6 @@ export class ServiceBuilder {
     return this;
   }
 
-  // 插入应答拦截器
   public setResponseInterceptors(
     ...interceptors: Array<ResponseInterceptorFunction | ResponseInterceptor>
   ): ServiceBuilder {

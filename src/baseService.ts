@@ -4,17 +4,20 @@ import { DataResolverFactory } from "./dataResolver";
 import { HttpMethod } from "./constants";
 import { HttpMethodOptions } from "./decorators";
 import { isNode } from "./util";
+import { RetrofitHttpClient } from "./http.client";
+import { ServiceBuilder } from "./service.builder";
 
 axios.defaults.withCredentials = true;
 
 export interface Response<T = any> extends AxiosResponse<T> {}
+export const STUB_RESPONSE = <T>() => ({} as T);
 
 const NON_HTTP_REQUEST_PROPERTY_NAME = "__nonHTTPRequestMethod__";
 
 export const nonHTTPRequestMethod = (target: any, methodName: string) => {
   const descriptor = {
     value: true,
-    writable: false
+    writable: false,
   };
   Object.defineProperty(target[methodName], NON_HTTP_REQUEST_PROPERTY_NAME, descriptor);
 };
@@ -22,13 +25,13 @@ export const nonHTTPRequestMethod = (target: any, methodName: string) => {
 export class BaseService {
   public __meta__: any;
   private _endpoint: string;
-  private _httpClient: HttpClient;
+  private _httpClient: RetrofitHttpClient;
   private _methodMap: Map<string, Function>;
   private _timeout: number;
 
   constructor(serviceBuilder: ServiceBuilder) {
     this._endpoint = serviceBuilder.endpoint;
-    this._httpClient = new HttpClient(serviceBuilder);
+    this._httpClient = new RetrofitHttpClient(serviceBuilder);
     this._methodMap = new Map<string, Function>();
     this._timeout = serviceBuilder.timeout;
 
@@ -51,7 +54,7 @@ export class BaseService {
           return (...args: any[]) => {
             return self._wrap(methodName, args);
           };
-        }
+        },
       };
       Object.defineProperty(this, methodName, descriptor);
     }
@@ -127,14 +130,14 @@ export class BaseService {
     method: HttpMethod,
     headers: any,
     query: any,
-    data: any
+    data: any,
   ): AxiosRequestConfig {
     let config: AxiosRequestConfig = {
       url,
       method,
       headers,
       params: query,
-      data
+      data,
     };
     // response type
     if (this.__meta__[methodName].responseType) {
@@ -153,7 +156,7 @@ export class BaseService {
     // mix in config set by @Config
     config = {
       ...config,
-      ...this.__meta__[methodName].config
+      ...this.__meta__[methodName].config,
     };
     return config;
   }
@@ -294,10 +297,10 @@ export class BaseService {
 }
 
 export type RequestInterceptorFunction = (
-  value: AxiosRequestConfig
+  value: AxiosRequestConfig,
 ) => AxiosRequestConfig | Promise<AxiosRequestConfig>;
 export type ResponseInterceptorFunction<T = any> = (
-  value: AxiosResponse<T>
+  value: AxiosResponse<T>,
 ) => AxiosResponse<T> | Promise<AxiosResponse<T>>;
 
 abstract class BaseInterceptor {
@@ -312,132 +315,4 @@ export abstract class RequestInterceptor extends BaseInterceptor {
 
 export abstract class ResponseInterceptor<T = any> extends BaseInterceptor {
   public abstract onFulfilled(value: AxiosResponse<T>): AxiosResponse<T> | Promise<AxiosResponse<T>>;
-}
-
-export class ServiceBuilder {
-  private _endpoint: string = "";
-  private _standalone: boolean | AxiosInstance = false;
-  private _requestInterceptors: Array<RequestInterceptorFunction | RequestInterceptor> = [];
-  private _responseInterceptors: Array<ResponseInterceptorFunction | ResponseInterceptor> = [];
-  private _timeout: number = 60000;
-
-  public build<T>(service: new (builder: ServiceBuilder) => T): T {
-    return new service(this);
-  }
-
-  public setEndpoint(endpoint: string): ServiceBuilder {
-    this._endpoint = endpoint;
-    return this;
-  }
-
-  // 单例模式
-  public setStandalone(standalone: boolean | AxiosInstance): ServiceBuilder {
-    this._standalone = standalone;
-    return this;
-  }
-
-  // 插入请求拦截器
-  public setRequestInterceptors(
-    ...interceptors: Array<RequestInterceptorFunction | RequestInterceptor>
-  ): ServiceBuilder {
-    this._requestInterceptors.push(...interceptors);
-    return this;
-  }
-
-  // 插入应答拦截器
-  public setResponseInterceptors(
-    ...interceptors: Array<ResponseInterceptorFunction | ResponseInterceptor>
-  ): ServiceBuilder {
-    this._responseInterceptors.push(...interceptors);
-    return this;
-  }
-
-  public setTimeout(timeout: number): ServiceBuilder {
-    this._timeout = timeout;
-    return this;
-  }
-
-  get endpoint(): string {
-    return this._endpoint;
-  }
-
-  get standalone(): boolean | AxiosInstance {
-    return this._standalone;
-  }
-
-  get requestInterceptors(): Array<RequestInterceptorFunction | RequestInterceptor> {
-    return this._requestInterceptors;
-  }
-
-  get responseInterceptors(): Array<ResponseInterceptorFunction | ResponseInterceptor> {
-    return this._responseInterceptors;
-  }
-
-  get timeout(): number {
-    return this._timeout;
-  }
-}
-
-class HttpClient {
-  private axios: AxiosInstance = axios;
-  private standalone: boolean = false;
-
-  constructor(builder: ServiceBuilder) {
-    if (builder.standalone === true) {
-      this.axios = axios.create();
-      this.standalone = true;
-    } else if (typeof builder.standalone === "function") {
-      this.axios = builder.standalone;
-    }
-
-    builder.requestInterceptors.forEach((interceptor) => {
-      if (interceptor instanceof RequestInterceptor) {
-        this.axios.interceptors.request.use(
-          interceptor.onFulfilled.bind(interceptor),
-          interceptor.onRejected.bind(interceptor)
-        );
-      } else {
-        this.axios.interceptors.request.use(interceptor);
-      }
-    });
-
-    builder.responseInterceptors.forEach((interceptor) => {
-      if (interceptor instanceof ResponseInterceptor) {
-        this.axios.interceptors.response.use(
-          interceptor.onFulfilled.bind(interceptor),
-          interceptor.onRejected.bind(interceptor)
-        );
-      } else {
-        this.axios.interceptors.response.use(interceptor);
-      }
-    });
-  }
-
-  public isStandalone(): boolean {
-    return this.standalone;
-  }
-
-  public async sendRequest(config: AxiosRequestConfig): Promise<Response> {
-    try {
-      return await this.axios(config);
-    } catch (err) {
-      throw err;
-    }
-  }
-
-  public useRequestInterceptor(interceptor: RequestInterceptorFunction): number {
-    return this.axios.interceptors.request.use(interceptor);
-  }
-
-  public useResponseInterceptor(interceptor: ResponseInterceptorFunction): number {
-    return this.axios.interceptors.response.use(interceptor);
-  }
-
-  public ejectRequestInterceptor(id: number): void {
-    this.axios.interceptors.request.eject(id);
-  }
-
-  public ejectResponseInterceptor(id: number): void {
-    this.axios.interceptors.response.eject(id);
-  }
 }

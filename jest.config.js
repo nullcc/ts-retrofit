@@ -1,14 +1,14 @@
 module.exports = {
   roots: [""],
   transform: {
-    "^.+\\.tsx?$": "ts-jest"
+    "^.+\\.tsx?$": "ts-jest",
   },
-  testRegex: "(/test/.*|(\\.|/)(test|spec))\\.(jsx?|tsx?)$",
-  modulePathIgnorePatterns: ["fixtures", "testSetupFile", "server"],
+  testRegex: "(/tests/.*|(\\.|/)(test|spec))\\.(jsx?|tsx?)$",
+  modulePathIgnorePatterns: ["fixtures", "testSetupFile", "server", "coverage"],
   moduleFileExtensions: ["ts", "tsx", "js", "jsx", "json", "node"],
   testURL: "http://localhost/",
   testEnvironment: "node",
   rootDir: ".",
-  setupFilesAfterEnv: ["./test/testSetupFile.js"],
-  coverageReporters: ["json-summary", "text", "lcov"]
+  setupFilesAfterEnv: ["./tests/testSetupFile.js"],
+  coverageReporters: ["json-summary", "text", "lcov"],
 };

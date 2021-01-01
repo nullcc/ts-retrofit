@@ -3,12 +3,12 @@ import {
   RequestInterceptorFunction,
   Response,
   ResponseInterceptor,
-  ResponseInterceptorFunction,
-  ServiceBuilder
+  ResponseInterceptorFunction
 } from "./baseService";
 import axios, { AxiosRequestConfig, AxiosInstance } from "axios";
+import { ServiceBuilder } from "./service.builder";
 
-export class HttpClient {
+export class RetrofitHttpClient {
   private axios: AxiosInstance = axios;
   private standalone: boolean = false;
 

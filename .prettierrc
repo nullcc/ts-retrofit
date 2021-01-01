@@ -1,6 +1,6 @@
 {
   "semi": true,
-  "trailingComma": "none",
+  "trailingComma": "all",
   "singleQuote": false,
   "proseWrap": "never",
   "printWidth": 120
