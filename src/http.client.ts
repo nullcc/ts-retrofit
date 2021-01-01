@@ -3,14 +3,14 @@ import {
   RequestInterceptorFunction,
   Response,
   ResponseInterceptor,
-  ResponseInterceptorFunction
+  ResponseInterceptorFunction,
 } from "./baseService";
 import axios, { AxiosRequestConfig, AxiosInstance } from "axios";
 import { ServiceBuilder } from "./service.builder";
 
 export class RetrofitHttpClient {
-  private axios: AxiosInstance = axios;
-  private standalone: boolean = false;
+  private readonly axios: AxiosInstance = axios;
+  public readonly standalone: boolean = false;
 
   constructor(builder: ServiceBuilder) {
     if (builder.standalone === true) {
@@ -24,7 +24,7 @@ export class RetrofitHttpClient {
       if (interceptor instanceof RequestInterceptor) {
         this.axios.interceptors.request.use(
           interceptor.onFulfilled.bind(interceptor),
-          interceptor.onRejected.bind(interceptor)
+          interceptor.onRejected.bind(interceptor),
         );
       } else {
         this.axios.interceptors.request.use(interceptor);
@@ -35,16 +35,12 @@ export class RetrofitHttpClient {
       if (interceptor instanceof ResponseInterceptor) {
         this.axios.interceptors.response.use(
           interceptor.onFulfilled.bind(interceptor),
-          interceptor.onRejected.bind(interceptor)
+          interceptor.onRejected.bind(interceptor),
         );
       } else {
         this.axios.interceptors.response.use(interceptor);
       }
     });
-  }
-
-  public isStandalone(): boolean {
-    return this.standalone;
   }
 
   public async sendRequest(config: AxiosRequestConfig): Promise<Response> {
@@ -53,21 +49,5 @@ export class RetrofitHttpClient {
     } catch (err) {
       throw err;
     }
-  }
-
-  public useRequestInterceptor(interceptor: RequestInterceptorFunction): number {
-    return this.axios.interceptors.request.use(interceptor);
-  }
-
-  public useResponseInterceptor(interceptor: ResponseInterceptorFunction): number {
-    return this.axios.interceptors.response.use(interceptor);
-  }
-
-  public ejectRequestInterceptor(id: number): void {
-    this.axios.interceptors.request.eject(id);
-  }
-
-  public ejectResponseInterceptor(id: number): void {
-    this.axios.interceptors.response.eject(id);
   }
 }

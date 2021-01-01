@@ -1,6 +1,7 @@
 import { ServiceBuilder } from "../../../src/service.builder";
 import { JSONPLACEHOLDER_URL, verifyBody, verifyRequest } from "../../testHelpers";
-import { PostsApiService, TransformerApiService } from "../../fixture/fixtures";
+import { PostsApiService } from "../../fixture/fixtures";
+import { TransformerApiService } from "../../fixture/fixtures.transformer";
 
 describe("Response transformer", () => {
   let service = new ServiceBuilder().setEndpoint(JSONPLACEHOLDER_URL).build(TransformerApiService);

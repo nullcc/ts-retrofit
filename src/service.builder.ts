@@ -3,7 +3,7 @@ import {
   RequestInterceptor,
   RequestInterceptorFunction,
   ResponseInterceptor,
-  ResponseInterceptorFunction
+  ResponseInterceptorFunction,
 } from "./baseService";
 
 export class ServiceBuilder {

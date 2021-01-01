@@ -1,7 +1,7 @@
 import { ServiceBuilder } from "../../src/service.builder";
 import { JSONPLACEHOLDER_URL } from "../testHelpers";
 import { PostsApiService } from "../fixture/fixtures";
-import axios from "axios";
+import axios, { AxiosRequestConfig } from "axios";
 
 describe("Standalone", () => {
   test("With instance", async () => {
@@ -16,6 +16,24 @@ describe("Standalone", () => {
     const serviceWithStandalone = new ServiceBuilder()
       .setEndpoint(JSONPLACEHOLDER_URL)
       .setStandalone(axiosInstance)
+      .build(PostsApiService);
+
+    expect((await serviceWithoutStandalone.get()).config["standaloneId"]).toBeUndefined();
+    expect((await serviceWithStandalone.get()).config["standaloneId"]).toBe(101);
+  });
+
+  test("With boolean", async () => {
+    const serviceWithoutStandalone = new ServiceBuilder().setEndpoint(JSONPLACEHOLDER_URL).build(PostsApiService);
+
+    const interceptor = (config: AxiosRequestConfig) => {
+      config["standaloneId"] = 101;
+      return config;
+    };
+
+    const serviceWithStandalone = new ServiceBuilder()
+      .setEndpoint(JSONPLACEHOLDER_URL)
+      .setStandalone(true)
+      .setRequestInterceptors(interceptor)
       .build(PostsApiService);
 
     expect((await serviceWithoutStandalone.get()).config["standaloneId"]).toBeUndefined();

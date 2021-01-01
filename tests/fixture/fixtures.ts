@@ -27,15 +27,11 @@ import {
   Config,
   Multipart,
   Part,
-  PartDescriptor,
   ResponseType,
   Timeout,
 } from "../../src";
 import { JSONPLACEHOLDER_URL } from "../testHelpers";
 
-export const TEST_SERVER_HOST = "http://localhost";
-export const TEST_SERVER_PORT = 12345;
-export const TEST_SERVER_ENDPOINT = `${TEST_SERVER_HOST}:${TEST_SERVER_PORT}`;
 export const API_PREFIX = "/api/v1";
 export const TOKEN = "abcdef123456";
 
@@ -130,7 +126,7 @@ export class PostsApiService extends BaseService {
   }
 
   @GET("/")
-  async headerMap(@HeaderMap headers: { [key: string]: string }): Promise<Response> {
+  async headerMap(@HeaderMap headers: { [key: string]: unknown }): Promise<Response> {
     return <Response>{};
   }
 
@@ -172,7 +168,21 @@ export class PostsApiService extends BaseService {
 
   @POST("/")
   @FormUrlEncoded
+  async fieldMapUrlEncoded(@FieldMap body: PostCreateDTO): Promise<Response<Post>> {
+    return STUB_RESPONSE();
+  }
+
+  @POST("/")
   async fieldMap(@FieldMap body: PostCreateDTO): Promise<Response<Post>> {
+    return STUB_RESPONSE();
+  }
+
+  @POST("/")
+  async field(
+    @Field("userId") userId: number,
+    @Field("title") title: string,
+    @Field("body") body: string,
+  ): Promise<Response<Post>> {
     return STUB_RESPONSE();
   }
 
@@ -189,85 +199,16 @@ export class PostsApiService extends BaseService {
   async config(): Promise<Response<Post[]>> {
     return STUB_RESPONSE();
   }
-}
 
-@BasePath(PostsApiService.BASE_PATH)
-export class TransformerApiService extends BaseService {
-  @POST("/")
-  @RequestTransformer((data: PostCreateDTO, headers?: { [key: string]: unknown }) => {
-    data.title = "updated title1";
-    return JSON.stringify(data);
-  })
-  async requestTransformer(@Body body: PostCreateDTO): Promise<Response<Post>> {
-    return STUB_RESPONSE();
-  }
-
-  @POST("/")
-  @RequestTransformer((data: PostCreateDTO, headers?: { [key: string]: unknown }) => {
-    data.title = "updated title1";
-    return JSON.stringify(data);
-  })
-  async twoRequestTransformers(@Body body: PostCreateDTO): Promise<Response<Post>> {
-    return STUB_RESPONSE();
-  }
-
-  @POST("/")
-  @ResponseTransformer((body: string, headers?: { [key: string]: unknown }) => {
-    const data = JSON.parse(body);
-    data.title = "updated title2";
-    return data;
-  })
-  async responseTransformer(@Body body: PostCreateDTO): Promise<Response<Post>> {
+  @GET("/asdasda/sdasdasda/sdasd/asdkjajkldkasd", { ignoreBasePath: true })
+  async wrongUrl(): Promise<Response> {
     return STUB_RESPONSE();
   }
 }
 
-@BasePath(API_PREFIX)
-export class FileService extends BaseService {
-  @POST("/upload")
-  @Multipart
-  async upload(
-    @Part("bucket") bucket: PartDescriptor<string>,
-    @Part("file") file: PartDescriptor<Buffer>,
-  ): Promise<Response> {
-    return <Response>{};
-  }
-
-  @GET("/file")
-  @ResponseType("stream")
-  async getFile(@Path("fileId") fileId: string): Promise<Response> {
-    return <Response>{};
-  }
-}
-
-@BasePath(API_PREFIX)
-export class MessagingService extends BaseService {
-  @POST("/sms")
-  @Multipart
-  async createSMS(
-    @Part("from") from: PartDescriptor<string>,
-    @Part("to") to: PartDescriptor<string[]>,
-  ): Promise<Response> {
-    return <Response>{};
-  }
-}
-
-@BasePath(API_PREFIX)
-export class TimeoutService extends BaseService {
-  @GET("/sleep-5000")
-  async sleep5000(): Promise<Response> {
-    return <Response>{};
-  }
-
-  @GET("/sleep-5000")
-  @Timeout(3000)
-  async timeoutIn3000(): Promise<Response> {
-    return <Response>{};
-  }
-
-  @GET("/sleep-5000")
-  @Timeout(6000)
-  async timeoutIn6000(): Promise<Response> {
+export class ServiceWithoutBasePath extends BaseService {
+  @GET("/posts")
+  async get(): Promise<Response<Post[]>> {
     return <Response>{};
   }
 }

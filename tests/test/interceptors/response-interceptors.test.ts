@@ -29,8 +29,59 @@ describe("Response interceptors", () => {
     await verifyInterceptor((b) => b.setResponseInterceptors(new Interceptor()));
   });
 
+  describe("onRejected", () => {
+    test("Override onRejected", async () => {
+      let calledRejected = false;
+
+      class Interceptor<T> extends ResponseInterceptor<T> {
+        onRejected(error: any): void {
+          calledRejected = true;
+        }
+
+        onFulfilled(value: AxiosResponse<T>): AxiosResponse<T> | Promise<AxiosResponse<T>> {
+          return value;
+        }
+      }
+
+      let interceptor = new Interceptor();
+      const spy = jest.spyOn(interceptor, "onRejected");
+
+      const service = new ServiceBuilder()
+        .setEndpoint(JSONPLACEHOLDER_URL)
+        .setResponseInterceptors(interceptor)
+        .setStandalone(true)
+        .build(PostsApiService);
+
+      await service.wrongUrl();
+
+      expect(spy).toHaveBeenCalled();
+      expect(calledRejected).toBeTruthy();
+    });
+
+    test("No override", async () => {
+      class Interceptor<T> extends ResponseInterceptor<T> {
+        onFulfilled(value: AxiosResponse<T>): AxiosResponse<T> | Promise<AxiosResponse<T>> {
+          return value;
+        }
+      }
+
+      let interceptor = new Interceptor();
+      const spy = jest.spyOn(interceptor, "onRejected");
+
+      const service = new ServiceBuilder()
+        .setEndpoint(JSONPLACEHOLDER_URL)
+        .setStandalone(true)
+        .setResponseInterceptors(interceptor)
+        .build(PostsApiService);
+
+      await service.wrongUrl();
+
+      expect(spy).toHaveBeenCalled();
+    });
+  });
+
   async function verifyInterceptor(setInterceptor: (builder: ServiceBuilder) => void) {
-    const builder = new ServiceBuilder().setEndpoint(JSONPLACEHOLDER_URL);
+    const builder = new ServiceBuilder().setEndpoint(JSONPLACEHOLDER_URL).setStandalone(true);
 
     setInterceptor(builder);
 

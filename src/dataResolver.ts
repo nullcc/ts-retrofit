@@ -1,6 +1,6 @@
 import * as qs from "qs";
 import FormData from "form-data";
-import { DATA_CONTENT_TYPES } from "./constants";
+import { CONTENT_TYPE } from "./constants";
 
 export class BaseDataResolver {
   public resolve(headers: any, data: any): any {
@@ -85,13 +85,13 @@ dataResolverMap.set("text/xml", TextXmlResolver);
 export class DataResolverFactory {
   public createDataResolver(contentType: string): BaseDataResolver {
     const contentTypeLowCased = contentType.toLowerCase();
-    for (const dataContentType of Object.values(DATA_CONTENT_TYPES)) {
+    for (const dataContentType of Object.values(CONTENT_TYPE)) {
       if (contentTypeLowCased.includes(dataContentType)) {
         const resolverCls = this._getDataResolverCls(dataContentType);
         return new resolverCls();
       }
     }
-    return new (this._getDataResolverCls("application/json"))();
+    return new (this._getDataResolverCls(CONTENT_TYPE.APPLICATION_JSON))();
   }
 
   private _getDataResolverCls(dataContentType: string): typeof BaseDataResolver {

@@ -4,7 +4,7 @@ node_js:
   - "10"
 
 install:
-  - npm install
+  - yarn
 
 os:
   - linux
@@ -20,22 +20,22 @@ jobs:
         - node --version
         - npm --version
         - echo "Linting Started ..."
-        - npm run tslint
-        - echo "Linting Finished."
-        - echo "Testing Started ..."
-        - npm test
-        - echo "Testing Finished."
+#        - npm run tslint
+#        - echo "Linting Finished."
+#        - echo "Testing Started ..."
+        - yarn test
+#        - echo "Testing Finished."
 
-    - stage: publish
-      if: tag IS present
-      before_deploy:
-        - echo "Publishing npm package ..."
-      after_deploy:
-        - echo "Publish npm package successfully!"
-      deploy:
-        provider: npm
-        email: $NPM_EMAIL
-        api_key: $NPM_TOKEN
-        skip_cleanup: true
-        on:
-          tags: true
+#    - stage: publish
+#      if: tag IS present
+#      before_deploy:
+#        - echo "Publishing npm package ..."
+#      after_deploy:
+#        - echo "Publish npm package successfully!"
+#      deploy:
+#        provider: npm
+#        email: $NPM_EMAIL
+#        api_key: $NPM_TOKEN
+#        skip_cleanup: true
+#        on:
+#          tags: true

@@ -1,7 +1,8 @@
 import { JSONPLACEHOLDER_URL, verifyRequest } from "../../testHelpers";
 import { ServiceBuilder } from "../../../src/service.builder";
-import { PostsApiService } from "../../fixture/fixtures";
+import { PostsApiService, ServiceWithoutBasePath } from "../../fixture/fixtures";
 import { Response } from "../../../src";
+import { CONTENT_TYPE, CONTENT_TYPE_HEADER } from "../../../src/constants";
 
 describe("Decorators", () => {
   const service = new ServiceBuilder().setEndpoint(JSONPLACEHOLDER_URL).build(PostsApiService);
@@ -16,6 +17,15 @@ describe("Decorators", () => {
     expect(response.data).toHaveLength(100);
 
     verifyRequest(response, "get");
+  });
+
+  test("@GET - without base path", async () => {
+    const service = new ServiceBuilder().setEndpoint(JSONPLACEHOLDER_URL).build(ServiceWithoutBasePath);
+    const response = await service.get();
+
+    expect(response.data).toHaveLength(100);
+
+    verifyRequest(response, "get", "/posts");
   });
 
   test("@GET - ignore base path", async () => {
@@ -82,9 +92,10 @@ describe("Decorators", () => {
   });
 
   test("@HeaderMap", async () => {
-    const response = await service.headerMap({ h1: "v1", h2: "v2" });
-    expect(response.config.headers["h1"]).toBe("v1");
+    const response = await service.headerMap({ h1: 1, h2: "v2", h3: true });
+    expect(response.config.headers["h1"]).toBe(1);
     expect(response.config.headers["h2"]).toBe("v2");
+    expect(response.config.headers["h3"]).toBe(true);
     verifyRequest(response, "get");
   });
 
@@ -103,12 +114,34 @@ describe("Decorators", () => {
   });
 
   test("@ResponseStatus", async () => {
-    expect(service.__meta__.responseStatus.responseStatus).toEqual(200);
+    expect(service.__getServiceMetadata__().getMetadata("responseStatus").responseStatus).toEqual(200);
   });
 
   test("@Config", async () => {
     const response = await service.config();
     expect(response.config.maxRedirects).toEqual(3);
+  });
+
+  test("@Field", async () => {
+    const response = await service.field(
+      PostsApiService.dto.userId,
+      PostsApiService.dto.title,
+      PostsApiService.dto.body,
+    );
+
+    expect(response.config.headers[CONTENT_TYPE_HEADER]).toBe(CONTENT_TYPE.APPLICATION_JSON);
+
+    verifyRequest(response, "post", "/posts/", 201);
+    verifyBody(response, PostsApiService.dto);
+  });
+
+  test("@FieldMap", async () => {
+    const response = await service.fieldMap(PostsApiService.dto);
+
+    expect(response.config.headers[CONTENT_TYPE_HEADER]).toBe(CONTENT_TYPE.APPLICATION_JSON);
+
+    verifyRequest(response, "post", "/posts/", 201);
+    verifyBody(response, PostsApiService.dto);
   });
 
   test("@QueryMap", async () => {
@@ -123,7 +156,7 @@ describe("Decorators", () => {
   function verifyBody<T>(response: Response, expectedRequestBody?: T) {
     if (!expectedRequestBody) return;
 
-    expect(response.config.data).toBe(JSON.stringify(expectedRequestBody));
+    expect(JSON.parse(response.config.data)).toMatchObject(expectedRequestBody);
     expect(response.data).toMatchObject(expectedRequestBody);
   }
 

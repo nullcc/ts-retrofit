@@ -11,4 +11,12 @@ module.exports = {
   rootDir: ".",
   setupFilesAfterEnv: ["./tests/testSetupFile.js"],
   coverageReporters: ["json-summary", "text", "lcov"],
+  coverageThreshold: {
+    global: {
+      branches: 90,
+      functions: 90,
+      lines: 90,
+      statements: 90,
+    },
+  },
 };

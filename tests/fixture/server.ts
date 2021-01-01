@@ -20,6 +20,10 @@ app.get("/api/v1/posts", jsonParser, function (req, res) {
   res.status(200).json({});
 });
 
+app.post("/api/v1/form-url-encoded", jsonParser, function (req, res) {
+  res.status(200).json(req.body);
+});
+
 app.post("/api/v1/posts", jsonParser, function (req, res) {
   res.status(200).json({});
 });

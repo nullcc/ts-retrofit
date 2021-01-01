@@ -1,12 +1,20 @@
 import { ServiceBuilder } from "../../../src/service.builder";
 import { JSONPLACEHOLDER_URL, verifyBody, verifyRequest } from "../../testHelpers";
-import { PostsApiService, TransformerApiService } from "../../fixture/fixtures";
+import { PostsApiService } from "../../fixture/fixtures";
+import { AxiosRequestConfig } from "axios";
+import { TransformerApiService } from "../../fixture/fixtures.transformer";
 
-// @BUG
-describe.skip("Request transformer", () => {
-  let service = new ServiceBuilder().setEndpoint(JSONPLACEHOLDER_URL).build(TransformerApiService);
-
+describe("Request transformer", () => {
   test("@RequestTransformer", async () => {
+    const interceptor = (config: AxiosRequestConfig) => {
+      return config;
+    };
+
+    let service = new ServiceBuilder()
+      .setEndpoint(JSONPLACEHOLDER_URL)
+      .setRequestInterceptors(interceptor)
+      .build(TransformerApiService);
+
     const transformed = {
       ...PostsApiService.dto,
       title: "updated title1",

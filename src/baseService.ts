@@ -1,33 +1,40 @@
-import axios, { AxiosRequestConfig, AxiosResponse, AxiosInstance } from "axios";
+import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 import FormData from "form-data";
-import { DataResolverFactory } from "./dataResolver";
-import { HttpMethod } from "./constants";
-import { HttpMethodOptions } from "./decorators";
+import { CONTENT_TYPE_HEADER, CONTENT_TYPE, HttpMethod, HttpMethodOptions, MethodMetadata } from "./constants";
 import { isNode } from "./util";
 import { RetrofitHttpClient } from "./http.client";
 import { ServiceBuilder } from "./service.builder";
+import { ServiceMetaData } from "./metadata";
+import { requestHeadersResolver } from "./request-resolvers/headers-request-resolver";
+import { requestQueryParamsResolver } from "./request-resolvers/query-params-request-resolver";
+import { requestBodyResolver } from "./request-resolvers/body-request-resolver";
 
 axios.defaults.withCredentials = true;
 
 export interface Response<T = any> extends AxiosResponse<T> {}
 export const STUB_RESPONSE = <T>() => ({} as T);
 
-const NON_HTTP_REQUEST_PROPERTY_NAME = "__nonHTTPRequestMethod__";
+export const ErrorMessages = {
+  NO_HTTP_METHOD: "No http method for method (Add @GET / @POST ...)",
+  EMPTY_HEADER_KEY: "Header key can't be empty",
+  WRONG_HEADERS_PROPERTY_TYPE: "Header's property can be only number / string / boolean",
+  WRONG_HEADER_TYPE: "Header type can be only number / string / boolean",
 
-export const nonHTTPRequestMethod = (target: any, methodName: string) => {
-  const descriptor = {
-    value: true,
-    writable: false,
-  };
-  Object.defineProperty(target[methodName], NON_HTTP_REQUEST_PROPERTY_NAME, descriptor);
+  EMPTY_QUERY_KEY: "Query key can't be empty",
+  WRONG_QUERY_TYPE: "Query type can be only number / string / boolean",
+  WRONG_QUERY_MAP_PROPERTY_TYPE: "QueryMap should only contain number / string / boolean",
+
+  EMPTY_FIELD_KEY: "Field key can't be empty",
 };
 
 export class BaseService {
-  public __meta__: any;
-  private _endpoint: string;
-  private _httpClient: RetrofitHttpClient;
-  private _methodMap: Map<string, Function>;
-  private _timeout: number;
+  // Generated before constructor call from decorators
+  // @ts-ignore
+  private __meta__: ServiceMetaData<this>;
+  private readonly _endpoint: string;
+  private readonly _httpClient: RetrofitHttpClient;
+  private readonly _methodMap: Map<string, Function>;
+  private readonly _timeout: number;
 
   constructor(serviceBuilder: ServiceBuilder) {
     this._endpoint = serviceBuilder.endpoint;
@@ -46,11 +53,6 @@ export class BaseService {
         enumerable: true,
         configurable: true,
         get(): Function {
-          const method = self._methodMap[methodName];
-          const methodOriginalDescriptor = Object.getOwnPropertyDescriptor(method, NON_HTTP_REQUEST_PROPERTY_NAME);
-          if (methodOriginalDescriptor && methodOriginalDescriptor.value === true) {
-            return method;
-          }
           return (...args: any[]) => {
             return self._wrap(methodName, args);
           };
@@ -60,70 +62,48 @@ export class BaseService {
     }
   }
 
-  @nonHTTPRequestMethod
-  public isClientStandalone(): boolean {
-    return this._httpClient.isStandalone();
+  __getServiceMetadata__() {
+    if (!this.__meta__) this.__meta__ = new ServiceMetaData<this>();
+    return this.__meta__;
   }
 
-  @nonHTTPRequestMethod
-  public useRequestInterceptor(interceptor: RequestInterceptorFunction): number {
-    return this._httpClient.useRequestInterceptor(interceptor);
-  }
-
-  @nonHTTPRequestMethod
-  public useResponseInterceptor(interceptor: ResponseInterceptorFunction): number {
-    return this._httpClient.useResponseInterceptor(interceptor);
-  }
-
-  @nonHTTPRequestMethod
-  public ejectRequestInterceptor(id: number): void {
-    this._httpClient.ejectRequestInterceptor(id);
-  }
-
-  @nonHTTPRequestMethod
-  public ejectResponseInterceptor(id: number): void {
-    this._httpClient.ejectResponseInterceptor(id);
-  }
-
-  @nonHTTPRequestMethod
-  public setEndpoint(endpoint: string): void {
-    this._endpoint = endpoint;
-  }
-
-  @nonHTTPRequestMethod
   private _getInstanceMethodNames(): string[] {
     let properties: string[] = [];
     let obj = this;
+
     do {
       properties = properties.concat(Object.getOwnPropertyNames(obj));
       obj = Object.getPrototypeOf(obj);
     } while (obj);
     return properties.sort().filter((e, i, arr) => {
-      return e !== arr[i + 1] && this[e] && typeof this[e] === "function";
+      return e !== arr[i + 1] && this[e] && typeof this[e] === "function" && this.__meta__.methodMetadata.has(e);
     });
   }
 
-  @nonHTTPRequestMethod
   private _wrap(methodName: string, args: any[]): Promise<Response> {
     const { url, method, headers, query, data } = this._resolveParameters(methodName, args);
     const config = this._makeConfig(methodName, url, method, headers, query, data);
     return this._httpClient.sendRequest(config);
   }
 
-  @nonHTTPRequestMethod
   private _resolveParameters(methodName: string, args: any[]): any {
+    const metadata = this.__meta__.getMetadata(methodName);
+
     const url = this._resolveUrl(methodName, args);
     const method = this._resolveHttpMethod(methodName);
-    let headers = this._resolveHeaders(methodName, args);
-    const query = this._resolveQuery(methodName, args);
-    const data = this._resolveData(methodName, headers, args);
-    if (headers["content-type"] && headers["content-type"].indexOf("multipart/form-data") !== -1 && isNode) {
+    let headers = requestHeadersResolver(metadata, methodName, args);
+    const query = requestQueryParamsResolver(metadata, methodName, args);
+    const data = requestBodyResolver(metadata, methodName, headers, args);
+    if (
+      headers[CONTENT_TYPE_HEADER] &&
+      headers[CONTENT_TYPE_HEADER].indexOf(CONTENT_TYPE.MULTIPART_FORM_DATA) !== -1 &&
+      isNode
+    ) {
       headers = { ...headers, ...(data as FormData).getHeaders() };
     }
     return { url, method, headers, query, data };
   }
 
-  @nonHTTPRequestMethod
   private _makeConfig(
     methodName: string,
     url: string,
@@ -139,166 +119,78 @@ export class BaseService {
       params: query,
       data,
     };
+    const metadata = this.__meta__.getMetadata(methodName);
+
     // response type
-    if (this.__meta__[methodName].responseType) {
-      config.responseType = this.__meta__[methodName].responseType;
+    if (metadata.responseType) {
+      config.responseType = metadata.responseType;
     }
     // request transformer
-    if (this.__meta__[methodName].requestTransformer) {
-      config.transformRequest = this.__meta__[methodName].requestTransformer;
+    if (metadata.requestTransformer) {
+      config.transformRequest = metadata.requestTransformer;
     }
     // response transformer
-    if (this.__meta__[methodName].responseTransformer) {
-      config.transformResponse = this.__meta__[methodName].responseTransformer;
+    if (metadata.responseTransformer) {
+      config.transformResponse = metadata.responseTransformer;
     }
     // timeout
-    config.timeout = this.__meta__[methodName].timeout || this._timeout;
+    config.timeout = metadata.timeout || this._timeout;
     // mix in config set by @Config
     config = {
       ...config,
-      ...this.__meta__[methodName].config,
+      ...metadata.config,
     };
     return config;
   }
 
-  @nonHTTPRequestMethod
   private _resolveUrl(methodName: string, args: any[]): string {
-    const meta = this.__meta__;
+    const metadata = this.__meta__.getMetadata(methodName);
+
     const endpoint = this._endpoint;
-    const basePath = meta.basePath;
-    const path = meta[methodName].path;
-    const pathParams = meta[methodName].pathParams;
-    const options = meta[methodName].options || {};
-    let url = this.makeURL(endpoint, basePath, path, options);
-    for (const pos in pathParams) {
-      if (pathParams[pos]) {
-        url = url.replace(new RegExp(`\{${pathParams[pos]}}`), args[pos]);
-      }
-    }
+    const pathParams = metadata.pathParams;
+    let url = this.makeURL(endpoint, this.__meta__.basePath, metadata.path, metadata.options);
+
+    Object.entries(pathParams).map((e) => {
+      const [idx, pathParamName] = e;
+      url = url.replace(new RegExp(`\{${pathParamName}}`), args[idx]);
+    });
+
     return url;
   }
 
-  @nonHTTPRequestMethod
-  private makeURL(endpoint: string, basePath: string, path: string, options: HttpMethodOptions): string {
-    const isAbsoluteURL = /^([a-z][a-z\d\+\-\.]*:)?\/\//i.test(path);
-    if (isAbsoluteURL) {
-      return path;
+  private makeURL(endpoint: string, basePath?: string, path?: string, options?: HttpMethodOptions): string {
+    let buf = [endpoint];
+
+    if (basePath) buf.push(basePath);
+
+    if (path) {
+      const isAbsoluteURL = /^([a-z][a-z\d\+\-\.]*:)?\/\//i.test(path);
+      if (isAbsoluteURL) {
+        return path;
+      }
+
+      if (options && options.ignoreBasePath) {
+        return [endpoint, path].join("");
+      }
+
+      buf.push(path);
     }
-    if (options.ignoreBasePath) {
-      return [endpoint, path].join("");
-    }
-    return [endpoint, basePath, path].join("");
+
+    return buf.join("");
   }
 
-  @nonHTTPRequestMethod
   private _resolveHttpMethod(methodName: string): HttpMethod {
-    const meta = this.__meta__;
-    return meta[methodName].method;
-  }
+    let httpMethod = this.__meta__.getMetadata(methodName).httpMethod;
+    if (!httpMethod) throw new Error(ErrorMessages.NO_HTTP_METHOD);
 
-  @nonHTTPRequestMethod
-  private _resolveHeaders(methodName: string, args: any[]): any {
-    const meta = this.__meta__;
-    const headers = meta[methodName].headers || {};
-    const headerParams = meta[methodName].headerParams;
-    for (const pos in headerParams) {
-      if (headerParams[pos]) {
-        headers[headerParams[pos]] = args[pos];
-      }
-    }
-    const headerMapIndex = meta[methodName].headerMapIndex;
-    if (headerMapIndex >= 0) {
-      for (const key in args[headerMapIndex]) {
-        if (args[headerMapIndex][key]) {
-          headers[key] = args[headerMapIndex][key];
-        }
-      }
-    }
-    return headers;
-  }
-
-  @nonHTTPRequestMethod
-  private _resolveQuery(methodName: string, args: any[]): any {
-    const meta = this.__meta__;
-    const query = meta[methodName].query || {};
-    const queryParams = meta[methodName].queryParams;
-    for (const pos in queryParams) {
-      if (queryParams[pos]) {
-        query[queryParams[pos]] = args[pos];
-      }
-    }
-    const queryMapIndex = meta[methodName].queryMapIndex;
-    if (queryMapIndex >= 0) {
-      for (const key in args[queryMapIndex]) {
-        if (args[queryMapIndex][key]) {
-          query[key] = args[queryMapIndex][key];
-        }
-      }
-    }
-    return query;
-  }
-
-  @nonHTTPRequestMethod
-  private _resolveData(methodName: string, headers: any, args: any[]): any {
-    const meta = this.__meta__;
-    const bodyIndex = meta[methodName].bodyIndex;
-    const fields = meta[methodName].fields || {};
-    const parts = meta[methodName].parts || {};
-    const fieldMapIndex = meta[methodName].fieldMapIndex;
-    let data = {};
-
-    // @Body
-    if (bodyIndex >= 0) {
-      if (Array.isArray(args[bodyIndex])) {
-        data = args[bodyIndex];
-      } else {
-        data = { ...data, ...args[bodyIndex] };
-      }
-    }
-
-    // @Field
-    if (Object.keys(fields).length > 0) {
-      const reqData = {};
-      for (const pos in fields) {
-        if (fields[pos]) {
-          reqData[fields[pos]] = args[pos];
-        }
-      }
-      data = { ...data, ...reqData };
-    }
-
-    // @FieldMap
-    if (fieldMapIndex >= 0) {
-      const reqData = {};
-      for (const key in args[fieldMapIndex]) {
-        if (args[fieldMapIndex][key]) {
-          reqData[key] = args[fieldMapIndex][key];
-        }
-      }
-      data = { ...data, ...reqData };
-    }
-
-    // @MultiPart
-    if (Object.keys(parts).length > 0) {
-      const reqData = {};
-      for (const pos in parts) {
-        if (parts[pos]) {
-          reqData[parts[pos]] = args[pos];
-        }
-      }
-      data = { ...data, ...reqData };
-    }
-
-    const contentType = headers["content-type"] || "application/json";
-    const dataResolverFactory = new DataResolverFactory();
-    const dataResolver = dataResolverFactory.createDataResolver(contentType);
-    return dataResolver.resolve(headers, data);
+    return httpMethod;
   }
 }
 
 export type RequestInterceptorFunction = (
   value: AxiosRequestConfig,
 ) => AxiosRequestConfig | Promise<AxiosRequestConfig>;
+
 export type ResponseInterceptorFunction<T = any> = (
   value: AxiosResponse<T>,
 ) => AxiosResponse<T> | Promise<AxiosResponse<T>>;

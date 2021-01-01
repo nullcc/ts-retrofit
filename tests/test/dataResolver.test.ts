@@ -7,6 +7,7 @@ import {
   DataResolverFactory,
 } from "../../src/dataResolver";
 import * as fs from "fs";
+import { CONTENT_TYPE, CONTENT_TYPE_HEADER } from "../../src/constants";
 
 describe("Data resolver.", () => {
   test("BaseDataResolver", async () => {
@@ -20,7 +21,7 @@ describe("Data resolver.", () => {
   test("FormUrlencodedResolver with flat object.", async () => {
     const formUrlencodedResolver = new FormUrlencodedResolver();
     const headers = {
-      "content-type": "application/x-www-form-urlencoded",
+      [CONTENT_TYPE_HEADER]: CONTENT_TYPE.FORM_URL_ENCODED,
     };
     const obj = {
       foo: "bar",
@@ -37,7 +38,7 @@ describe("Data resolver.", () => {
   test("FormUrlencodedResolver with nested object.", async () => {
     const formUrlencodedResolver = new FormUrlencodedResolver();
     const headers = {
-      "content-type": "application/x-www-form-urlencoded",
+      [CONTENT_TYPE_HEADER]: CONTENT_TYPE.FORM_URL_ENCODED,
     };
     const data = {
       a: 1,
@@ -53,7 +54,7 @@ describe("Data resolver.", () => {
   test("MultiPartResolver.", async () => {
     const multiPartResolver = new MultiPartResolver();
     const headers = {
-      "content-type": "multipart/form-data",
+      [CONTENT_TYPE_HEADER]: CONTENT_TYPE.MULTIPART_FORM_DATA,
     };
     const bucket = {
       value: "test-bucket",
@@ -73,7 +74,7 @@ describe("Data resolver.", () => {
   test("JsonResolver.", async () => {
     const jsonResolver = new JsonResolver();
     const headers = {
-      "content-type": "application/json",
+      [CONTENT_TYPE_HEADER]: CONTENT_TYPE.APPLICATION_JSON,
     };
     const data = {
       a: 1,
@@ -93,7 +94,7 @@ describe("Data resolver.", () => {
   test("TextXmlResolver.", async () => {
     const textXmlResolver = new TextXmlResolver();
     const headers = {
-      "content-type": "text/xml",
+      [CONTENT_TYPE_HEADER]: CONTENT_TYPE.XML,
     };
     const xmlString = `
       <?xml version="1.0" encoding="UTF-8"?>
