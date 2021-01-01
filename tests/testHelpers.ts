@@ -7,7 +7,6 @@ export const testServerUrl = (address: AddressInfo | string | null) =>
   `http://localhost:${(address as AddressInfo).port}`;
 
 export function verifyRequest<T>(response: Response, method: Method, path: string = "/posts/", status = 200) {
-  expect(response.request.protocol + "//" + response.request.host).toBe(JSONPLACEHOLDER_URL);
   expect(response.request.method).toBe(method.toUpperCase());
   expect(response.request.path).toBe(path);
 
@@ -26,3 +25,7 @@ export function verifyBody<T>(response: Response, expectedRequestBody: T, expect
 describe.skip("TMP", () => {
   test.skip("t", () => {});
 });
+
+export let testServer = {
+  url: "",
+};

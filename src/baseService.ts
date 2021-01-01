@@ -16,6 +16,7 @@ export const STUB_RESPONSE = <T>() => ({} as T);
 
 export const ErrorMessages = {
   NO_HTTP_METHOD: "No http method for method (Add @GET / @POST ...)",
+
   EMPTY_HEADER_KEY: "Header key can't be empty",
   WRONG_HEADERS_PROPERTY_TYPE: "Header's property can be only number / string / boolean",
   WRONG_HEADER_TYPE: "Header type can be only number / string / boolean",
@@ -25,6 +26,7 @@ export const ErrorMessages = {
   WRONG_QUERY_MAP_PROPERTY_TYPE: "QueryMap should only contain number / string / boolean",
 
   EMPTY_FIELD_KEY: "Field key can't be empty",
+  EMPTY_PART_KEY: "Part key can't be empty",
 };
 
 export class BaseService {

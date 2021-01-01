@@ -1,11 +1,11 @@
 import { ServiceBuilder } from "../../src/service.builder";
-import { JSONPLACEHOLDER_URL } from "../testHelpers";
+import { testServer } from "../testHelpers";
 import { PostsApiService } from "../fixture/fixtures";
 import axios, { AxiosRequestConfig } from "axios";
 
 describe("Standalone", () => {
   test("With instance", async () => {
-    const serviceWithoutStandalone = new ServiceBuilder().setEndpoint(JSONPLACEHOLDER_URL).build(PostsApiService);
+    const serviceWithoutStandalone = new ServiceBuilder().setEndpoint(testServer.url).build(PostsApiService);
     const axiosInstance = axios.create();
 
     axiosInstance.interceptors.response.use((value) => {
@@ -14,7 +14,7 @@ describe("Standalone", () => {
     });
 
     const serviceWithStandalone = new ServiceBuilder()
-      .setEndpoint(JSONPLACEHOLDER_URL)
+      .setEndpoint(testServer.url)
       .setStandalone(axiosInstance)
       .build(PostsApiService);
 
@@ -23,7 +23,7 @@ describe("Standalone", () => {
   });
 
   test("With boolean", async () => {
-    const serviceWithoutStandalone = new ServiceBuilder().setEndpoint(JSONPLACEHOLDER_URL).build(PostsApiService);
+    const serviceWithoutStandalone = new ServiceBuilder().setEndpoint(testServer.url).build(PostsApiService);
 
     const interceptor = (config: AxiosRequestConfig) => {
       config["standaloneId"] = 101;
@@ -31,7 +31,7 @@ describe("Standalone", () => {
     };
 
     const serviceWithStandalone = new ServiceBuilder()
-      .setEndpoint(JSONPLACEHOLDER_URL)
+      .setEndpoint(testServer.url)
       .setStandalone(true)
       .setRequestInterceptors(interceptor)
       .build(PostsApiService);

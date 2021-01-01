@@ -1,6 +1,7 @@
 import express from "express";
 import bodyParser from "body-parser";
 import multer from "multer";
+import { Post, posts } from "./fixtures";
 
 export const app = express();
 
@@ -16,21 +17,46 @@ const sleep = async (milliseconds: number): Promise<void> => {
   });
 };
 
-app.get("/api/v1/posts", jsonParser, function (req, res) {
-  res.status(200).json({});
+app.get("/posts", jsonParser, function (req, res) {
+  res.status(200).json(posts);
 });
+
+app.post("/posts", jsonParser, function (req, res) {
+  res.status(201).json(req.body);
+});
+
+app.get("/posts/:id", jsonParser, function (req, res) {
+  res.status(200).json(posts.find((p) => p.id === Number(req.params["id"])));
+});
+
+app.put("/posts/:id", jsonParser, function (req, res) {
+  const found = posts.find((p) => p.id === Number(req.params["id"]));
+  res.status(200).json({ ...found, ...req.body });
+});
+
+app.patch("/posts/:id", jsonParser, function (req, res) {
+  const found = posts.find((p) => p.id === Number(req.params["id"]));
+  res.status(200).json({ ...found, ...req.body });
+});
+
+app.delete("/posts/:id", jsonParser, function (req, res) {
+  res.status(200).json(posts.find((p) => p.id === Number(req.params["id"])));
+});
+
+app.head("/posts/:id", jsonParser, function (req, res) {
+  res.status(200).json(posts.find((p) => p.id === Number(req.params["id"])));
+});
+app.options("/posts/:id", jsonParser, function (req, res) {
+  res.status(204).json(posts.find((p) => p.id === Number(req.params["id"])));
+});
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
 
 app.post("/api/v1/form-url-encoded", jsonParser, function (req, res) {
   res.status(200).json(req.body);
 });
 
-app.post("/api/v1/posts", jsonParser, function (req, res) {
-  res.status(200).json({});
-});
-
 app.post("/api/v1/upload", upload.any(), function (req, res) {
-  // get fields of form data from `req.body`
-  // get files from req.files array
   res.status(200).json({});
 });
 
@@ -39,43 +65,10 @@ app.get("/api/v1/file", upload.any(), function (req, res) {
 });
 
 app.post("/api/v1/sms", jsonParser, function (req, res) {
-  // get fields of form data from `req.body`
-  // get files from req.files array
-  res.status(200).json({});
-});
-
-app.post("/api/v1/groups", jsonParser, function (req, res) {
-  // get fields of form data from `req.body`
-  // get files from req.files array
-  res.status(200).json({});
-});
-
-app.get("/api/v1/interceptor", function (req, res) {
-  res.status(200).json(req.query);
-});
-
-app.post("/api/v1/interceptor", function (req, res) {
-  res.status(200).json(req.body);
-});
-
-app.get("/api/v1/header", function (req, res) {
-  res.status(200).json({ role: req.header("X-Role") });
-});
-
-app.post("/api/v1/request-transformer", function (req, res) {
-  res.status(200).json({});
-});
-
-app.get("/api/v1/response-transformer", function (req, res) {
   res.status(200).json({});
 });
 
 app.get("/api/v1/sleep-5000", async function (req, res) {
-  await sleep(5000);
-  res.status(200).json({});
-});
-
-app.get("/api/v1/config", async function (req, res) {
   await sleep(5000);
   res.status(200).json({});
 });

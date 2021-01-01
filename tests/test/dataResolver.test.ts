@@ -1,10 +1,10 @@
 import {
   BaseDataResolver,
-  FormUrlencodedResolver,
-  MultiPartResolver,
-  JsonResolver,
-  TextXmlResolver,
   DataResolverFactory,
+  FormUrlencodedResolver,
+  JsonResolver,
+  MultiPartResolver,
+  TextXmlResolver,
 } from "../../src/dataResolver";
 import * as fs from "fs";
 import { CONTENT_TYPE, CONTENT_TYPE_HEADER } from "../../src/constants";

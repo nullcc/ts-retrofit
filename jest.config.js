@@ -9,7 +9,7 @@ module.exports = {
   testURL: "http://localhost/",
   testEnvironment: "node",
   rootDir: ".",
-  setupFilesAfterEnv: ["./tests/testSetupFile.js"],
+  setupFilesAfterEnv: ["./tests/testSetupFile.ts"],
   coverageReporters: ["json-summary", "text", "lcov"],
   coverageThreshold: {
     global: {

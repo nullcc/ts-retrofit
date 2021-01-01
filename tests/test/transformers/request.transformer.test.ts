@@ -1,5 +1,5 @@
 import { ServiceBuilder } from "../../../src/service.builder";
-import { JSONPLACEHOLDER_URL, verifyBody, verifyRequest } from "../../testHelpers";
+import { testServer, verifyBody, verifyRequest } from "../../testHelpers";
 import { PostsApiService } from "../../fixture/fixtures";
 import { AxiosRequestConfig } from "axios";
 import { TransformerApiService } from "../../fixture/fixtures.transformer";
@@ -11,7 +11,7 @@ describe("Request transformer", () => {
     };
 
     let service = new ServiceBuilder()
-      .setEndpoint(JSONPLACEHOLDER_URL)
+      .setEndpoint(testServer.url)
       .setRequestInterceptors(interceptor)
       .build(TransformerApiService);
 

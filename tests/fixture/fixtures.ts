@@ -51,6 +51,21 @@ export interface SearchQuery {
   userId?: number;
 }
 
+export const posts: Post[] = [
+  {
+    id: 1,
+    userId: 1,
+    body: "body1",
+    title: "title1",
+  },
+  {
+    id: 2,
+    userId: 2,
+    body: "body2",
+    title: "title2",
+  },
+];
+
 @BasePath(PostsApiService.BASE_PATH)
 export class PostsApiService extends BaseService {
   static BASE_PATH = "/posts";

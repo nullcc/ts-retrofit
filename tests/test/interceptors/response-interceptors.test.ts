@@ -1,7 +1,7 @@
 import { ResponseInterceptor, ResponseInterceptorFunction } from "../../../src";
 import { ServiceBuilder } from "../../../src/service.builder";
 import { AxiosResponse } from "axios";
-import { JSONPLACEHOLDER_URL } from "../../testHelpers";
+import { testServer } from "../../testHelpers";
 import { PostsApiService } from "../../fixture/fixtures";
 
 describe("Response interceptors", () => {
@@ -47,7 +47,7 @@ describe("Response interceptors", () => {
       const spy = jest.spyOn(interceptor, "onRejected");
 
       const service = new ServiceBuilder()
-        .setEndpoint(JSONPLACEHOLDER_URL)
+        .setEndpoint(testServer.url)
         .setResponseInterceptors(interceptor)
         .setStandalone(true)
         .build(PostsApiService);
@@ -69,7 +69,7 @@ describe("Response interceptors", () => {
       const spy = jest.spyOn(interceptor, "onRejected");
 
       const service = new ServiceBuilder()
-        .setEndpoint(JSONPLACEHOLDER_URL)
+        .setEndpoint(testServer.url)
         .setStandalone(true)
         .setResponseInterceptors(interceptor)
         .build(PostsApiService);
@@ -81,7 +81,7 @@ describe("Response interceptors", () => {
   });
 
   async function verifyInterceptor(setInterceptor: (builder: ServiceBuilder) => void) {
-    const builder = new ServiceBuilder().setEndpoint(JSONPLACEHOLDER_URL).setStandalone(true);
+    const builder = new ServiceBuilder().setEndpoint(testServer.url).setStandalone(true);
 
     setInterceptor(builder);
 

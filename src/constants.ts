@@ -33,8 +33,8 @@ export type MethodMetadata = {
   options?: HttpMethodOptions;
   httpMethod?: HttpMethod;
   bodyIndex?: number;
-  fields: { [key: number]: any };
-  parts: { [key: number]: any };
+  fields: { [key: number]: string };
+  parts: { [key: number]: string };
   fieldMapIndex?: number;
 
   headers: HeadersParamType;

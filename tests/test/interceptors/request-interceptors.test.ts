@@ -1,7 +1,7 @@
 import { RequestInterceptor, RequestInterceptorFunction } from "../../../src";
 import { ServiceBuilder } from "../../../src/service.builder";
 import { AxiosRequestConfig } from "axios";
-import { JSONPLACEHOLDER_URL } from "../../testHelpers";
+import { testServer } from "../../testHelpers";
 import { PostsApiService } from "../../fixture/fixtures";
 
 describe("Request interceptors", () => {
@@ -28,7 +28,7 @@ describe("Request interceptors", () => {
   });
 
   async function verifyInterceptor(setInterceptor: (builder: ServiceBuilder) => void) {
-    const builder = new ServiceBuilder().setEndpoint(JSONPLACEHOLDER_URL);
+    const builder = new ServiceBuilder().setEndpoint(testServer.url);
     setInterceptor(builder);
     const service = builder.build(PostsApiService);
 

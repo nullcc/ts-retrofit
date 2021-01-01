@@ -16,6 +16,7 @@ import {
   Body,
   Query,
   QueryMap,
+  FieldMap,
 } from "../../src";
 import { Post, PostCreateDTO, SearchQuery } from "./fixtures";
 
@@ -32,6 +33,18 @@ export class WrongHeaderService extends BaseService {
 
   @GET("/")
   async emptyHeaderKey(@Header("") header: unknown): Promise<Response> {
+    return <Response>{};
+  }
+}
+
+export class WrongFieldService extends BaseService {
+  @GET("/")
+  async wrongFieldMap(@FieldMap param: { [key: string]: unknown }): Promise<Response> {
+    return <Response>{};
+  }
+
+  @GET("/")
+  async emptyFieldKey(@Field("") param: unknown): Promise<Response> {
     return <Response>{};
   }
 }

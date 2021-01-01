@@ -1,11 +1,16 @@
 import { ServiceBuilder } from "../../../src/service.builder";
-import { JSONPLACEHOLDER_URL } from "../../testHelpers";
-import { NoHttpMethodService, WrongHeaderService, WrongQueryService } from "../../fixture/fixtures.wrong-cases";
+import { testServer } from "../../testHelpers";
+import {
+  NoHttpMethodService,
+  WrongFieldService,
+  WrongHeaderService,
+  WrongQueryService,
+} from "../../fixture/fixtures.wrong-cases";
 import { ErrorMessages } from "../../../src";
 
 describe("Decorators - wrong cases", () => {
   describe("Headers", () => {
-    const service = new ServiceBuilder().setEndpoint(JSONPLACEHOLDER_URL).build(WrongHeaderService);
+    const service = new ServiceBuilder().setEndpoint(testServer.url).build(WrongHeaderService);
 
     describe("@HeaderMap", () => {
       test("Empty header key", async () => {
@@ -46,8 +51,30 @@ describe("Decorators - wrong cases", () => {
     });
   });
 
+  describe("Fields", () => {
+    const service = new ServiceBuilder().setEndpoint(testServer.url).build(WrongFieldService);
+
+    describe("@FieldMap", () => {
+      test("Empty field key", async () => {
+        await verifyErrorThrown(async () => {
+          await service.wrongFieldMap({
+            "": "hello",
+          });
+        }, ErrorMessages.EMPTY_FIELD_KEY);
+      });
+    });
+
+    describe("@Field", () => {
+      test("Empty field key", async () => {
+        await verifyErrorThrown(async () => {
+          await service.emptyFieldKey("");
+        }, ErrorMessages.EMPTY_FIELD_KEY);
+      });
+    });
+  });
+
   describe("Query params", () => {
-    const service = new ServiceBuilder().setEndpoint(JSONPLACEHOLDER_URL).build(WrongQueryService);
+    const service = new ServiceBuilder().setEndpoint(testServer.url).build(WrongQueryService);
 
     describe("@QueryMap", () => {
       test("Empty header key", async () => {
@@ -89,7 +116,7 @@ describe("Decorators - wrong cases", () => {
   });
 
   describe("No Http decorator", () => {
-    const noHttpMethodService = new ServiceBuilder().setEndpoint(JSONPLACEHOLDER_URL).build(NoHttpMethodService);
+    const noHttpMethodService = new ServiceBuilder().setEndpoint(testServer.url).build(NoHttpMethodService);
 
     describe("Works fine with not decorated methods", () => {
       test("No params", async () => {

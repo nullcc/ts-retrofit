@@ -1,5 +1,6 @@
 import { CONTENT_TYPE, CONTENT_TYPE_HEADER, MethodMetadata } from "../constants";
 import { DataResolverFactory } from "../dataResolver";
+import { ErrorMessages } from "../baseService";
 
 export const requestBodyResolver = (metadata: MethodMetadata, methodName: string, headers: any, args: any[]): any => {
   const bodyIndex = metadata.bodyIndex;
@@ -18,7 +19,7 @@ export const requestBodyResolver = (metadata: MethodMetadata, methodName: string
   // @MultiPart
   data = resolveMultipart(metadata, args, data);
 
-  const contentType = headers[CONTENT_TYPE_HEADER] || CONTENT_TYPE.APPLICATION_JSON;
+  const contentType = headers[CONTENT_TYPE_HEADER];
   const dataResolverFactory = new DataResolverFactory();
   const dataResolver = dataResolverFactory.createDataResolver(contentType);
   return dataResolver.resolve(headers, data);
@@ -26,50 +27,60 @@ export const requestBodyResolver = (metadata: MethodMetadata, methodName: string
 
 // @Body
 function resolveBody(bodyIndex: number | undefined, args: any[], data: {}) {
-  if (bodyIndex === undefined || bodyIndex < 0) return data;
+  if (bodyIndex === undefined) return data;
 
-  if (Array.isArray(args[bodyIndex])) {
-    data = args[bodyIndex];
+  const argValue = args[bodyIndex];
+
+  if (Array.isArray(argValue)) {
+    data = argValue;
   } else {
-    data = { ...data, ...args[bodyIndex] };
+    data = { ...data, ...argValue };
   }
   return data;
 }
 
+// @Field
 const resolveField = (metadata: MethodMetadata, args: any[], data: {}) => {
   if (Object.keys(metadata.fields).length === 0) return data;
 
-  const reqData = {};
-  for (const pos in metadata.fields) {
-    if (metadata.fields[pos]) {
-      reqData[metadata.fields[pos]] = args[pos];
-    }
-  }
-  return { ...data, ...reqData };
+  const result = {};
+  Object.entries(metadata.fields).map((e) => {
+    const [idx, fieldKey] = e;
+    if (fieldKey === "") throw Error(ErrorMessages.EMPTY_FIELD_KEY);
+
+    result[fieldKey] = args[idx];
+  });
+
+  return { ...data, ...result };
 };
 
 // @MultiPart
 const resolveMultipart = (metadata: MethodMetadata, args: any[], data: {}) => {
   if (Object.keys(metadata.parts).length === 0) return data;
 
-  const reqData = {};
-  for (const pos in metadata.parts) {
-    if (metadata.parts[pos]) {
-      reqData[metadata.parts[pos]] = args[pos];
-    }
-  }
-  return { ...data, ...reqData };
+  const result = {};
+  Object.entries(metadata.parts).map((e) => {
+    const [idx, partKey] = e;
+    if (partKey === "") throw Error(ErrorMessages.EMPTY_PART_KEY);
+
+    result[partKey] = args[idx];
+  });
+  return { ...data, ...result };
 };
 
 // @FieldMap
 const resolveFieldMap = (fieldMapIndex: number | undefined, args: any[], data: {}) => {
-  if (fieldMapIndex === undefined || fieldMapIndex < 0) return data;
+  if (fieldMapIndex === undefined) return data;
 
-  const reqData = {};
-  for (const key in args[fieldMapIndex]) {
-    if (args[fieldMapIndex][key]) {
-      reqData[key] = args[fieldMapIndex][key];
-    }
-  }
-  return { ...data, ...reqData };
+  const fieldMap = args[fieldMapIndex];
+
+  const result = {};
+  Object.entries(fieldMap).map((e) => {
+    const [fieldKey, fieldValue] = e;
+    if (fieldKey === "") throw Error(ErrorMessages.EMPTY_FIELD_KEY);
+
+    result[fieldKey] = fieldValue;
+  });
+
+  return { ...data, ...result };
 };

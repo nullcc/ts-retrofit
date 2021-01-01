@@ -1,11 +1,15 @@
-import { JSONPLACEHOLDER_URL, verifyRequest } from "../../testHelpers";
+import { JSONPLACEHOLDER_URL, testServer, verifyRequest } from "../../testHelpers";
 import { ServiceBuilder } from "../../../src/service.builder";
-import { PostsApiService, ServiceWithoutBasePath } from "../../fixture/fixtures";
+import { posts, PostsApiService, ServiceWithoutBasePath } from "../../fixture/fixtures";
 import { Response } from "../../../src";
 import { CONTENT_TYPE, CONTENT_TYPE_HEADER } from "../../../src/constants";
 
 describe("Decorators", () => {
-  const service = new ServiceBuilder().setEndpoint(JSONPLACEHOLDER_URL).build(PostsApiService);
+  let service: PostsApiService;
+
+  beforeAll(() => {
+    service = new ServiceBuilder().setEndpoint(testServer.url).build(PostsApiService);
+  });
 
   test("@BasePath", async () => {
     const response = await service.get();
@@ -14,31 +18,31 @@ describe("Decorators", () => {
 
   test("@GET", async () => {
     const response = await service.get();
-    expect(response.data).toHaveLength(100);
+    expect(response.data).toHaveLength(posts.length);
 
     verifyRequest(response, "get");
   });
 
   test("@GET - without base path", async () => {
-    const service = new ServiceBuilder().setEndpoint(JSONPLACEHOLDER_URL).build(ServiceWithoutBasePath);
+    const service = new ServiceBuilder().setEndpoint(testServer.url).build(ServiceWithoutBasePath);
     const response = await service.get();
 
-    expect(response.data).toHaveLength(100);
+    expect(response.data).toHaveLength(posts.length);
 
     verifyRequest(response, "get", "/posts");
   });
 
   test("@GET - ignore base path", async () => {
     const response = await service.getIgnoreBasePath();
-    expect(response.data).toHaveLength(100);
+    expect(response.data).toHaveLength(posts.length);
 
     verifyRequest(response, "get", "/posts");
   });
 
   test("@GET - Absolute url", async () => {
+    const service = new ServiceBuilder().setEndpoint(JSONPLACEHOLDER_URL).build(PostsApiService);
     const response = await service.getAbsoluteUrl();
     expect(response.data).toHaveLength(100);
-
     verifyRequest(response, "get", "/posts");
   });
 
@@ -161,6 +165,6 @@ describe("Decorators", () => {
   }
 
   function postsUrl() {
-    return `${JSONPLACEHOLDER_URL}${PostsApiService.BASE_PATH}/`;
+    return `${testServer.url}${PostsApiService.BASE_PATH}/`;
   }
 });

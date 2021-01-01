@@ -1,23 +1,13 @@
 import { ServiceBuilder } from "../../../src/service.builder";
-import { testServerUrl } from "../../testHelpers";
+import { testServer } from "../../testHelpers";
 import { CHARSET_UTF_8, CONTENT_TYPE, CONTENT_TYPE_HEADER } from "../../../src/constants";
-import http from "http";
-import { app } from "../../fixture/server";
 import { FormUrlEncodedService } from "../../fixture/fixtures.formurlencoded";
 
 describe("Decorators - @FormUrlEncoded", () => {
   let service: FormUrlEncodedService;
-  let server: http.Server;
-  let url: string;
 
   beforeAll(() => {
-    server = app.listen(0);
-    url = testServerUrl(server.address());
-    service = new ServiceBuilder().setEndpoint(url).build(FormUrlEncodedService);
-  });
-
-  afterAll(() => {
-    server.close();
+    service = new ServiceBuilder().setEndpoint(testServer.url).build(FormUrlEncodedService);
   });
 
   const object = {
