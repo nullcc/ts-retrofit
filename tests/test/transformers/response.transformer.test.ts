@@ -7,7 +7,7 @@ describe("Response transformer", () => {
   let service: TransformerApiService;
 
   beforeAll(() => {
-    service = new ServiceBuilder().setEndpoint(testServer.url).build(TransformerApiService);
+    service = new ServiceBuilder().baseUrl(testServer.url).build(TransformerApiService);
   });
 
   test("@ResponseTransformer", async () => {

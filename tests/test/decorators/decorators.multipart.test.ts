@@ -6,7 +6,7 @@ import { FileService, MessagingService } from "../../fixture/fixtures.multipart"
 
 describe("Decorators - Multipart", () => {
   test("@Multipart", async () => {
-    const fileService = new ServiceBuilder().setEndpoint(testServer.url).build(FileService);
+    const fileService = new ServiceBuilder().baseUrl(testServer.url).build(FileService);
     const bucket = {
       value: "test-bucket",
     };
@@ -19,7 +19,7 @@ describe("Decorators - Multipart", () => {
   });
 
   test("@Multipart - test2", async () => {
-    const messagingService = new ServiceBuilder().setEndpoint(testServer.url).build(MessagingService);
+    const messagingService = new ServiceBuilder().baseUrl(testServer.url).build(MessagingService);
     const from = { value: "+11111111" };
     const to = { value: ["+22222222", "+33333333"] };
     const response = await messagingService.createSMS(from, to);
@@ -27,7 +27,7 @@ describe("Decorators - Multipart", () => {
   });
 
   test("@ResponseType", async () => {
-    const fileService = new ServiceBuilder().setEndpoint(testServer.url).build(FileService);
+    const fileService = new ServiceBuilder().baseUrl(testServer.url).build(FileService);
     const response = await fileService.getFile("x-y-z");
     expect(response.config.responseType).toEqual("stream");
   });

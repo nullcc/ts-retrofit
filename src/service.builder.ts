@@ -11,7 +11,7 @@ export class ServiceBuilder {
   private _standalone: boolean | AxiosInstance = false;
   private _requestInterceptors: Array<RequestInterceptorFunction | RequestInterceptor> = [];
   private _responseInterceptors: Array<ResponseInterceptorFunction | ResponseInterceptor> = [];
-  private _inlineResponseBody = false;
+  private _withInlineResponseBody = false;
   private _shouldSaveRequestHistory = false;
   private _timeout = 60000;
 
@@ -19,7 +19,7 @@ export class ServiceBuilder {
     return new service(this);
   }
 
-  public setEndpoint(endpoint: string): ServiceBuilder {
+  public baseUrl(endpoint: string): ServiceBuilder {
     this._endpoint = endpoint;
     return this;
   }
@@ -48,8 +48,8 @@ export class ServiceBuilder {
     return this;
   }
 
-  public onlyResponseBody(): ServiceBuilder {
-    this._inlineResponseBody = true;
+  public inlineResponseBody(): ServiceBuilder {
+    this._withInlineResponseBody = true;
     return this;
   }
 
@@ -62,8 +62,8 @@ export class ServiceBuilder {
     return this._shouldSaveRequestHistory;
   }
 
-  get inlineResponseBody(): boolean {
-    return this._inlineResponseBody;
+  get withInlineResponseBody(): boolean {
+    return this._withInlineResponseBody;
   }
 
   get endpoint(): string {

@@ -11,7 +11,7 @@ describe("Request transformer", () => {
     };
 
     const service = new ServiceBuilder()
-      .setEndpoint(testServer.url)
+      .baseUrl(testServer.url)
       .setRequestInterceptors(interceptor)
       .build(TransformerApiService);
 

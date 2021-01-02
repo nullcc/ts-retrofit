@@ -7,7 +7,7 @@ describe("Decorators - @FormUrlEncoded", () => {
   let service: FormUrlEncodedService;
 
   beforeAll(() => {
-    service = new ServiceBuilder().setEndpoint(testServer.url).build(FormUrlEncodedService);
+    service = new ServiceBuilder().baseUrl(testServer.url).build(FormUrlEncodedService);
   });
 
   const object = {

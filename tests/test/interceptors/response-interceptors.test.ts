@@ -47,7 +47,7 @@ describe("Response interceptors", () => {
       const spy = jest.spyOn(interceptor, "onRejected");
 
       const service = new ServiceBuilder()
-        .setEndpoint(testServer.url)
+        .baseUrl(testServer.url)
         .setResponseInterceptors(interceptor)
         .setStandalone(true)
         .build(PostsApiService);
@@ -69,7 +69,7 @@ describe("Response interceptors", () => {
       const spy = jest.spyOn(interceptor, "onRejected");
 
       const service = new ServiceBuilder()
-        .setEndpoint(testServer.url)
+        .baseUrl(testServer.url)
         .setStandalone(true)
         .setResponseInterceptors(interceptor)
         .build(PostsApiService);
@@ -81,7 +81,7 @@ describe("Response interceptors", () => {
   });
 
   async function verifyInterceptor(setInterceptor: (builder: ServiceBuilder) => void) {
-    const builder = new ServiceBuilder().setEndpoint(testServer.url).setStandalone(true);
+    const builder = new ServiceBuilder().baseUrl(testServer.url).setStandalone(true);
 
     setInterceptor(builder);
 

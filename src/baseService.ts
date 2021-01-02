@@ -55,7 +55,7 @@ export class BaseService {
         configurable: true,
         get() {
           return (...args: any[]) => {
-            if (serviceBuilder.inlineResponseBody) {
+            if (serviceBuilder.withInlineResponseBody) {
               return self._wrapToInlinedResponse(methodName, args);
             } else {
               return self._wrapToAxiosResponse(methodName, args);

@@ -6,7 +6,7 @@ describe("Metadata", () => {
   let service: PostsApiService;
 
   beforeAll(() => {
-    service = new ServiceBuilder().setEndpoint(testServer.url).build(PostsApiService);
+    service = new ServiceBuilder().baseUrl(testServer.url).build(PostsApiService);
   });
 
   test("Method not found", () => {

@@ -12,7 +12,7 @@ import { Post, posts } from "../../fixture/fixtures";
 
 describe("Decorators - wrong cases", () => {
   describe("Headers", () => {
-    const service = new ServiceBuilder().setEndpoint(testServer.url).build(WrongHeaderService);
+    const service = new ServiceBuilder().baseUrl(testServer.url).build(WrongHeaderService);
 
     describe("@HeaderMap", () => {
       test("Empty header key", async () => {
@@ -54,7 +54,7 @@ describe("Decorators - wrong cases", () => {
   });
 
   describe("Fields", () => {
-    const service = new ServiceBuilder().setEndpoint(testServer.url).build(WrongFieldService);
+    const service = new ServiceBuilder().baseUrl(testServer.url).build(WrongFieldService);
 
     describe("@FieldMap", () => {
       test("Empty field key", async () => {
@@ -76,7 +76,7 @@ describe("Decorators - wrong cases", () => {
   });
 
   describe("Multipart", () => {
-    const service = new ServiceBuilder().setEndpoint(testServer.url).build(WrongMultipartService);
+    const service = new ServiceBuilder().baseUrl(testServer.url).build(WrongMultipartService);
 
     test("Empty part key", async () => {
       const bucket = {
@@ -89,7 +89,7 @@ describe("Decorators - wrong cases", () => {
   });
 
   describe("Query params", () => {
-    const service = new ServiceBuilder().setEndpoint(testServer.url).build(WrongQueryService);
+    const service = new ServiceBuilder().baseUrl(testServer.url).build(WrongQueryService);
 
     describe("@QueryMap", () => {
       test("Empty header key", async () => {
@@ -131,7 +131,7 @@ describe("Decorators - wrong cases", () => {
   });
 
   describe("No Http decorator", () => {
-    const noHttpMethodService = new ServiceBuilder().setEndpoint(testServer.url).build(NoHttpMethodService);
+    const noHttpMethodService = new ServiceBuilder().baseUrl(testServer.url).build(NoHttpMethodService);
 
     describe("Works fine with not decorated methods", () => {
       test("No params", async () => {
@@ -190,7 +190,7 @@ describe("Decorators - wrong cases", () => {
   });
 
   test("__getLastRequest - empty", async () => {
-    const anyService = new ServiceBuilder().setEndpoint(testServer.url).build(NoHttpMethodService);
+    const anyService = new ServiceBuilder().baseUrl(testServer.url).build(NoHttpMethodService);
     await verifyErrorThrown(async () => {
       await anyService.__getLastRequest();
     }, ErrorMessages.__TEST_NO_REQUESTS_IN_HISTORY);

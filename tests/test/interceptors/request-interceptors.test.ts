@@ -28,7 +28,7 @@ describe("Request interceptors", () => {
   });
 
   async function verifyInterceptor(setInterceptor: (builder: ServiceBuilder) => void) {
-    const builder = new ServiceBuilder().setEndpoint(testServer.url);
+    const builder = new ServiceBuilder().baseUrl(testServer.url);
     setInterceptor(builder);
     const service = builder.build(PostsApiService);
 

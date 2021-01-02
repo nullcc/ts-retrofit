@@ -8,7 +8,7 @@ describe("Decorators", () => {
   let service: PostsApiService;
 
   beforeAll(() => {
-    service = new ServiceBuilder().setEndpoint(testServer.url).build(PostsApiService);
+    service = new ServiceBuilder().baseUrl(testServer.url).build(PostsApiService);
   });
 
   test("@BasePath", async () => {
@@ -24,7 +24,7 @@ describe("Decorators", () => {
   });
 
   test("@GET - without base path", async () => {
-    const service = new ServiceBuilder().setEndpoint(testServer.url).build(ServiceWithoutBasePath);
+    const service = new ServiceBuilder().baseUrl(testServer.url).build(ServiceWithoutBasePath);
     const response = await service.get();
 
     expect(response.data).toHaveLength(posts.length);
@@ -40,7 +40,7 @@ describe("Decorators", () => {
   });
 
   test("@GET - Absolute url", async () => {
-    const service = new ServiceBuilder().setEndpoint(JSONPLACEHOLDER_URL).build(PostsApiService);
+    const service = new ServiceBuilder().baseUrl(JSONPLACEHOLDER_URL).build(PostsApiService);
     const response = await service.getAbsoluteUrl();
     expect(response.data).toHaveLength(100);
     verifyRequest(response, "get", "/posts");

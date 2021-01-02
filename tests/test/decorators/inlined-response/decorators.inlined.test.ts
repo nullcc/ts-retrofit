@@ -16,8 +16,8 @@ describe("Decorators - inlined response", () => {
   beforeEach(() => {
     service = new ServiceBuilder()
       .saveRequestHistory()
-      .setEndpoint(testServer.url)
-      .onlyResponseBody()
+      .baseUrl(testServer.url)
+      .inlineResponseBody()
       .build(ResponseBodyPostsApiService);
   });
 
@@ -40,7 +40,7 @@ describe("Decorators - inlined response", () => {
   });
 
   test("@GET - without base path", async () => {
-    const service = new ServiceBuilder().setEndpoint(testServer.url).build(ServiceWithoutBasePath);
+    const service = new ServiceBuilder().baseUrl(testServer.url).build(ServiceWithoutBasePath);
     const response = await service.get();
 
     expect(response.data).toHaveLength(posts.length);
@@ -56,7 +56,7 @@ describe("Decorators - inlined response", () => {
   });
 
   test("@GET - Absolute url", async () => {
-    const service = new ServiceBuilder().setEndpoint(JSONPLACEHOLDER_URL).build(PostsApiService);
+    const service = new ServiceBuilder().baseUrl(JSONPLACEHOLDER_URL).build(PostsApiService);
     const response = await service.getAbsoluteUrl();
     expect(response.data).toHaveLength(100);
     verifyRequest(response, "get", "/posts");
