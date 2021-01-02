@@ -5,13 +5,14 @@
 </p>
 
 <p align="center">
+    <a href="https://travis-ci.com/npwork/ts-retrofit2"><img alt="build status" src="https://travis-ci.com/npwork/ts-retrofit2.svg?branch=master"></a>
     <a href="./package.json"><img alt="github package" src="https://img.shields.io/github/package-json/v/npwork/ts-retrofit2"></a>
     <a href="https://www.npmjs.com/package/ts-retrofit2"><img alt="npm package" src="https://img.shields.io/npm/v/ts-retrofit2"></a>
     <a href="https://www.npmjs.com/package/retroxios"><img alt="npm downloads" src="https://img.shields.io/npm/dt/ts-retrofit2"></a>
     <a href="./LICENSE.txt"><img alt="license" src="https://img.shields.io/github/license/tnychn/retroxios"></a>
 </p>
-
-[![build status](https://travis-ci.com/npwork/ts-retrofit2.svg?branch=master)](https://travis-ci.com/npwork/ts-retrofit2) 
+<p align="center">
+</p>
 
 | Statements                  | Branches                | Functions                 | Lines                |
 | --------------------------- | ----------------------- | ------------------------- | -------------------- |
@@ -33,7 +34,7 @@ $ yarn add ts-retrofit2
 ```
 
 ## Introduction
-It automatically turns your decorated methods into axios HTTP requests.
+Automatically turn your decorated methods into axios HTTP requests.
 
 ```typescript
 export class GitHubService extends BaseService {
