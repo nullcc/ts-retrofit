@@ -17,7 +17,7 @@ import { BaseService } from "./baseService";
  */
 const registerMethod = <T extends BaseService>(method: HttpMethod, url: string, options?: HttpMethodOptions) => {
   return (target: T, methodName: string, descriptor: PropertyDescriptor) => {
-    target.__getServiceMetadata__().setMetadata(methodName, (prev: MethodMetadata) => ({
+    target.__getServiceMetadata().setMetadata(methodName, (prev: MethodMetadata) => ({
       httpMethod: method,
       path: url,
       options: {
@@ -48,14 +48,14 @@ export const OPTIONS = <T extends BaseService>(url: string, options?: HttpMethod
  */
 export const BasePath = (path: string) => {
   return (target: typeof BaseService) => {
-    target.prototype.__getServiceMetadata__().basePath = path;
+    target.prototype.__getServiceMetadata().basePath = path;
   };
 };
 
 /** @sample @Path("userId") userId: number */
 export const Path = <T extends BaseService>(paramName: string) => {
   return (target: T, methodName: string, paramIndex: number) => {
-    target.__getServiceMetadata__().setMetadata(methodName, (prev: MethodMetadata) => ({
+    target.__getServiceMetadata().setMetadata(methodName, (prev: MethodMetadata) => ({
       pathParams: {
         ...prev.pathParams,
         [paramIndex]: paramName,
@@ -66,7 +66,7 @@ export const Path = <T extends BaseService>(paramName: string) => {
 
 /** @sample @Body user: User */
 export const Body = <T extends BaseService>(target: T, methodName: string, paramIndex: number) => {
-  target.__getServiceMetadata__().setMetadata(methodName, { bodyIndex: paramIndex });
+  target.__getServiceMetadata().setMetadata(methodName, { bodyIndex: paramIndex });
 };
 
 /**
@@ -77,7 +77,7 @@ export const Body = <T extends BaseService>(target: T, methodName: string, param
  */
 export const Headers = <T extends BaseService>(headers: HeadersParamType) => {
   return (target: T, methodName: string, descriptor: PropertyDescriptor) => {
-    target.__getServiceMetadata__().setMetadata(methodName, (prev: MethodMetadata) => ({
+    target.__getServiceMetadata().setMetadata(methodName, (prev: MethodMetadata) => ({
       headers: {
         ...prev.headers,
         ...headers,
@@ -89,7 +89,7 @@ export const Headers = <T extends BaseService>(headers: HeadersParamType) => {
 /** @sample @Header("X-Token") token: string */
 export const Header = <T extends BaseService>(paramName: string) => {
   return (target: T, methodName: string, paramIndex: number) => {
-    target.__getServiceMetadata__().setMetadata(methodName, (prev: MethodMetadata) => ({
+    target.__getServiceMetadata().setMetadata(methodName, (prev: MethodMetadata) => ({
       headerParams: {
         ...prev.headerParams,
         [paramIndex]: paramName,
@@ -100,7 +100,7 @@ export const Header = <T extends BaseService>(paramName: string) => {
 
 /** @sample @HeaderMap headers: any */
 export const HeaderMap = <T extends BaseService>(target: T, methodName: string, paramIndex: number) => {
-  target.__getServiceMetadata__().setMetadata(methodName, { headerMapIndex: paramIndex });
+  target.__getServiceMetadata().setMetadata(methodName, { headerMapIndex: paramIndex });
 };
 
 /**
@@ -112,14 +112,14 @@ export const HeaderMap = <T extends BaseService>(target: T, methodName: string, 
  */
 export const Queries = <T extends BaseService>(query: QueriesParamType) => {
   return (target: T, methodName: string, descriptor: PropertyDescriptor) => {
-    target.__getServiceMetadata__().setMetadata(methodName, { query: query });
+    target.__getServiceMetadata().setMetadata(methodName, { query: query });
   };
 };
 
 /** @sample @Query('group') group: string */
 export const Query = <T extends BaseService>(paramName: string) => {
   return (target: T, methodName: string, paramIndex: number) => {
-    target.__getServiceMetadata__().setMetadata(methodName, (prev: MethodMetadata) => ({
+    target.__getServiceMetadata().setMetadata(methodName, (prev: MethodMetadata) => ({
       queryParams: {
         ...prev.queryParams,
         [paramIndex]: paramName,
@@ -132,7 +132,7 @@ export const Query = <T extends BaseService>(paramName: string) => {
  * @sample @QueryMap query: SearchQuery
  */
 export const QueryMap = <T extends BaseService>(target: T, methodName: string, paramIndex: number) => {
-  target.__getServiceMetadata__().setMetadata(methodName, { queryMapIndex: paramIndex });
+  target.__getServiceMetadata().setMetadata(methodName, { queryMapIndex: paramIndex });
 };
 
 /**
@@ -157,7 +157,7 @@ export const FormUrlEncoded = <T extends BaseService>(
  */
 export const Field = <T extends BaseService>(paramName: string) => {
   return (target: T, methodName: string, paramIndex: number) => {
-    target.__getServiceMetadata__().setMetadata(methodName, (prev: MethodMetadata) => ({
+    target.__getServiceMetadata().setMetadata(methodName, (prev: MethodMetadata) => ({
       fields: {
         ...prev.fields,
         [paramIndex]: paramName,
@@ -170,7 +170,7 @@ export const Field = <T extends BaseService>(paramName: string) => {
  * @sample @FieldMap post: Post
  */
 export const FieldMap = <T extends BaseService>(target: T, methodName: string, paramIndex: number) => {
-  target.__getServiceMetadata__().setMetadata(methodName, { fieldMapIndex: paramIndex });
+  target.__getServiceMetadata().setMetadata(methodName, { fieldMapIndex: paramIndex });
 };
 
 /**
@@ -187,7 +187,7 @@ export const Multipart = <T extends BaseService>(target: T, methodName: string, 
  */
 export const Part = <T extends BaseService>(paramName: string) => {
   return (target: T, methodName: string, paramIndex: number) => {
-    target.__getServiceMetadata__().setMetadata(methodName, (old: MethodMetadata) => ({
+    target.__getServiceMetadata().setMetadata(methodName, (old: MethodMetadata) => ({
       parts: {
         ...old.parts,
         [paramIndex]: paramName,
@@ -202,7 +202,7 @@ export const Part = <T extends BaseService>(paramName: string) => {
  */
 export const ResponseType = <T extends BaseService>(responseType: AxiosResponseType) => {
   return (target: T, methodName: string) => {
-    target.__getServiceMetadata__().setMetadata(methodName, { responseType: responseType });
+    target.__getServiceMetadata().setMetadata(methodName, { responseType: responseType });
   };
 };
 
@@ -215,7 +215,7 @@ export const ResponseType = <T extends BaseService>(responseType: AxiosResponseT
  */
 export const RequestTransformer = <T extends BaseService>(transformer: TransformerType) => {
   return (target: T, methodName: string) => {
-    target.__getServiceMetadata__().setMetadata(methodName, { requestTransformer: transformer });
+    target.__getServiceMetadata().setMetadata(methodName, { requestTransformer: transformer });
   };
 };
 
@@ -229,7 +229,7 @@ export const RequestTransformer = <T extends BaseService>(transformer: Transform
  */
 export const ResponseTransformer = <T extends BaseService>(transformer: TransformerType) => {
   return (target: T, methodName: string) => {
-    target.__getServiceMetadata__().setMetadata(methodName, { responseTransformer: transformer });
+    target.__getServiceMetadata().setMetadata(methodName, { responseTransformer: transformer });
   };
 };
 
@@ -239,7 +239,7 @@ export const ResponseTransformer = <T extends BaseService>(transformer: Transfor
  */
 export const Timeout = <T extends BaseService>(timeout: number) => {
   return (target: T, methodName: string) => {
-    target.__getServiceMetadata__().setMetadata(methodName, { timeout: timeout });
+    target.__getServiceMetadata().setMetadata(methodName, { timeout: timeout });
   };
 };
 
@@ -249,7 +249,7 @@ export const Timeout = <T extends BaseService>(timeout: number) => {
  */
 export const ResponseStatus = <T extends BaseService>(responseStatus: number) => {
   return (target: T, methodName: string) => {
-    target.__getServiceMetadata__().setMetadata(methodName, { responseStatus: responseStatus });
+    target.__getServiceMetadata().setMetadata(methodName, { responseStatus: responseStatus });
   };
 };
 
@@ -259,6 +259,6 @@ export const ResponseStatus = <T extends BaseService>(responseStatus: number) =>
  */
 export const Config = <T extends BaseService>(config: Partial<AxiosRequestConfig>) => {
   return (target: T, methodName: string) => {
-    target.__getServiceMetadata__().setMetadata(methodName, { config: config });
+    target.__getServiceMetadata().setMetadata(methodName, { config: config });
   };
 };

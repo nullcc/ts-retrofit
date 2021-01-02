@@ -38,6 +38,6 @@ export class RetrofitHttpClient {
   }
 
   public async sendRequest<T>(config: AxiosRequestConfig): ApiResponse<T> {
-    return await this.axios(config);
+    return this.axios(config);
   }
 }

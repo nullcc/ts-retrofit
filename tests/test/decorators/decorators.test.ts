@@ -118,7 +118,7 @@ describe("Decorators", () => {
   });
 
   test("@ResponseStatus", async () => {
-    expect(service.__getServiceMetadata__().getMetadata("responseStatus").responseStatus).toEqual(200);
+    expect(service.__getServiceMetadata().getMetadata("responseStatus").responseStatus).toEqual(200);
   });
 
   test("@Config", async () => {

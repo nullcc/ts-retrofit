@@ -37,8 +37,9 @@ export class BaseService {
   private readonly _endpoint: string;
   private readonly _httpClient: RetrofitHttpClient;
   private readonly _timeout: number;
+  public readonly __requestsHistory: AxiosResponse[] = [];
 
-  constructor(serviceBuilder: ServiceBuilder) {
+  constructor(private serviceBuilder: ServiceBuilder) {
     this._endpoint = serviceBuilder.endpoint;
     this._httpClient = new RetrofitHttpClient(serviceBuilder);
     this._timeout = serviceBuilder.timeout;
@@ -52,7 +53,11 @@ export class BaseService {
         configurable: true,
         get() {
           return (...args: any[]) => {
-            return self._wrap(methodName, args);
+            if (serviceBuilder.inlineResponseBody) {
+              return self._wrapToInlinedResponse(methodName, args);
+            } else {
+              return self._wrapToAxiosResponse(methodName, args);
+            }
           };
         },
       };
@@ -60,9 +65,21 @@ export class BaseService {
     }
   }
 
-  __getServiceMetadata__() {
+  __getServiceMetadata() {
     if (!this.__meta__) this.__meta__ = new ServiceMetaData<this>();
     return this.__meta__;
+  }
+
+  async __performRequest<T>(methodName: keyof this, args: any[] = []): ApiResponse<T> {
+    return await this._wrapToAxiosResponse(methodName as string, args);
+  }
+
+  // For testing purposes
+  __getLastRequest() {
+    const last = this.__requestsHistory.pop();
+    if (last) return last;
+
+    throw new Error("No requests in history");
   }
 
   private _getInstanceMethodNames(): string[] {
@@ -78,10 +95,20 @@ export class BaseService {
     });
   }
 
-  private _wrap<T>(methodName: string, args: any[]): ApiResponse<T> {
+  private _wrapToAxiosResponse<T>(methodName: string, args: any[]): ApiResponse<T> {
     const { url, method, headers, query, data } = this._resolveParameters(methodName, args);
     const config = this._makeConfig(methodName, url, method, headers, query, data);
-    return this._httpClient.sendRequest(config);
+    const promise = this._httpClient.sendRequest<T>(config);
+    if (this.serviceBuilder.shouldSaveRequestHistory) {
+      promise.then((result) => {
+        this.__requestsHistory.push(result);
+      });
+    }
+    return promise;
+  }
+
+  private _wrapToInlinedResponse<T = any>(methodName: string, args: any[]): Promise<T> {
+    return this._wrapToAxiosResponse<T>(methodName, args).then((r) => r.data);
   }
 
   private _resolveParameters(methodName: string, args: any[]): any {
