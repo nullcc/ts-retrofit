@@ -1,22 +1,23 @@
-<h1 align="center">ts-retrofit 2</h1>
+<h1>ts-retrofit 2</h1>
 
-<p align="center">
+<p>
     <strong>Declarative and type-safe HTTP client for Node.js and Web</strong>
 </p>
 
-<p align="center">
+<p>
     <a href="https://travis-ci.com/npwork/ts-retrofit2"><img alt="build status" src="https://travis-ci.com/npwork/ts-retrofit2.svg?branch=master"></a>
     <a href="./package.json"><img alt="github package" src="https://img.shields.io/github/package-json/v/npwork/ts-retrofit2"></a>
     <a href="https://www.npmjs.com/package/ts-retrofit2"><img alt="npm package" src="https://img.shields.io/npm/v/ts-retrofit2"></a>
     <a href="https://www.npmjs.com/package/retroxios"><img alt="npm downloads" src="https://img.shields.io/npm/dt/ts-retrofit2"></a>
     <a href="./LICENSE.txt"><img alt="license" src="https://img.shields.io/github/license/tnychn/retroxios"></a>
 </p>
-<p align="center">
-</p>
+
+### Test coverage
 
 | Statements                  | Branches                | Functions                 | Lines                |
 | --------------------------- | ----------------------- | ------------------------- | -------------------- |
 | ![Statements](https://img.shields.io/badge/Coverage-99.77%25-brightgreen.svg) | ![Branches](https://img.shields.io/badge/Coverage-99.15%25-brightgreen.svg) | ![Functions](https://img.shields.io/badge/Coverage-99.17%25-brightgreen.svg) | ![Lines](https://img.shields.io/badge/Coverage-100%25-brightgreen.svg)    |
+
 
 
 ## Installing
