@@ -95,9 +95,14 @@ export class PostsApiService extends BaseService {
     return STUB_RESPONSE();
   }
 
+  @POST("/body-as-array")
+  async bodyAsArray(@Body body: PostCreateDTO[]): ApiResponse<Post[]> {
+    return STUB_RESPONSE();
+  }
+
   @PUT("/{id}")
   async put(@Path("id") id: number, @Body body: PostCreateDTO): ApiResponse<Post> {
-    return STUB_RESPONSE();
+    return STUB_RESPONSE<ApiResponse<Post>>();
   }
 
   @PATCH("/{id}")

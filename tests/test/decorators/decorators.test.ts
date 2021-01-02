@@ -46,6 +46,12 @@ describe("Decorators", () => {
     verifyRequest(response, "get", "/posts");
   });
 
+  test("@Body as array", async () => {
+    const response = await service.bodyAsArray([PostsApiService.dto, PostsApiService.dto]);
+    verifyRequest(response, "post", "/posts/body-as-array", 201);
+    verifyBody(response, [PostsApiService.dto, PostsApiService.dto]);
+  });
+
   test("@POST", async () => {
     const response = await service.post(PostsApiService.dto);
 

@@ -1,5 +1,6 @@
 import {
   ApiResponse,
+  BasePath,
   BaseService,
   Config,
   Field,
@@ -9,14 +10,18 @@ import {
   Header,
   HeaderMap,
   Headers,
+  Multipart,
+  Part,
   Path,
+  POST,
   Queries,
   Query,
   QueryMap,
   ResponseStatus,
   STUB_RESPONSE,
 } from "../../src";
-import { Post } from "./fixtures";
+import { API_PREFIX, Post } from "./fixtures";
+import { PartDescriptor } from "../../src/constants";
 
 export class WrongHeaderService extends BaseService {
   @GET("/")
@@ -60,6 +65,15 @@ export class WrongQueryService extends BaseService {
 
   @GET("/")
   async emptyQueryKey(@Query("") query: unknown): ApiResponse {
+    return STUB_RESPONSE();
+  }
+}
+
+@BasePath(API_PREFIX)
+export class WrongMultipartService extends BaseService {
+  @POST("/upload")
+  @Multipart
+  async emptyPartKey(@Part("") bucket: PartDescriptor<string>): ApiResponse {
     return STUB_RESPONSE();
   }
 }

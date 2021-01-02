@@ -4,7 +4,7 @@
 
 | Statements                  | Branches                | Functions                 | Lines                |
 | --------------------------- | ----------------------- | ------------------------- | -------------------- |
-| ![Statements](https://img.shields.io/badge/Coverage-99.07%25-brightgreen.svg) | ![Branches](https://img.shields.io/badge/Coverage-96.58%25-brightgreen.svg) | ![Functions](https://img.shields.io/badge/Coverage-99.17%25-brightgreen.svg) | ![Lines](https://img.shields.io/badge/Coverage-99.46%25-brightgreen.svg)    |
+| ![Statements](https://img.shields.io/badge/Coverage-99.77%25-brightgreen.svg) | ![Branches](https://img.shields.io/badge/Coverage-99.15%25-brightgreen.svg) | ![Functions](https://img.shields.io/badge/Coverage-99.17%25-brightgreen.svg) | ![Lines](https://img.shields.io/badge/Coverage-100%25-brightgreen.svg)    |
 
 This branch is a fork from [https://github.com/nullcc/ts-retrofit/](https://github.com/nullcc/ts-retrofit/)
 > A declarative and axios based retrofit implementation for JavaScript and TypeScript.

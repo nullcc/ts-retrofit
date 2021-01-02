@@ -50,6 +50,10 @@ app.options("/posts/:id", jsonParser, function (req, res) {
   res.status(204).json(posts.find((p) => p.id === Number(req.params["id"])));
 });
 
+app.post("/posts/body-as-array", jsonParser, function (req, res) {
+  res.status(201).json(req.body);
+});
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 app.post("/api/v1/form-url-encoded", jsonParser, function (req, res) {

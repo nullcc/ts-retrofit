@@ -28,6 +28,8 @@ export const ErrorMessages = {
 
   EMPTY_FIELD_KEY: "Field key can't be empty",
   EMPTY_PART_KEY: "Part key can't be empty",
+
+  __TEST_NO_REQUESTS_IN_HISTORY: "No requests in history",
 };
 
 export class BaseService {
@@ -79,7 +81,7 @@ export class BaseService {
     const last = this.__requestsHistory.pop();
     if (last) return last;
 
-    throw new Error("No requests in history");
+    throw new Error(ErrorMessages.__TEST_NO_REQUESTS_IN_HISTORY);
   }
 
   private _getInstanceMethodNames(): string[] {

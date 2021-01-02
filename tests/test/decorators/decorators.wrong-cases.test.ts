@@ -1,12 +1,14 @@
 import { ServiceBuilder } from "../../../src/service.builder";
-import { testServer } from "../../testHelpers";
+import { testServer, verifyRequest } from "../../testHelpers";
 import {
   NoHttpMethodService,
   WrongFieldService,
   WrongHeaderService,
+  WrongMultipartService,
   WrongQueryService,
 } from "../../fixture/fixtures.wrong-cases";
 import { ErrorMessages } from "../../../src";
+import { Post, posts } from "../../fixture/fixtures";
 
 describe("Decorators - wrong cases", () => {
   describe("Headers", () => {
@@ -70,6 +72,19 @@ describe("Decorators - wrong cases", () => {
           await service.emptyFieldKey("");
         }, ErrorMessages.EMPTY_FIELD_KEY);
       });
+    });
+  });
+
+  describe("Multipart", () => {
+    const service = new ServiceBuilder().setEndpoint(testServer.url).build(WrongMultipartService);
+
+    test("Empty part key", async () => {
+      const bucket = {
+        value: "test-bucket",
+      };
+      await verifyErrorThrown(async () => {
+        await service.emptyPartKey(bucket);
+      }, ErrorMessages.EMPTY_PART_KEY);
     });
   });
 
@@ -174,7 +189,14 @@ describe("Decorators - wrong cases", () => {
     });
   });
 
-  async function verifyErrorThrown(exec: () => void, err: string) {
+  test("__getLastRequest - empty", async () => {
+    const anyService = new ServiceBuilder().setEndpoint(testServer.url).build(NoHttpMethodService);
+    await verifyErrorThrown(async () => {
+      await anyService.__getLastRequest();
+    }, ErrorMessages.__TEST_NO_REQUESTS_IN_HISTORY);
+  });
+
+  async function verifyErrorThrown(exec: () => void, err?: string) {
     try {
       await exec();
     } catch (e) {
