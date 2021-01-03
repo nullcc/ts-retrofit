@@ -22,7 +22,6 @@
     "prepare": "yarn run build",
     "prepublishOnly": "yarn run lint",
     "preversion": "yarn run lint",
-    "postversion": "git push && git push --tags",
     "unpublish": "npm unpublish ts-retrofit2@2.0.0",
     "publish": "npm publish"
   },
