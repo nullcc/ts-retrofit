@@ -20,10 +20,7 @@
     "lint": "eslint . --ext .ts",
     "make-badges": "istanbul-badges-readme",
     "prepare": "yarn run build",
-    "prepublishOnly": "yarn run lint",
-    "preversion": "yarn run lint",
-    "unpublish": "npm unpublish ts-retrofit2@2.0.0",
-    "publish": "npm publish"
+    "prepublishOnly": "yarn run lint"
   },
   "author": "NP",
   "license": "MIT",
