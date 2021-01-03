@@ -3,8 +3,8 @@
   "version": "2.0.15",
   "description": "A declarative and axios based retrofit implementation for JavaScript and TypeScript. (forked from https://github.com/nullcc/ts-retrofit)",
   "repository": "https://github.com/npwork/ts-retrofit2",
-  "main": "dist/index.js",
-  "types": "dist/types/index.d.ts",
+  "main": "dist/src/index.js",
+  "types": "dist/types/src/index.d.ts",
   "keywords": [
     "retrofit",
     "ts",
