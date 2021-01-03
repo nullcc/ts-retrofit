@@ -12,6 +12,7 @@ export class ServiceBuilder {
   private _requestInterceptors: Array<RequestInterceptorFunction | RequestInterceptor> = [];
   private _responseInterceptors: Array<ResponseInterceptorFunction | ResponseInterceptor> = [];
   private _withInlineResponseBody = false;
+  private _validate = false;
   private _shouldSaveRequestHistory = false;
   private _timeout = 60000;
 
@@ -26,6 +27,11 @@ export class ServiceBuilder {
 
   public setStandalone(standalone: boolean | AxiosInstance): ServiceBuilder {
     this._standalone = standalone;
+    return this;
+  }
+
+  public setValidate(): ServiceBuilder {
+    this._validate = true;
     return this;
   }
 
@@ -64,6 +70,10 @@ export class ServiceBuilder {
 
   get withInlineResponseBody(): boolean {
     return this._withInlineResponseBody;
+  }
+
+  get shouldValidate(): boolean {
+    return this._validate;
   }
 
   get endpoint(): string {

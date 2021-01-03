@@ -11,6 +11,8 @@ import {
   TransformerType,
 } from "./constants";
 import { BaseService } from "./baseService";
+import { PostAsClass } from "../tests/fixture/fixtures";
+import { validateSync } from "class-validator";
 
 /**
  * Register HTTP method and path in API method.
@@ -213,9 +215,12 @@ export const ResponseType = <T extends BaseService>(responseType: AxiosResponseT
  *           return JSON.stringify(data);
  *         })
  */
-export const RequestTransformer = <T extends BaseService>(transformer: TransformerType) => {
+export const RequestTransformer = <T extends BaseService>(...transformers: TransformerType[]) => {
   return (target: T, methodName: string) => {
-    target.__getServiceMetadata().setMetadata(methodName, { requestTransformer: transformer });
+    target.__getServiceMetadata().setMetadata(methodName, (prev) => ({
+      ...prev,
+      requestTransformer: [...transformers, ...prev.requestTransformer],
+    }));
   };
 };
 
@@ -227,9 +232,18 @@ export const RequestTransformer = <T extends BaseService>(transformer: Transform
  *           return json;
  *         })
  */
-export const ResponseTransformer = <T extends BaseService>(transformer: TransformerType) => {
+export const ResponseTransformer = <T extends BaseService>(...transformers: TransformerType[]) => {
   return (target: T, methodName: string) => {
-    target.__getServiceMetadata().setMetadata(methodName, { responseTransformer: transformer });
+    target.__getServiceMetadata().setMetadata(methodName, (prev) => ({
+      ...prev,
+      responseTransformer: [...transformers, ...prev.responseTransformer],
+    }));
+  };
+};
+
+export const ConvertTo = <T extends BaseService>(returnClass: any) => {
+  return (target: T, methodName: string) => {
+    target.__getServiceMetadata().setMetadata(methodName, { convertTo: returnClass });
   };
 };
 

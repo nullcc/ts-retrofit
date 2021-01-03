@@ -11,32 +11,82 @@ import {
 import { Post, PostCreateDTO, PostsApiService } from "./fixtures";
 
 @BasePath(PostsApiService.BASE_PATH)
-export class TransformerApiService extends BaseService {
+export class RequestTransformerApiService extends BaseService {
   @POST("/")
   @RequestTransformer((data: PostCreateDTO) => {
     data.title = "updated title1";
-    return JSON.stringify(data);
+    return data;
   })
   async requestTransformer(@Body body: PostCreateDTO): ApiResponse<Post> {
     return STUB_RESPONSE<ApiResponse<Post>>(); // to test with param
   }
 
   @POST("/")
-  @RequestTransformer((data: PostCreateDTO) => {
-    data.title = "updated title1";
-    return JSON.stringify(data);
-  })
-  async twoRequestTransformers(@Body body: PostCreateDTO): ApiResponse<Post> {
+  @RequestTransformer(
+    (data: PostCreateDTO) => {
+      data.title = "updated title1";
+      return data;
+    },
+    (data: PostCreateDTO) => {
+      data.title = "updated title2";
+      return data;
+    },
+  )
+  async twoTransformersAsArgument(@Body body: PostCreateDTO): ApiResponse<Post> {
     return STUB_RESPONSE();
   }
 
   @POST("/")
-  @ResponseTransformer((body: string, headers?: { [key: string]: unknown }) => {
-    const data = JSON.parse(body);
+  @RequestTransformer((data: PostCreateDTO) => {
+    data.title = "updated title1";
+    return data;
+  })
+  @POST("/")
+  @RequestTransformer((data: PostCreateDTO) => {
+    data.title = "updated title2";
+    return data;
+  })
+  async twoTransformersAsDifferentDecorators(@Body body: PostCreateDTO): ApiResponse<Post> {
+    return STUB_RESPONSE();
+  }
+}
+
+@BasePath(PostsApiService.BASE_PATH)
+export class ResponseTransformerApiService extends BaseService {
+  @POST("/")
+  @ResponseTransformer((data: any, headers?: { [key: string]: unknown }) => {
     data.title = "updated title2";
     return data;
   })
   async responseTransformer(@Body body: PostCreateDTO): ApiResponse<Post> {
+    return STUB_RESPONSE();
+  }
+
+  @POST("/")
+  @ResponseTransformer(
+    (data: any, headers?: { [key: string]: unknown }) => {
+      data.title = "updated title1";
+      return data;
+    },
+    (data: Post, headers?: { [key: string]: unknown }) => {
+      data.title = "updated title2";
+      return data;
+    },
+  )
+  async twoTransformersAsArgument(@Body body: PostCreateDTO): ApiResponse<Post> {
+    return STUB_RESPONSE();
+  }
+
+  @POST("/")
+  @ResponseTransformer((data: any, headers?: { [key: string]: unknown }) => {
+    data.title = "updated title1";
+    return data;
+  })
+  @ResponseTransformer((data: any, headers?: { [key: string]: unknown }) => {
+    data.title = "updated title2";
+    return data;
+  })
+  async twoTransformersAsDifferentDecorators(@Body body: PostCreateDTO): ApiResponse<Post> {
     return STUB_RESPONSE();
   }
 }

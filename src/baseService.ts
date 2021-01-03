@@ -1,6 +1,13 @@
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 import FormData from "form-data";
-import { CONTENT_TYPE, CONTENT_TYPE_HEADER, HttpMethod, HttpMethodOptions } from "./constants";
+import {
+  CONTENT_TYPE,
+  CONTENT_TYPE_HEADER,
+  HeadersParamType,
+  HttpMethod,
+  HttpMethodOptions,
+  QueriesParamType,
+} from "./constants";
 import { isNode } from "./util";
 import { RetrofitHttpClient } from "./http.client";
 import { ServiceBuilder } from "./service.builder";
@@ -8,6 +15,21 @@ import { ServiceMetaData } from "./metadata";
 import { requestHeadersResolver } from "./request-resolvers/headers-request-resolver";
 import { requestQueryParamsResolver } from "./request-resolvers/query-params-request-resolver";
 import { requestBodyResolver } from "./request-resolvers/body-request-resolver";
+import { PostAsClass } from "../tests/fixture/fixtures";
+import { ResponseAsClassService } from "../tests/fixture/fixtures.response-as-class";
+import {
+  validate,
+  validateOrReject,
+  Contains,
+  IsInt,
+  Length,
+  IsEmail,
+  IsFQDN,
+  IsDate,
+  Min,
+  Max,
+  validateSync,
+} from "class-validator";
 
 axios.defaults.withCredentials = true;
 
@@ -98,14 +120,15 @@ export class BaseService {
   }
 
   private _wrapToAxiosResponse<T>(methodName: string, args: any[]): ApiResponse<T> {
+    this._resolveConverterAndValidator(methodName);
+
     const { url, method, headers, query, data } = this._resolveParameters(methodName, args);
     const config = this._makeConfig(methodName, url, method, headers, query, data);
+
     const promise = this._httpClient.sendRequest<T>(config);
-    if (this.serviceBuilder.shouldSaveRequestHistory) {
-      promise.then((result) => {
-        this.__requestsHistory.push(result);
-      });
-    }
+
+    this._saveToRequestHistory(promise);
+
     return promise;
   }
 
@@ -113,7 +136,45 @@ export class BaseService {
     return this._wrapToAxiosResponse<T>(methodName, args).then((r) => r.data);
   }
 
-  private _resolveParameters(methodName: string, args: any[]): any {
+  private _saveToRequestHistory<T>(promise: Promise<AxiosResponse<T>>) {
+    if (!this.serviceBuilder.shouldSaveRequestHistory) return;
+
+    promise.then((result) => {
+      this.__requestsHistory.push(result);
+    });
+  }
+
+  private _resolveConverterAndValidator(methodName: string) {
+    const metadata = this.__meta__.getMetadata(methodName);
+
+    const convert = (data: any) => {
+      const obj = new metadata.convertTo();
+      Object.assign(obj, data);
+      return obj;
+    };
+
+    if (metadata.convertTo) {
+      metadata.responseTransformer.push((data) => {
+        if (Array.isArray(data)) {
+          return data.map(convert);
+        } else {
+          return convert(data);
+        }
+      });
+    }
+
+    if (this.serviceBuilder.shouldValidate && metadata.convertTo) {
+      metadata.responseTransformer.push((data) => {
+        validateSync(data);
+        return data;
+      });
+    }
+  }
+
+  private _resolveParameters(
+    methodName: string,
+    args: any[],
+  ): { url: string; method: HttpMethod; headers: HeadersParamType; query: QueriesParamType; data: any } {
     const metadata = this.__meta__.getMetadata(methodName);
 
     const url = this._resolveUrl(methodName, args);
@@ -153,12 +214,24 @@ export class BaseService {
       config.responseType = metadata.responseType;
     }
     // request transformer
-    if (metadata.requestTransformer) {
-      config.transformRequest = metadata.requestTransformer;
+    if (metadata.requestTransformer.length > 0) {
+      config.transformRequest = [
+        ...metadata.requestTransformer,
+        (data: string, headers?: { [key: string]: unknown }) => {
+          // @TODO what if not json ??? response content type?
+          return JSON.stringify(data);
+        },
+      ];
     }
     // response transformer
-    if (metadata.responseTransformer) {
-      config.transformResponse = metadata.responseTransformer;
+    if (metadata.responseTransformer.length > 0) {
+      config.transformResponse = [
+        (body: string, headers?: { [key: string]: unknown }) => {
+          // @TODO what if not json ??? response content type?
+          return JSON.parse(body);
+        },
+        ...metadata.responseTransformer,
+      ];
     }
     // timeout
     config.timeout = metadata.timeout || this._timeout;

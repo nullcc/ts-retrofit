@@ -30,7 +30,7 @@ export class ServiceMetaData<T extends BaseService> {
     const meta = this.methodMetadata.get(method);
     if (meta) return meta;
 
-    const initial = {
+    const initial: MethodMetadata = {
       query: {},
       fields: {},
       queryParams: {},
@@ -40,6 +40,8 @@ export class ServiceMetaData<T extends BaseService> {
       },
       pathParams: {},
       headerParams: {},
+      requestTransformer: [],
+      responseTransformer: [],
     };
 
     this.methodMetadata.set(method, initial);

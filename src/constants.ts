@@ -25,12 +25,17 @@ export interface TransformerType<T = any> {
   (data: T, headers?: HeadersParamType): T;
 }
 
+export interface ResponseTransformer<T = any> {
+  (data: T, headers?: any): T;
+}
+
 export type MethodMetadata = {
   config?: Partial<AxiosRequestConfig>;
   responseType?: AxiosResponseType;
-  requestTransformer?: AxiosTransformer | AxiosTransformer[];
-  responseTransformer?: AxiosTransformer | AxiosTransformer[];
+  requestTransformer: AxiosTransformer[];
+  responseTransformer: AxiosTransformer[];
   timeout?: number;
+  convertTo?: any;
   path?: string;
   pathParams: { [key: number]: string };
   //basePath?: string;

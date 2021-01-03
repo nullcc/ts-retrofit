@@ -35,6 +35,14 @@ export interface PostCreateDTO {
   body: string;
 }
 
+export class PostAsClass {
+  constructor(public id: number, public userId: number, public title: string, public body: string) {}
+
+  methodInside() {
+    return this.id;
+  }
+}
+
 export interface Post extends PostCreateDTO {
   id: number;
 }
