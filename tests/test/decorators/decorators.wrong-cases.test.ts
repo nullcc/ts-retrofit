@@ -1,4 +1,4 @@
-import { ServiceBuilder } from "../../../src/service.builder";
+import { ServiceBuilder } from "../../../src";
 import { testServer, verifyRequest } from "../../testHelpers";
 import {
   NoHttpMethodService,

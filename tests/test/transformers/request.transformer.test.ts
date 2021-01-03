@@ -1,4 +1,4 @@
-import { ServiceBuilder } from "../../../src/service.builder";
+import { ServiceBuilder } from "../../../src";
 import { testServer, verifyBody, verifyRequest } from "../../testHelpers";
 import { PostsApiService } from "../../fixture/fixtures";
 import { AxiosRequestConfig } from "axios";

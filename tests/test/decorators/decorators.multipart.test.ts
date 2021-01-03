@@ -1,4 +1,4 @@
-import { ServiceBuilder } from "../../../src/service.builder";
+import { ServiceBuilder } from "../../../src";
 import { testServer } from "../../testHelpers";
 import fs from "fs";
 import { CONTENT_TYPE, CONTENT_TYPE_HEADER } from "../../../src/constants";

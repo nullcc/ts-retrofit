@@ -1,5 +1,5 @@
 import { ResponseInterceptor, ResponseInterceptorFunction } from "../../../src";
-import { ServiceBuilder } from "../../../src/service.builder";
+import { ServiceBuilder } from "../../../src";
 import { AxiosResponse } from "axios";
 import { testServer } from "../../testHelpers";
 import { PostsApiService } from "../../fixture/fixtures";

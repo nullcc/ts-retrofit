@@ -1,4 +1,4 @@
-import { ServiceBuilder } from "../../../src/service.builder";
+import { ServiceBuilder } from "../../../src";
 import { testServer } from "../../testHelpers";
 import { CHARSET_UTF_8, CONTENT_TYPE, CONTENT_TYPE_HEADER } from "../../../src/constants";
 import { FormUrlEncodedService } from "../../fixture/fixtures.formurlencoded";

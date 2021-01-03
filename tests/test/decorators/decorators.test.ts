@@ -1,5 +1,5 @@
 import { JSONPLACEHOLDER_URL, testServer, verifyRequest } from "../../testHelpers";
-import { ServiceBuilder } from "../../../src/service.builder";
+import { ServiceBuilder } from "../../../src";
 import { posts, PostsApiService, ServiceWithoutBasePath } from "../../fixture/fixtures";
 import { CONTENT_TYPE, CONTENT_TYPE_HEADER } from "../../../src/constants";
 import { AxiosResponse } from "axios";

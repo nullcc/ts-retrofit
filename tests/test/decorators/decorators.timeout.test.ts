@@ -1,4 +1,4 @@
-import { ServiceBuilder } from "../../../src/service.builder";
+import { ServiceBuilder } from "../../../src";
 import { TimeoutService } from "../../fixture/fixtures.timeout";
 import { testServer } from "../../testHelpers";
 
