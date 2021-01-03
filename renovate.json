@@ -2,7 +2,7 @@
   "extends": [
     "config:base"
   ],
-  "baseBranches": ["develop"],
+  "baseBranches": ["master"],
   "automerge": true,
   "major": {
     "automerge": false
@@ -13,7 +13,7 @@
       "allowedVersions": "<15"
     }
   ],
-  "schedule": ["after 1am and before 7am on friday"],
+  "schedule": ["after 1am and before 7am"],
   "timezone": "Europe/Paris",
   "prHourlyLimit": 0
 }
