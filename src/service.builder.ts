@@ -5,6 +5,7 @@ import {
   ResponseInterceptor,
   ResponseInterceptorFunction,
 } from "./baseService";
+import { ValidationMethod } from "./constants";
 
 export class ServiceBuilder {
   private _endpoint = "";
@@ -12,7 +13,7 @@ export class ServiceBuilder {
   private _requestInterceptors: Array<RequestInterceptorFunction | RequestInterceptor> = [];
   private _responseInterceptors: Array<ResponseInterceptorFunction | ResponseInterceptor> = [];
   private _withInlineResponseBody = false;
-  private _validate = false;
+  private _responseValidator?: ValidationMethod;
   private _shouldSaveRequestHistory = false;
   private _timeout = 60000;
 
@@ -30,8 +31,8 @@ export class ServiceBuilder {
     return this;
   }
 
-  public setValidate(): ServiceBuilder {
-    this._validate = true;
+  public validateResponse(type: ValidationMethod = ValidationMethod.CLASS_VALIDATOR): ServiceBuilder {
+    this._responseValidator = type;
     return this;
   }
 
@@ -72,8 +73,8 @@ export class ServiceBuilder {
     return this._withInlineResponseBody;
   }
 
-  get shouldValidate(): boolean {
-    return this._validate;
+  get responseValidator() {
+    return this._responseValidator;
   }
 
   get endpoint(): string {

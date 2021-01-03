@@ -14,10 +14,15 @@ import {
 import { Post, PostAsClass, PostCreateDTO, PostsApiService } from "./fixtures";
 
 @BasePath(PostsApiService.BASE_PATH)
-export class ConvertToInlinedBodyService extends BaseService {
+export class ConvertServiceInline extends BaseService {
   @GET("/")
   @ConvertTo(PostAsClass)
   async get(): Promise<PostAsClass[]> {
+    return STUB_RESPONSE();
+  }
+
+  @GET("/", PostAsClass)
+  async getConvertInMethod(): Promise<PostAsClass[]> {
     return STUB_RESPONSE();
   }
 
@@ -32,6 +37,11 @@ export class ConvertToInlinedBodyService extends BaseService {
     return STUB_RESPONSE();
   }
 
+  @GET("/{id}", PostAsClass)
+  async getWithPathInMethod(@Path("id") id: number): Promise<PostAsClass> {
+    return STUB_RESPONSE();
+  }
+
   @GET("/")
   async getToType(): Promise<Post[]> {
     return STUB_RESPONSE();
@@ -39,7 +49,7 @@ export class ConvertToInlinedBodyService extends BaseService {
 }
 
 @BasePath(PostsApiService.BASE_PATH)
-export class ConvertToService extends BaseService {
+export class ConvertToServiceRaw extends BaseService {
   @GET("/")
   @ConvertTo(PostAsClass)
   async get(): ApiResponse<PostAsClass[]> {

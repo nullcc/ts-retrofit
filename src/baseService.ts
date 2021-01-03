@@ -7,6 +7,7 @@ import {
   HttpMethod,
   HttpMethodOptions,
   QueriesParamType,
+  ValidationErrors,
 } from "./constants";
 import { isNode } from "./util";
 import { RetrofitHttpClient } from "./http.client";
@@ -16,7 +17,7 @@ import { requestHeadersResolver } from "./request-resolvers/headers-request-reso
 import { requestQueryParamsResolver } from "./request-resolvers/query-params-request-resolver";
 import { requestBodyResolver } from "./request-resolvers/body-request-resolver";
 import { PostAsClass } from "../tests/fixture/fixtures";
-import { ConvertToInlinedBodyService } from "../tests/fixture/fixtures.response-as-class";
+import { ConvertServiceInline } from "../tests/fixture/fixtures.convertTo";
 import {
   validate,
   validateOrReject,
@@ -147,8 +148,8 @@ export class BaseService {
   private _resolveConverterAndValidator(methodName: string) {
     const metadata = this.__meta__.getMetadata(methodName);
 
-    const convert = (data: any) => {
-      const obj = new metadata.convertTo();
+    const convert = (data: Record<string, unknown>) => {
+      const obj = new metadata.convertTo!();
       Object.assign(obj, data);
       return obj;
     };
@@ -163,9 +164,16 @@ export class BaseService {
       });
     }
 
-    if (this.serviceBuilder.shouldValidate && metadata.convertTo) {
+    if (this.serviceBuilder.responseValidator && metadata.convertTo) {
       metadata.responseTransformer.push((data) => {
-        validateSync(data);
+        const errors = Array.isArray(data)
+          ? Array.prototype.concat.apply(
+              [],
+              data.map((e) => validateSync(e)),
+            )
+          : validateSync(data);
+        if (errors.length !== 0) throw new ValidationErrors(errors);
+
         return data;
       });
     }

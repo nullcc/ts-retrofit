@@ -17,8 +17,15 @@ import { validateSync } from "class-validator";
 /**
  * Register HTTP method and path in API method.
  */
-const registerMethod = <T extends BaseService>(method: HttpMethod, url: string, options?: HttpMethodOptions) => {
+const registerMethod = <T extends BaseService>(
+  method: HttpMethod,
+  url: string,
+  returnClass?: new (...args: any[]) => void,
+  options?: HttpMethodOptions,
+) => {
   return (target: T, methodName: string, descriptor: PropertyDescriptor) => {
+    if (returnClass) handleConvertTo(target, methodName, returnClass);
+
     target.__getServiceMetadata().setMetadata(methodName, (prev: MethodMetadata) => ({
       httpMethod: method,
       path: url,
@@ -30,20 +37,42 @@ const registerMethod = <T extends BaseService>(method: HttpMethod, url: string, 
   };
 };
 
-export const GET = <T extends BaseService>(url: string, options?: HttpMethodOptions) =>
-  registerMethod<T>("GET", url, options);
-export const POST = <T extends BaseService>(url: string, options?: HttpMethodOptions) =>
-  registerMethod<T>("POST", url, options);
-export const PUT = <T extends BaseService>(url: string, options?: HttpMethodOptions) =>
-  registerMethod<T>("PUT", url, options);
-export const PATCH = <T extends BaseService>(url: string, options?: HttpMethodOptions) =>
-  registerMethod<T>("PATCH", url, options);
-export const DELETE = <T extends BaseService>(url: string, options?: HttpMethodOptions) =>
-  registerMethod<T>("DELETE", url, options);
-export const HEAD = <T extends BaseService>(url: string, options?: HttpMethodOptions) =>
-  registerMethod<T>("HEAD", url, options);
-export const OPTIONS = <T extends BaseService>(url: string, options?: HttpMethodOptions) =>
-  registerMethod<T>("OPTIONS", url, options);
+export const GET = <T extends BaseService>(
+  url: string,
+  returnClass?: new (...args: any[]) => void,
+  options?: HttpMethodOptions,
+) => registerMethod<T>("GET", url, returnClass, options);
+
+export const POST = <T extends BaseService>(
+  url: string,
+  returnClass?: new (...args: any[]) => void,
+  options?: HttpMethodOptions,
+) => registerMethod<T>("POST", url, returnClass, options);
+export const PUT = <T extends BaseService>(
+  url: string,
+  returnClass?: new (...args: any[]) => void,
+  options?: HttpMethodOptions,
+) => registerMethod<T>("PUT", url, returnClass, options);
+export const PATCH = <T extends BaseService>(
+  url: string,
+  returnClass?: new (...args: any[]) => void,
+  options?: HttpMethodOptions,
+) => registerMethod<T>("PATCH", url, returnClass, options);
+export const DELETE = <T extends BaseService>(
+  url: string,
+  returnClass?: new (...args: any[]) => void,
+  options?: HttpMethodOptions,
+) => registerMethod<T>("DELETE", url, returnClass, options);
+export const HEAD = <T extends BaseService>(
+  url: string,
+  returnClass?: new (...args: any[]) => void,
+  options?: HttpMethodOptions,
+) => registerMethod<T>("HEAD", url, returnClass, options);
+export const OPTIONS = <T extends BaseService>(
+  url: string,
+  returnClass?: new (...args: any[]) => void,
+  options?: HttpMethodOptions,
+) => registerMethod<T>("OPTIONS", url, returnClass, options);
 
 /**
  * @sample @BasePath("/api/v1")
@@ -241,11 +270,19 @@ export const ResponseTransformer = <T extends BaseService>(...transformers: Tran
   };
 };
 
-export const ConvertTo = <T extends BaseService>(returnClass: any) => {
+export const ConvertTo = <T extends BaseService>(returnClass: new (...args: any[]) => void) => {
   return (target: T, methodName: string) => {
-    target.__getServiceMetadata().setMetadata(methodName, { convertTo: returnClass });
+    handleConvertTo(target, methodName, returnClass);
   };
 };
+
+function handleConvertTo<T extends BaseService>(
+  target: T,
+  methodName: string,
+  returnClass: new (...args: any[]) => void,
+) {
+  target.__getServiceMetadata().setMetadata(methodName, { convertTo: returnClass });
+}
 
 /**
  * Set timeout for method, this config will shield service timeout.

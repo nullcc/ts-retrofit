@@ -25,6 +25,7 @@ import {
   STUB_RESPONSE,
 } from "../../src";
 import { JSONPLACEHOLDER_URL } from "../testHelpers";
+import { IsEmail, Length, MinLength } from "class-validator";
 
 export const API_PREFIX = "/api/v1";
 export const TOKEN = "abcdef123456";
@@ -83,7 +84,7 @@ export class PostsApiService extends BaseService {
     return STUB_RESPONSE();
   }
 
-  @GET("/posts", { ignoreBasePath: true })
+  @GET("/posts", undefined, { ignoreBasePath: true })
   async getIgnoreBasePath(): ApiResponse<Post[]> {
     return STUB_RESPONSE();
   }
@@ -222,7 +223,7 @@ export class PostsApiService extends BaseService {
     return STUB_RESPONSE();
   }
 
-  @GET("/asdasda/sdasdasda/sdasd/asdkjajkldkasd", { ignoreBasePath: true })
+  @GET("/asdasda/sdasdasda/sdasd/asdkjajkldkasd", undefined, { ignoreBasePath: true })
   async wrongUrl(): ApiResponse {
     return STUB_RESPONSE();
   }
@@ -235,7 +236,7 @@ export class ResponseBodyPostsApiService extends BaseService {
     return STUB_RESPONSE();
   }
 
-  @GET("/posts", { ignoreBasePath: true })
+  @GET("/posts", undefined, { ignoreBasePath: true })
   async getIgnoreBasePath(): Promise<Post[]> {
     return STUB_RESPONSE();
   }
@@ -369,7 +370,7 @@ export class ResponseBodyPostsApiService extends BaseService {
     return STUB_RESPONSE();
   }
 
-  @GET("/asdasda/sdasdasda/sdasd/asdkjajkldkasd", { ignoreBasePath: true })
+  @GET("/asdasda/sdasdasda/sdasd/asdkjajkldkasd", undefined, { ignoreBasePath: true })
   async wrongUrl(): Promise<any> {
     return STUB_RESPONSE();
   }

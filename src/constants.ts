@@ -1,4 +1,15 @@
 import { AxiosRequestConfig, AxiosTransformer, Method, ResponseType as AxiosResponseType } from "axios";
+import { ValidationError } from "class-validator";
+
+export enum ValidationMethod {
+  CLASS_VALIDATOR = "CLASS_VALIDATOR",
+}
+
+export class ValidationErrors extends Error {
+  constructor(public errors: ValidationError[]) {
+    super(`Response validation errors: ${errors.length}\n${errors.map((e) => e.toString())}`);
+  }
+}
 
 export type HttpMethod = Method;
 
@@ -21,12 +32,8 @@ export type QueriesParamType = {
   [x: string]: Primitive;
 };
 
-export interface TransformerType<T = any> {
+export interface TransformerType<T = Record<string, unknown>> {
   (data: T, headers?: HeadersParamType): T;
-}
-
-export interface ResponseTransformer<T = any> {
-  (data: T, headers?: any): T;
 }
 
 export type MethodMetadata = {
@@ -35,7 +42,7 @@ export type MethodMetadata = {
   requestTransformer: AxiosTransformer[];
   responseTransformer: AxiosTransformer[];
   timeout?: number;
-  convertTo?: any;
+  convertTo?: new (...arg: unknown[]) => void;
   path?: string;
   pathParams: { [key: number]: string };
   //basePath?: string;

@@ -1,14 +1,14 @@
 import { ServiceBuilder } from "../../../src";
 import { testServer, verifyRequest } from "../../testHelpers";
-import { ConvertToInlinedBodyService, ConvertToService } from "../../fixture/fixtures.response-as-class";
-import { posts } from "../../fixture/fixtures";
+import { ConvertServiceInline, ConvertToServiceRaw } from "../../fixture/fixtures.convertTo";
+import { PostAsClass, posts } from "../../fixture/fixtures";
 
 describe("@ConvertTo", () => {
   describe("AxiosResponse", () => {
-    let service: ConvertToService;
+    let service: ConvertToServiceRaw;
 
     beforeAll(() => {
-      service = new ServiceBuilder().baseUrl(testServer.url).saveRequestHistory().build(ConvertToService);
+      service = new ServiceBuilder().baseUrl(testServer.url).saveRequestHistory().build(ConvertToServiceRaw);
     });
 
     test("@GET", async () => {
@@ -38,22 +38,29 @@ describe("@ConvertTo", () => {
   });
 
   describe("Inline", () => {
-    let service: ConvertToInlinedBodyService;
+    let service: ConvertServiceInline;
 
     beforeAll(() => {
       service = new ServiceBuilder()
         .baseUrl(testServer.url)
         .saveRequestHistory()
         .inlineResponseBody()
-        .build(ConvertToInlinedBodyService);
+        .build(ConvertServiceInline);
     });
 
     test("@GET", async () => {
-      const response = await service.get();
+      verifyGet(await service.get());
+    });
+
+    test("@GET in method", async () => {
+      verifyGet(await service.getConvertInMethod());
+    });
+
+    function verifyGet(response: PostAsClass[]) {
       expect(response[0].methodInside()).toBe(1);
       expect(response[1].methodInside()).toBe(2);
       verifyRequest(service.__getLastRequest(), "get");
-    });
+    }
 
     test("@GET - to type", async () => {
       const response = await service.getToType();
