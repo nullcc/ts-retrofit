@@ -1,6 +1,6 @@
 import { JSONPLACEHOLDER_URL, testServer, verifyRequest } from "../../testHelpers";
 import { ServiceBuilder } from "../../../src";
-import { posts, PostsApiService, ServiceWithoutBasePath } from "../../fixture/fixtures";
+import { posts, PostsApiService, ServiceWithoutBasePath, WithMethodsService } from "../../fixture/fixtures";
 import { CONTENT_TYPE, CONTENT_TYPE_HEADER } from "../../../src/constants";
 import { AxiosResponse } from "axios";
 
@@ -161,6 +161,15 @@ describe("Decorators", () => {
     expect(response.config.params.title).toBe("t");
 
     verifyRequest(response, "get", "/posts/?userId=15&body=b&title=t");
+  });
+
+  test("Methods that are not decorated should work", async () => {
+    const withMethodsService = new ServiceBuilder().baseUrl(testServer.url).build(WithMethodsService);
+
+    const response = await withMethodsService.methodCallsGet();
+    expect(response.data).toHaveLength(posts.length);
+
+    verifyRequest(response, "get");
   });
 
   function verifyBody<T>(response: AxiosResponse<T>, expectedRequestBody?: T) {

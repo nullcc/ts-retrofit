@@ -1,5 +1,5 @@
-import { ServiceBuilder } from "../../../src";
-import { testServer, verifyRequest } from "../../testHelpers";
+import { ErrorMessages, ServiceBuilder } from "../../../src";
+import { testServer } from "../../testHelpers";
 import {
   NoHttpMethodService,
   WrongFieldService,
@@ -7,8 +7,6 @@ import {
   WrongMultipartService,
   WrongQueryService,
 } from "../../fixture/fixtures.wrong-cases";
-import { ErrorMessages } from "../../../src";
-import { Post, posts } from "../../fixture/fixtures";
 
 describe("Decorators - wrong cases", () => {
   describe("Headers", () => {

@@ -1,28 +1,28 @@
 import {
+  ApiResponse,
   BasePath,
   BaseService,
-  Path,
-  GET,
-  Header,
-  POST,
   Body,
-  PUT,
+  Config,
   DELETE,
-  PATCH,
-  STUB_RESPONSE,
+  Field,
+  FieldMap,
+  FormUrlEncoded,
+  GET,
   HEAD,
-  OPTIONS,
-  Headers,
+  Header,
   HeaderMap,
+  Headers,
+  OPTIONS,
+  PATCH,
+  Path,
+  POST,
+  PUT,
   Queries,
   Query,
   QueryMap,
-  FormUrlEncoded,
-  Field,
-  FieldMap,
   ResponseStatus,
-  Config,
-  ApiResponse,
+  STUB_RESPONSE,
 } from "../../src";
 import { JSONPLACEHOLDER_URL } from "../testHelpers";
 
@@ -222,14 +222,6 @@ export class PostsApiService extends BaseService {
 
 @BasePath(PostsApiService.BASE_PATH)
 export class ResponseBodyPostsApiService extends BaseService {
-  static BASE_PATH = "/posts";
-
-  static dto = {
-    body: "updatedBody",
-    title: "updatedTitle",
-    userId: 100,
-  };
-
   @GET("/")
   async get(): Promise<Post[]> {
     return STUB_RESPONSE();
@@ -386,5 +378,17 @@ export class ResponseBodyServiceWithoutBasePath extends BaseService {
   @GET("/posts")
   async get(): ApiResponse<Post[]> {
     return STUB_RESPONSE();
+  }
+}
+
+@BasePath(PostsApiService.BASE_PATH)
+export class WithMethodsService extends BaseService {
+  @GET("/")
+  async get(): ApiResponse<Post[]> {
+    return STUB_RESPONSE();
+  }
+
+  async methodCallsGet() {
+    return this.get();
   }
 }
