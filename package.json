@@ -1,6 +1,6 @@
 {
   "name": "ts-retrofit2",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "A declarative and axios based retrofit implementation for JavaScript and TypeScript. (forked from https://github.com/nullcc/ts-retrofit)",
   "repository": "https://github.com/npwork/ts-retrofit2",
   "main": "dist/index.js",
@@ -20,8 +20,8 @@
     "lint": "eslint . --ext .ts",
     "make-badges": "istanbul-badges-readme",
     "prepare": "yarn run build",
-    "prepublishOnly": "",
-    "preversion": "",
+    "prepublishOnly": "yarn run tslint",
+    "preversion": "yarn run tslint",
     "postversion": "git push && git push --tags",
     "unpublish": "npm unpublish ts-retrofit2@2.0.0"
   },
