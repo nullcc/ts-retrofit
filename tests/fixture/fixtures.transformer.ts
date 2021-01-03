@@ -13,7 +13,7 @@ import { Post, PostCreateDTO, PostsApiService } from "./fixtures";
 @BasePath(PostsApiService.BASE_PATH)
 export class RequestTransformerApiService extends BaseService {
   @POST("/")
-  @RequestTransformer((data: PostCreateDTO) => {
+  @RequestTransformer((data: Record<string, unknown>) => {
     data.title = "updated title1";
     return data;
   })
@@ -23,11 +23,11 @@ export class RequestTransformerApiService extends BaseService {
 
   @POST("/")
   @RequestTransformer(
-    (data: PostCreateDTO) => {
+    (data: Record<string, unknown>) => {
       data.title = "updated title1";
       return data;
     },
-    (data: PostCreateDTO) => {
+    (data: Record<string, unknown>) => {
       data.title = "updated title2";
       return data;
     },
@@ -54,7 +54,7 @@ export class RequestTransformerApiService extends BaseService {
 @BasePath(PostsApiService.BASE_PATH)
 export class ResponseTransformerApiService extends BaseService {
   @POST("/")
-  @ResponseTransformer((data: any, headers?: { [key: string]: unknown }) => {
+  @ResponseTransformer((data: Record<string, unknown>, headers?: { [key: string]: unknown }) => {
     data.title = "updated title2";
     return data;
   })
@@ -64,11 +64,11 @@ export class ResponseTransformerApiService extends BaseService {
 
   @POST("/")
   @ResponseTransformer(
-    (data: any, headers?: { [key: string]: unknown }) => {
+    (data: Record<string, unknown>, headers?: { [key: string]: unknown }) => {
       data.title = "updated title1";
       return data;
     },
-    (data: Post, headers?: { [key: string]: unknown }) => {
+    (data: Record<string, unknown>, headers?: { [key: string]: unknown }) => {
       data.title = "updated title2";
       return data;
     },
@@ -78,11 +78,11 @@ export class ResponseTransformerApiService extends BaseService {
   }
 
   @POST("/")
-  @ResponseTransformer((data: any, headers?: { [key: string]: unknown }) => {
+  @ResponseTransformer((data: Record<string, unknown>, headers?: { [key: string]: unknown }) => {
     data.title = "updated title1";
     return data;
   })
-  @ResponseTransformer((data: any, headers?: { [key: string]: unknown }) => {
+  @ResponseTransformer((data: Record<string, unknown>, headers?: { [key: string]: unknown }) => {
     data.title = "updated title2";
     return data;
   })

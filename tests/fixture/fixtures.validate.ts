@@ -1,19 +1,6 @@
-import {
-  ApiResponse,
-  BasePath,
-  BaseService,
-  Body,
-  GET,
-  PATCH,
-  Path,
-  POST,
-  PUT,
-  ConvertTo,
-  STUB_RESPONSE,
-  RequestTransformer,
-} from "../../src";
-import { Post, PostsApiService } from "./fixtures";
-import { IS_POSITIVE, IsNegative, IsPositive, Max, Min, MinLength } from "class-validator";
+import { ApiResponse, BasePath, BaseService, GET, Path, ConvertTo, STUB_RESPONSE } from "../../src";
+import { PostsApiService } from "./fixtures";
+import { IsNegative, IsPositive, MinLength } from "class-validator";
 
 export class ValidationPass {
   @IsPositive()

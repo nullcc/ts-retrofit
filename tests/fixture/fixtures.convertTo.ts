@@ -1,17 +1,5 @@
-import {
-  ApiResponse,
-  BasePath,
-  BaseService,
-  Body,
-  GET,
-  PATCH,
-  Path,
-  POST,
-  PUT,
-  ConvertTo,
-  STUB_RESPONSE,
-} from "../../src";
-import { Post, PostAsClass, PostCreateDTO, PostsApiService } from "./fixtures";
+import { ApiResponse, BasePath, BaseService, GET, Path, ConvertTo, STUB_RESPONSE } from "../../src";
+import { Post, PostAsClass, PostsApiService } from "./fixtures";
 
 @BasePath(PostsApiService.BASE_PATH)
 export class ConvertServiceInline extends BaseService {

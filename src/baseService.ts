@@ -3,12 +3,13 @@ import FormData from "form-data";
 import {
   CONTENT_TYPE,
   CONTENT_TYPE_HEADER,
+  DataType,
   HeadersParamType,
   HttpMethod,
   HttpMethodOptions,
   QueriesParamType,
-  ValidationErrors,
 } from "./constants";
+import { ValidationErrors } from "../src";
 import { isNode } from "./util";
 import { RetrofitHttpClient } from "./http.client";
 import { ServiceBuilder } from "./service.builder";
@@ -16,21 +17,7 @@ import { ServiceMetaData } from "./metadata";
 import { requestHeadersResolver } from "./request-resolvers/headers-request-resolver";
 import { requestQueryParamsResolver } from "./request-resolvers/query-params-request-resolver";
 import { requestBodyResolver } from "./request-resolvers/body-request-resolver";
-import { PostAsClass } from "../tests/fixture/fixtures";
-import { ConvertServiceInline } from "../tests/fixture/fixtures.convertTo";
-import {
-  validate,
-  validateOrReject,
-  Contains,
-  IsInt,
-  Length,
-  IsEmail,
-  IsFQDN,
-  IsDate,
-  Min,
-  Max,
-  validateSync,
-} from "class-validator";
+import { validateSync } from "class-validator";
 
 axios.defaults.withCredentials = true;
 
@@ -52,6 +39,13 @@ export const ErrorMessages = {
   EMPTY_FIELD_KEY: "Field key can't be empty",
   EMPTY_PART_KEY: "Part key can't be empty",
 
+  FIELD_WITH_ARRAY_BODY: "Field can't be used when array passed in @Body",
+  FIELD_MAP_FOR_ARRAY_BODY: "@FieldMap can't be used with array @Body",
+  FIELD_MAP_PARAM_TYPE: "@FieldMap should be object",
+
+  MULTIPART_WITH_ARRAY_BODY: "@Multipart can't be used with array @Body",
+  MULTIPART_PARAM_WRONG_TYPE: "Multipart param should be PartDescriptor",
+
   __TEST_NO_REQUESTS_IN_HISTORY: "No requests in history",
 };
 
@@ -71,20 +65,21 @@ export class BaseService {
 
     const methodNames = this._getInstanceMethodNames();
 
-    const self = this;
     for (const methodName of methodNames) {
+      const get = () => {
+        return (...args: unknown[]) => {
+          if (serviceBuilder.withInlineResponseBody) {
+            return this._wrapToInlinedResponse(methodName, args);
+          } else {
+            return this._wrapToAxiosResponse(methodName, args);
+          }
+        };
+      };
+
       const descriptor = {
         enumerable: true,
         configurable: true,
-        get() {
-          return (...args: any[]) => {
-            if (serviceBuilder.withInlineResponseBody) {
-              return self._wrapToInlinedResponse(methodName, args);
-            } else {
-              return self._wrapToAxiosResponse(methodName, args);
-            }
-          };
-        },
+        get,
       };
       Object.defineProperty(this, methodName, descriptor);
     }
@@ -95,7 +90,7 @@ export class BaseService {
     return this.__meta__;
   }
 
-  async __performRequest<T>(methodName: keyof this, args: any[] = []): ApiResponse<T> {
+  async __performRequest<T = DataType | DataType[]>(methodName: keyof this, args: unknown[] = []): ApiResponse<T> {
     return await this._wrapToAxiosResponse(methodName as string, args);
   }
 
@@ -108,19 +103,23 @@ export class BaseService {
   }
 
   private _getInstanceMethodNames(): string[] {
-    let properties: string[] = [];
-    let obj = this;
+    function props(obj: unknown) {
+      const p = [];
+      for (; obj != null; obj = Object.getPrototypeOf(obj)) {
+        const op = Object.getOwnPropertyNames(obj);
+        for (let i = 0; i < op.length; i++) if (p.indexOf(op[i]) == -1) p.push(op[i]);
+      }
+      return p;
+    }
 
-    do {
-      properties = properties.concat(Object.getOwnPropertyNames(obj));
-      obj = Object.getPrototypeOf(obj);
-    } while (obj);
-    return properties.sort().filter((e, i, arr) => {
-      return e !== arr[i + 1] && this[e] && typeof this[e] === "function" && this.__meta__.methodMetadata.has(e);
-    });
+    return props(this)
+      .sort()
+      .filter((e, i, arr) => {
+        return e !== arr[i + 1] && this[e] && typeof this[e] === "function" && this.__meta__.methodMetadata.has(e);
+      });
   }
 
-  private _wrapToAxiosResponse<T>(methodName: string, args: any[]): ApiResponse<T> {
+  private _wrapToAxiosResponse<T = DataType | DataType[]>(methodName: string, args: unknown[]): ApiResponse<T> {
     this._resolveConverterAndValidator(methodName);
 
     const { url, method, headers, query, data } = this._resolveParameters(methodName, args);
@@ -133,7 +132,7 @@ export class BaseService {
     return promise;
   }
 
-  private _wrapToInlinedResponse<T = any>(methodName: string, args: any[]): Promise<T> {
+  private _wrapToInlinedResponse<T extends Record<string, unknown>>(methodName: string, args: unknown[]): Promise<T> {
     return this._wrapToAxiosResponse<T>(methodName, args).then((r) => r.data);
   }
 
@@ -148,13 +147,12 @@ export class BaseService {
   private _resolveConverterAndValidator(methodName: string) {
     const metadata = this.__meta__.getMetadata(methodName);
 
-    const convert = (data: Record<string, unknown>) => {
-      const obj = new metadata.convertTo!();
-      Object.assign(obj, data);
-      return obj;
-    };
-
     if (metadata.convertTo) {
+      const convert = (data: Record<string, unknown>) => {
+        if (!metadata.convertTo) throw new Error("metadata.convertTo null???");
+        return Object.assign(new metadata.convertTo(), data);
+      };
+
       metadata.responseTransformer.push((data) => {
         if (Array.isArray(data)) {
           return data.map(convert);
@@ -181,8 +179,14 @@ export class BaseService {
 
   private _resolveParameters(
     methodName: string,
-    args: any[],
-  ): { url: string; method: HttpMethod; headers: HeadersParamType; query: QueriesParamType; data: any } {
+    args: unknown[],
+  ): {
+    url: string;
+    method: HttpMethod;
+    headers: HeadersParamType;
+    query: QueriesParamType;
+    data: DataType | DataType[];
+  } {
     const metadata = this.__meta__.getMetadata(methodName);
 
     const url = this._resolveUrl(methodName, args);
@@ -204,9 +208,9 @@ export class BaseService {
     methodName: string,
     url: string,
     method: HttpMethod,
-    headers: any,
-    query: any,
-    data: any,
+    headers: HeadersParamType,
+    query: QueriesParamType,
+    data: unknown,
   ): AxiosRequestConfig {
     let config: AxiosRequestConfig = {
       url,
@@ -251,7 +255,7 @@ export class BaseService {
     return config;
   }
 
-  private _resolveUrl(methodName: string, args: any[]): string {
+  private _resolveUrl(methodName: string, args: unknown[]): string {
     const metadata = this.__meta__.getMetadata(methodName);
 
     const endpoint = this._endpoint;
@@ -299,7 +303,7 @@ export type RequestInterceptorFunction = (
   value: AxiosRequestConfig,
 ) => AxiosRequestConfig | Promise<AxiosRequestConfig>;
 
-export type ResponseInterceptorFunction<T = any> = (
+export type ResponseInterceptorFunction<T extends Record<string, unknown> = Record<string, unknown>> = (
   value: AxiosResponse<T>,
 ) => AxiosResponse<T> | Promise<AxiosResponse<T>>;
 
@@ -313,6 +317,6 @@ export abstract class RequestInterceptor extends BaseInterceptor {
   public abstract onFulfilled(value: AxiosRequestConfig): AxiosRequestConfig | Promise<AxiosRequestConfig>;
 }
 
-export abstract class ResponseInterceptor<T = any> extends BaseInterceptor {
+export abstract class ResponseInterceptor<T extends DataType = DataType> extends BaseInterceptor {
   public abstract onFulfilled(value: AxiosResponse<T>): AxiosResponse<T> | Promise<AxiosResponse<T>>;
 }

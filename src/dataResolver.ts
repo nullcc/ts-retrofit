@@ -1,9 +1,10 @@
 import * as qs from "qs";
 import FormData from "form-data";
-import { CONTENT_TYPE, HeadersParamType } from "./constants";
+import { CONTENT_TYPE, DataType, HeadersParamType } from "./constants";
+import { ErrorMessages } from "./baseService";
 
 export class BaseDataResolver {
-  public resolve(headers: HeadersParamType, data: any): any {
+  public resolve(headers: HeadersParamType, data: DataType): DataType {
     throw new Error("Can not call this method in BaseDataResolver.");
   }
 }
@@ -13,8 +14,8 @@ export class FormUrlencodedResolver extends BaseDataResolver {
     super();
   }
 
-  public resolve(headers: HeadersParamType, data: any): any {
-    const deepStringify = (obj: any) => {
+  public resolve(headers: HeadersParamType, data: DataType): DataType {
+    const deepStringify = (obj: Record<string, unknown>) => {
       const res = {};
       for (const key in obj) {
         if (!Object.prototype.hasOwnProperty.call(obj, key)) {
@@ -28,7 +29,7 @@ export class FormUrlencodedResolver extends BaseDataResolver {
       }
       return qs.stringify(res);
     };
-    return deepStringify(data);
+    return deepStringify(data as Record<string, unknown>);
   }
 }
 
@@ -37,21 +38,25 @@ export class MultiPartResolver extends BaseDataResolver {
     super();
   }
 
-  public resolve(headers: HeadersParamType, data: any): any {
+  public resolve(headers: HeadersParamType, data: Record<string, unknown>): FormData {
     const formData = new FormData();
-    for (const key in data) {
-      if (data[key].filename) {
-        formData.append(key, data[key].value, { filename: data[key].filename });
+    Object.entries(data).map((e) => {
+      if (typeof e[1] !== "object") throw new Error(ErrorMessages.MULTIPART_PARAM_WRONG_TYPE);
+      const [key] = e;
+      const value = e[1] as Record<string, unknown>;
+
+      if (value && "filename" in value) {
+        formData.append(key, value.value, { filename: value.filename as string });
       } else {
-        if (Array.isArray(data[key].value)) {
-          for (const element of data[key].value) {
+        if (Array.isArray(value.value)) {
+          for (const element of value.value) {
             formData.append(key, element);
           }
         } else {
-          formData.append(key, data[key].value);
+          formData.append(key, value.value);
         }
       }
-    }
+    });
     return formData;
   }
 }
@@ -61,7 +66,7 @@ export class JsonResolver extends BaseDataResolver {
     super();
   }
 
-  public resolve(headers: HeadersParamType, data: any): any {
+  public resolve(headers: HeadersParamType, data: DataType): DataType {
     return data;
   }
 }
@@ -71,7 +76,7 @@ export class TextXmlResolver extends BaseDataResolver {
     super();
   }
 
-  public resolve(headers: HeadersParamType, data: any): any {
+  public resolve(headers: HeadersParamType, data: DataType): DataType {
     return data;
   }
 }

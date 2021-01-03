@@ -2,6 +2,7 @@ import {
   ApiResponse,
   BasePath,
   BaseService,
+  Body,
   Config,
   Field,
   FieldMap,
@@ -20,7 +21,7 @@ import {
   ResponseStatus,
   STUB_RESPONSE,
 } from "../../src";
-import { API_PREFIX, Post } from "./fixtures";
+import { API_PREFIX, Post, PostsApiService } from "./fixtures";
 import { PartDescriptor } from "../../src/constants";
 
 export class WrongHeaderService extends BaseService {
@@ -40,14 +41,30 @@ export class WrongHeaderService extends BaseService {
   }
 }
 
+@BasePath(PostsApiService.BASE_PATH)
 export class WrongFieldService extends BaseService {
-  @GET("/")
+  @POST("/")
   async wrongFieldMap(@FieldMap param: { [key: string]: unknown }): ApiResponse {
     return STUB_RESPONSE();
   }
 
-  @GET("/")
+  @POST("/")
+  async wrongFieldMapType(@FieldMap param: string[]): ApiResponse {
+    return STUB_RESPONSE();
+  }
+
+  @POST("/")
+  async fieldMapWithBodyArray(@FieldMap param: { [key: string]: unknown }, @Body body: string[]): ApiResponse {
+    return STUB_RESPONSE();
+  }
+
+  @POST("/")
   async emptyFieldKey(@Field("") param: unknown): ApiResponse {
+    return STUB_RESPONSE();
+  }
+
+  @POST("/")
+  async fieldWithBodyArray(@Field("p") param: unknown, @Body body: number[]): ApiResponse {
     return STUB_RESPONSE();
   }
 }
@@ -74,6 +91,18 @@ export class WrongMultipartService extends BaseService {
   @POST("/upload")
   @Multipart
   async emptyPartKey(@Part("") bucket: PartDescriptor<string>): ApiResponse {
+    return STUB_RESPONSE();
+  }
+
+  @POST("/upload")
+  @Multipart
+  async partAsIsNotPartDescriptor(@Part("from") from: string): ApiResponse {
+    return STUB_RESPONSE();
+  }
+
+  @POST("/upload")
+  @Multipart
+  async withBody(@Part("bucket") bucket: PartDescriptor<string>, @Body body: number[]): ApiResponse {
     return STUB_RESPONSE();
   }
 }

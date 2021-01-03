@@ -1,7 +1,7 @@
 import { ServiceBuilder } from "../../../src";
 import { testServer, verifyBody, verifyRequest } from "../../testHelpers";
 import { Post, PostCreateDTO, PostsApiService } from "../../fixture/fixtures";
-import { RequestTransformerApiService, ResponseTransformerApiService } from "../../fixture/fixtures.transformer";
+import { ResponseTransformerApiService } from "../../fixture/fixtures.transformer";
 import { AxiosResponse } from "axios";
 
 describe("Response transformer", () => {

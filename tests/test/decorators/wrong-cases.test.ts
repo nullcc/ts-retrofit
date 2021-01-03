@@ -10,7 +10,11 @@ import {
 
 describe("Decorators - wrong cases", () => {
   describe("Headers", () => {
-    const service = new ServiceBuilder().baseUrl(testServer.url).build(WrongHeaderService);
+    let service: WrongHeaderService;
+
+    beforeAll(() => {
+      service = new ServiceBuilder().baseUrl(testServer.url).build(WrongHeaderService);
+    });
 
     describe("@HeaderMap", () => {
       test("Empty header key", async () => {
@@ -52,7 +56,11 @@ describe("Decorators - wrong cases", () => {
   });
 
   describe("Fields", () => {
-    const service = new ServiceBuilder().baseUrl(testServer.url).build(WrongFieldService);
+    let service: WrongFieldService;
+
+    beforeAll(() => {
+      service = new ServiceBuilder().baseUrl(testServer.url).build(WrongFieldService);
+    });
 
     describe("@FieldMap", () => {
       test("Empty field key", async () => {
@@ -62,6 +70,18 @@ describe("Decorators - wrong cases", () => {
           });
         }, ErrorMessages.EMPTY_FIELD_KEY);
       });
+
+      test("Wrong FieldMap type", async () => {
+        await verifyErrorThrown(async () => {
+          await service.wrongFieldMapType(["1", "hello"]);
+        }, ErrorMessages.FIELD_MAP_PARAM_TYPE);
+      });
+
+      test("FieldMap with @Body as array", async () => {
+        await verifyErrorThrown(async () => {
+          await service.fieldMapWithBodyArray({ p1: "name" }, ["1", "hello"]);
+        }, ErrorMessages.FIELD_MAP_FOR_ARRAY_BODY);
+      });
     });
 
     describe("@Field", () => {
@@ -70,24 +90,50 @@ describe("Decorators - wrong cases", () => {
           await service.emptyFieldKey("");
         }, ErrorMessages.EMPTY_FIELD_KEY);
       });
+
+      test("Field with @Body as array", async () => {
+        await verifyErrorThrown(async () => {
+          await service.fieldWithBodyArray(1, [1, 2, 3]);
+        }, ErrorMessages.FIELD_WITH_ARRAY_BODY);
+      });
     });
   });
 
   describe("Multipart", () => {
-    const service = new ServiceBuilder().baseUrl(testServer.url).build(WrongMultipartService);
+    let service: WrongMultipartService;
+    const bucket = {
+      value: "test-bucket",
+    };
+
+    beforeAll(() => {
+      service = new ServiceBuilder().baseUrl(testServer.url).build(WrongMultipartService);
+    });
 
     test("Empty part key", async () => {
-      const bucket = {
-        value: "test-bucket",
-      };
       await verifyErrorThrown(async () => {
         await service.emptyPartKey(bucket);
       }, ErrorMessages.EMPTY_PART_KEY);
     });
+
+    test("Part is not type PartDescriptor", async () => {
+      await verifyErrorThrown(async () => {
+        await service.partAsIsNotPartDescriptor("hello");
+      }, ErrorMessages.MULTIPART_PARAM_WRONG_TYPE);
+    });
+
+    test("Multipart with @Body as array", async () => {
+      await verifyErrorThrown(async () => {
+        await service.withBody(bucket, [1, 2, 3]);
+      }, ErrorMessages.MULTIPART_WITH_ARRAY_BODY);
+    });
   });
 
   describe("Query params", () => {
-    const service = new ServiceBuilder().baseUrl(testServer.url).build(WrongQueryService);
+    let service: WrongQueryService;
+
+    beforeAll(() => {
+      service = new ServiceBuilder().baseUrl(testServer.url).build(WrongQueryService);
+    });
 
     describe("@QueryMap", () => {
       test("Empty header key", async () => {
@@ -129,7 +175,11 @@ describe("Decorators - wrong cases", () => {
   });
 
   describe("No Http decorator", () => {
-    const noHttpMethodService = new ServiceBuilder().baseUrl(testServer.url).build(NoHttpMethodService);
+    let noHttpMethodService: NoHttpMethodService;
+
+    beforeAll(() => {
+      noHttpMethodService = new ServiceBuilder().baseUrl(testServer.url).build(NoHttpMethodService);
+    });
 
     describe("Works fine with not decorated methods", () => {
       test("No params", async () => {

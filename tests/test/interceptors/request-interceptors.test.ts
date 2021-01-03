@@ -1,4 +1,4 @@
-import { RequestInterceptor, RequestInterceptorFunction } from "../../../src";
+import { RequestInterceptor } from "../../../src";
 import { ServiceBuilder } from "../../../src";
 import { AxiosRequestConfig } from "axios";
 import { testServer } from "../../testHelpers";

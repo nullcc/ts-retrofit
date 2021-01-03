@@ -11,6 +11,9 @@ export class ValidationErrors extends Error {
   }
 }
 
+export type ResponseConvertTo = new () => void;
+export type DataType = Record<string, unknown> | unknown;
+
 export type HttpMethod = Method;
 
 export const CONTENT_TYPE_HEADER = "Content-Type";
@@ -32,7 +35,7 @@ export type QueriesParamType = {
   [x: string]: Primitive;
 };
 
-export interface TransformerType<T = Record<string, unknown>> {
+export interface TransformerType<T extends DataType = DataType> {
   (data: T, headers?: HeadersParamType): T;
 }
 
@@ -42,7 +45,7 @@ export type MethodMetadata = {
   requestTransformer: AxiosTransformer[];
   responseTransformer: AxiosTransformer[];
   timeout?: number;
-  convertTo?: new (...arg: unknown[]) => void;
+  convertTo?: ResponseConvertTo;
   path?: string;
   pathParams: { [key: number]: string };
   //basePath?: string;

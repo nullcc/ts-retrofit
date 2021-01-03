@@ -1,7 +1,7 @@
 import express from "express";
 import bodyParser from "body-parser";
 import multer from "multer";
-import { Post, posts } from "./fixtures";
+import { posts } from "./fixtures";
 
 export const app = express();
 
@@ -10,7 +10,7 @@ const upload = multer();
 app.use(bodyParser.urlencoded({ extended: false }));
 
 const sleep = async (milliseconds: number): Promise<void> => {
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     setTimeout(() => {
       resolve();
     }, milliseconds);

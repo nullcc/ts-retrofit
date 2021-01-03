@@ -1,18 +1,18 @@
-import { ResponseType as AxiosResponseType, AxiosTransformer, AxiosRequestConfig } from "axios";
+import { AxiosRequestConfig, ResponseType as AxiosResponseType } from "axios";
 import {
   CHARSET_UTF_8,
   CONTENT_TYPE,
   CONTENT_TYPE_HEADER,
+  DataType,
+  HeadersParamType,
   HttpMethod,
   HttpMethodOptions,
-  HeadersParamType,
-  QueriesParamType,
   MethodMetadata,
+  QueriesParamType,
+  ResponseConvertTo,
   TransformerType,
 } from "./constants";
 import { BaseService } from "./baseService";
-import { PostAsClass } from "../tests/fixture/fixtures";
-import { validateSync } from "class-validator";
 
 /**
  * Register HTTP method and path in API method.
@@ -20,7 +20,7 @@ import { validateSync } from "class-validator";
 const registerMethod = <T extends BaseService>(
   method: HttpMethod,
   url: string,
-  returnClass?: new (...args: any[]) => void,
+  returnClass?: ResponseConvertTo,
   options?: HttpMethodOptions,
 ) => {
   return (target: T, methodName: string, descriptor: PropertyDescriptor) => {
@@ -37,40 +37,34 @@ const registerMethod = <T extends BaseService>(
   };
 };
 
-export const GET = <T extends BaseService>(
-  url: string,
-  returnClass?: new (...args: any[]) => void,
-  options?: HttpMethodOptions,
-) => registerMethod<T>("GET", url, returnClass, options);
+export const GET = <T extends BaseService>(url: string, returnClass?: ResponseConvertTo, options?: HttpMethodOptions) =>
+  registerMethod<T>("GET", url, returnClass, options);
 
 export const POST = <T extends BaseService>(
   url: string,
-  returnClass?: new (...args: any[]) => void,
+  returnClass?: ResponseConvertTo,
   options?: HttpMethodOptions,
 ) => registerMethod<T>("POST", url, returnClass, options);
-export const PUT = <T extends BaseService>(
-  url: string,
-  returnClass?: new (...args: any[]) => void,
-  options?: HttpMethodOptions,
-) => registerMethod<T>("PUT", url, returnClass, options);
+export const PUT = <T extends BaseService>(url: string, returnClass?: ResponseConvertTo, options?: HttpMethodOptions) =>
+  registerMethod<T>("PUT", url, returnClass, options);
 export const PATCH = <T extends BaseService>(
   url: string,
-  returnClass?: new (...args: any[]) => void,
+  returnClass?: ResponseConvertTo,
   options?: HttpMethodOptions,
 ) => registerMethod<T>("PATCH", url, returnClass, options);
 export const DELETE = <T extends BaseService>(
   url: string,
-  returnClass?: new (...args: any[]) => void,
+  returnClass?: ResponseConvertTo,
   options?: HttpMethodOptions,
 ) => registerMethod<T>("DELETE", url, returnClass, options);
 export const HEAD = <T extends BaseService>(
   url: string,
-  returnClass?: new (...args: any[]) => void,
+  returnClass?: ResponseConvertTo,
   options?: HttpMethodOptions,
 ) => registerMethod<T>("HEAD", url, returnClass, options);
 export const OPTIONS = <T extends BaseService>(
   url: string,
-  returnClass?: new (...args: any[]) => void,
+  returnClass?: ResponseConvertTo,
   options?: HttpMethodOptions,
 ) => registerMethod<T>("OPTIONS", url, returnClass, options);
 
@@ -244,7 +238,9 @@ export const ResponseType = <T extends BaseService>(responseType: AxiosResponseT
  *           return JSON.stringify(data);
  *         })
  */
-export const RequestTransformer = <T extends BaseService>(...transformers: TransformerType[]) => {
+export const RequestTransformer = <T extends BaseService, P1 extends DataType>(
+  ...transformers: TransformerType<P1>[]
+) => {
   return (target: T, methodName: string) => {
     target.__getServiceMetadata().setMetadata(methodName, (prev) => ({
       ...prev,
@@ -261,7 +257,9 @@ export const RequestTransformer = <T extends BaseService>(...transformers: Trans
  *           return json;
  *         })
  */
-export const ResponseTransformer = <T extends BaseService>(...transformers: TransformerType[]) => {
+export const ResponseTransformer = <T extends BaseService, P1 extends DataType>(
+  ...transformers: TransformerType<P1>[]
+) => {
   return (target: T, methodName: string) => {
     target.__getServiceMetadata().setMetadata(methodName, (prev) => ({
       ...prev,
@@ -270,17 +268,15 @@ export const ResponseTransformer = <T extends BaseService>(...transformers: Tran
   };
 };
 
-export const ConvertTo = <T extends BaseService>(returnClass: new (...args: any[]) => void) => {
+// public id: number, public userId: number, public title: string, public body: string
+// ...args: object[]
+export const ConvertTo = <T extends BaseService>(returnClass: new () => void) => {
   return (target: T, methodName: string) => {
     handleConvertTo(target, methodName, returnClass);
   };
 };
 
-function handleConvertTo<T extends BaseService>(
-  target: T,
-  methodName: string,
-  returnClass: new (...args: any[]) => void,
-) {
+function handleConvertTo<T extends BaseService>(target: T, methodName: string, returnClass: ResponseConvertTo) {
   target.__getServiceMetadata().setMetadata(methodName, { convertTo: returnClass });
 }
 

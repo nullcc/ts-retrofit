@@ -68,7 +68,7 @@ describe("Data resolver.", () => {
       file,
     };
     const resolvedData = multiPartResolver.resolve(headers, data);
-    expect(resolvedData._streams).toContain("test-bucket");
+    expect(resolvedData["_streams"]).toContain("test-bucket");
   });
 
   test("JsonResolver.", async () => {

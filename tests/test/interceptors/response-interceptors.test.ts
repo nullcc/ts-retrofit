@@ -1,8 +1,9 @@
-import { ResponseInterceptor, ResponseInterceptorFunction } from "../../../src";
+import { ResponseInterceptor } from "../../../src";
 import { ServiceBuilder } from "../../../src";
 import { AxiosResponse } from "axios";
 import { testServer } from "../../testHelpers";
 import { PostsApiService } from "../../fixture/fixtures";
+import { DataType } from "../../../src/constants";
 
 describe("Response interceptors", () => {
   const interceptedHeaderValue = 100;
@@ -17,9 +18,7 @@ describe("Response interceptors", () => {
   });
 
   test("ResponseInterceptor class", async () => {
-    class Interceptor<T> extends ResponseInterceptor<T> {
-      onRejected(error: Error): void {}
-
+    class Interceptor<T extends DataType = DataType> extends ResponseInterceptor<T> {
       onFulfilled(value: AxiosResponse<T>): AxiosResponse<T> | Promise<AxiosResponse<T>> {
         value.data["INTERCEPTOR"] = interceptedHeaderValue;
         return value;
@@ -33,8 +32,8 @@ describe("Response interceptors", () => {
     test("Override onRejected", async () => {
       let calledRejected = false;
 
-      class Interceptor<T> extends ResponseInterceptor<T> {
-        onRejected(error: Error): void {
+      class Interceptor<T extends Record<string, unknown>> extends ResponseInterceptor<T> {
+        onRejected(): void {
           calledRejected = true;
         }
 
@@ -59,7 +58,7 @@ describe("Response interceptors", () => {
     });
 
     test("No override", async () => {
-      class Interceptor<T> extends ResponseInterceptor<T> {
+      class Interceptor<T extends Record<string, unknown>> extends ResponseInterceptor<T> {
         onFulfilled(value: AxiosResponse<T>): AxiosResponse<T> | Promise<AxiosResponse<T>> {
           return value;
         }

@@ -102,7 +102,7 @@ describe("Decorators - inlined response", () => {
   });
 
   test("@Headers", async () => {
-    const response = await service.headers(PostsApiService.dto);
+    await service.headers(PostsApiService.dto);
     const lastRequest = service.__getLastRequest();
     expect(lastRequest.config.headers["Header1"]).toBe("Value1");
     expect(lastRequest.config.headers["Header2"]).toBe("Value2");
@@ -110,14 +110,14 @@ describe("Decorators - inlined response", () => {
   });
 
   test("@Header", async () => {
-    const response = await service.header("Value1");
+    await service.header("Value1");
     const lastRequest = service.__getLastRequest();
     expect(lastRequest.config.headers["Header"]).toBe("Value1");
     verifyRequest(lastRequest, "get");
   });
 
   test("@HeaderMap", async () => {
-    const response = await service.headerMap({ h1: 1, h2: "v2", h3: true });
+    await service.headerMap({ h1: 1, h2: "v2", h3: true });
     const lastRequest = service.__getLastRequest();
     expect(lastRequest.config.headers["h1"]).toBe(1);
     expect(lastRequest.config.headers["h2"]).toBe("v2");
@@ -175,7 +175,7 @@ describe("Decorators - inlined response", () => {
   });
 
   test("@QueryMap", async () => {
-    const response = await service.queryMap({ userId: 15, body: "b", title: "t" });
+    await service.queryMap({ userId: 15, body: "b", title: "t" });
     const lastRequest = service.__getLastRequest();
     expect(lastRequest.config.params.userId).toBe(15);
     expect(lastRequest.config.params.body).toBe("b");

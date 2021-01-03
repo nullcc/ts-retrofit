@@ -26,7 +26,9 @@ export function verifyBody<T>(
 
 // @TODO
 describe.skip("TMP", () => {
-  test.skip("t", () => {});
+  test.skip("t", () => {
+    return 10;
+  });
 });
 
 export const testServer = {
