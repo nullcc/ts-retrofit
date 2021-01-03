@@ -1,5 +1,4 @@
-src
-test
+tests
 tsconfig.json
 tslint.json
 jest.config.js
@@ -10,4 +9,3 @@ response-samples
 package-lock.json
 .travis.yml
 .npmrc
-.npmrc.template
