@@ -1,10 +1,13 @@
 import { ServiceBuilder } from "../../../src";
 import { testServer } from "../../testHelpers";
-import { ResponseAsClassService } from "../../fixture/fixtures.response-as-class";
+import { ConvertToInlinedBodyService } from "../../fixture/fixtures.response-as-class";
 
-describe("Decorators - response type is class", () => {
+describe("Validate", () => {
   test("@GET", async () => {
-    const service = new ServiceBuilder().baseUrl(testServer.url).inlineResponseBody().build(ResponseAsClassService);
+    const service = new ServiceBuilder()
+      .baseUrl(testServer.url)
+      .inlineResponseBody()
+      .build(ConvertToInlinedBodyService);
 
     const result = await service.get();
     expect(result[0].methodInside()).toBe(1);
@@ -12,7 +15,10 @@ describe("Decorators - response type is class", () => {
   });
 
   test("@GET single", async () => {
-    const service = new ServiceBuilder().baseUrl(testServer.url).inlineResponseBody().build(ResponseAsClassService);
+    const service = new ServiceBuilder()
+      .baseUrl(testServer.url)
+      .inlineResponseBody()
+      .build(ConvertToInlinedBodyService);
 
     const result = await service.getWithPath(1);
     expect(result.methodInside()).toBe(1);

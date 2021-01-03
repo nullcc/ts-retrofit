@@ -14,10 +14,15 @@ import {
 import { Post, PostAsClass, PostCreateDTO, PostsApiService } from "./fixtures";
 
 @BasePath(PostsApiService.BASE_PATH)
-export class ResponseAsClassService extends BaseService {
+export class ConvertToInlinedBodyService extends BaseService {
   @GET("/")
   @ConvertTo(PostAsClass)
   async get(): Promise<PostAsClass[]> {
+    return STUB_RESPONSE();
+  }
+
+  @GET("/")
+  async getNoConvertTo(): Promise<PostAsClass[]> {
     return STUB_RESPONSE();
   }
 
@@ -27,23 +32,33 @@ export class ResponseAsClassService extends BaseService {
     return STUB_RESPONSE();
   }
 
-  @POST("/")
-  async post(@Body body: PostCreateDTO): Promise<PostAsClass> {
+  @GET("/")
+  async getToType(): Promise<Post[]> {
+    return STUB_RESPONSE();
+  }
+}
+
+@BasePath(PostsApiService.BASE_PATH)
+export class ConvertToService extends BaseService {
+  @GET("/")
+  @ConvertTo(PostAsClass)
+  async get(): ApiResponse<PostAsClass[]> {
     return STUB_RESPONSE();
   }
 
-  @POST("/body-as-array")
-  async bodyAsArray(@Body body: PostCreateDTO[]): Promise<PostAsClass[]> {
+  @GET("/")
+  async getNoConvertTo(): ApiResponse<PostAsClass[]> {
     return STUB_RESPONSE();
   }
 
-  @PUT("/{id}")
-  async put(@Path("id") id: number, @Body body: PostCreateDTO): Promise<PostAsClass> {
+  @GET("/{id}")
+  @ConvertTo(PostAsClass)
+  async getWithPath(@Path("id") id: number): ApiResponse<PostAsClass> {
     return STUB_RESPONSE();
   }
 
-  @PATCH("/{id}")
-  async patch(@Path("id") id: number, @Body body: PostCreateDTO): Promise<Post> {
+  @GET("/")
+  async getToType(): ApiResponse<Post[]> {
     return STUB_RESPONSE();
   }
 }

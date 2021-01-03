@@ -16,7 +16,7 @@ import { requestHeadersResolver } from "./request-resolvers/headers-request-reso
 import { requestQueryParamsResolver } from "./request-resolvers/query-params-request-resolver";
 import { requestBodyResolver } from "./request-resolvers/body-request-resolver";
 import { PostAsClass } from "../tests/fixture/fixtures";
-import { ResponseAsClassService } from "../tests/fixture/fixtures.response-as-class";
+import { ConvertToInlinedBodyService } from "../tests/fixture/fixtures.response-as-class";
 import {
   validate,
   validateOrReject,
