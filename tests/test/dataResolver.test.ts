@@ -109,8 +109,7 @@ describe("Data resolver.", () => {
   });
 
   test("DataResolverFactory.", async () => {
-    const dataResolverFactory = new DataResolverFactory();
-    const dataResolver = dataResolverFactory.createDataResolver("application/user-defined-content-type");
+    const dataResolver = DataResolverFactory.createDataResolver("application/user-defined-content-type");
     expect(dataResolver instanceof JsonResolver).toBeTruthy();
   });
 });

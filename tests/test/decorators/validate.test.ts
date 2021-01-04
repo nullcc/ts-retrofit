@@ -1,5 +1,5 @@
 import { ServiceBuilder, ValidationErrors } from "../../../src";
-import { testServer } from "../../testHelpers";
+import { testServer, validateThrows } from "../../testHelpers";
 import {
   ValidationFailService,
   ValidationFailServiceInlinedBody,
@@ -78,6 +78,17 @@ describe("Validate", () => {
           await fn(service);
         },
       );
+
+      test("Wrong url", async () => {
+        await validateThrows(
+          async () => {
+            await service.wrongUrlAndOneField();
+          },
+          (error) => {
+            expect(error.message).toContain("404");
+          },
+        );
+      });
     });
 
     describe("Inlined body", () => {
@@ -109,7 +120,7 @@ describe("Validate", () => {
     });
 
     async function validateTwoFieldsInArray(service: ValidationFailServiceInlinedBody | ValidationFailService) {
-      await validateThrowsValidationErrors(service.arrayTwoFields, (er) => {
+      await validateThrows<ValidationErrors>(service.arrayTwoFields, (er) => {
         validateErrorsByTwoFields(posts.length, er, posts.length * 2);
       });
     }
@@ -124,7 +135,7 @@ describe("Validate", () => {
     }
 
     async function validateSingleFieldInArray(service: ValidationFailServiceInlinedBody | ValidationFailService) {
-      await validateThrowsValidationErrors(service.array, (er) => {
+      await validateThrows<ValidationErrors>(service.array, (er) => {
         expect(er.errors).toHaveLength(posts.length);
         er.errors.forEach((o) => {
           expect(o.property).toBe("body");
@@ -133,7 +144,7 @@ describe("Validate", () => {
     }
 
     async function validateSingleFieldIsInvalid(service: ValidationFailServiceInlinedBody | ValidationFailService) {
-      await validateThrowsValidationErrors(
+      await validateThrows<ValidationErrors>(
         () => service.singleOneField(1),
         (er) => {
           expect(er.errors).toHaveLength(1);
@@ -145,22 +156,12 @@ describe("Validate", () => {
     }
 
     async function validateTwoFieldAreInvalid(service: ValidationFailServiceInlinedBody | ValidationFailService) {
-      await validateThrowsValidationErrors(
+      await validateThrows<ValidationErrors>(
         () => service.singleTwoFields(1),
         (er) => {
           validateErrorsByTwoFields(posts.length, er);
         },
       );
-    }
-
-    async function validateThrowsValidationErrors(fn: () => void, catchChecks: (errors: ValidationErrors) => void) {
-      try {
-        await fn();
-      } catch (e) {
-        catchChecks(e as ValidationErrors);
-        return;
-      }
-      fail("Expected exception");
     }
   });
 });

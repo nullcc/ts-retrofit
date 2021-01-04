@@ -24,6 +24,20 @@ export function verifyBody<T>(
   expect(response.data).toMatchObject(expectedResponseBody);
 }
 
+export async function validateThrows<T extends Error = Error, R = unknown>(
+  fn: () => Promise<R>,
+  catchChecks: (error: T) => void = () => {
+    // do nothing
+  },
+) {
+  try {
+    await fn();
+    fail("Expected exception");
+  } catch (e) {
+    catchChecks(e as T);
+  }
+}
+
 // @TODO
 describe.skip("TMP", () => {
   test.skip("t", () => {

@@ -25,8 +25,7 @@ export const requestBodyResolver = (
   data = resolveMultipart(metadata, args, data);
 
   const contentType = headers[CONTENT_TYPE_HEADER] as string;
-  const dataResolverFactory = new DataResolverFactory();
-  const dataResolver = dataResolverFactory.createDataResolver(contentType);
+  const dataResolver = DataResolverFactory.createDataResolver(contentType);
   return dataResolver.resolve(headers, data);
 };
 

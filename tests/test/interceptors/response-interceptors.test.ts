@@ -1,7 +1,7 @@
 import { ResponseInterceptor } from "../../../src";
 import { ServiceBuilder } from "../../../src";
 import { AxiosResponse } from "axios";
-import { testServer } from "../../testHelpers";
+import { testServer, validateThrows } from "../../testHelpers";
 import { PostsApiService } from "../../fixture/fixtures";
 import { DataType } from "../../../src/constants";
 
@@ -65,7 +65,6 @@ describe("Response interceptors", () => {
       }
 
       const interceptor = new Interceptor();
-      const spy = jest.spyOn(interceptor, "onRejected");
 
       const service = new ServiceBuilder()
         .baseUrl(testServer.url)
@@ -73,9 +72,9 @@ describe("Response interceptors", () => {
         .setResponseInterceptors(interceptor)
         .build(PostsApiService);
 
-      await service.wrongUrl();
-
-      expect(spy).toHaveBeenCalled();
+      await validateThrows(service.wrongUrl, (error) => {
+        expect(error.message).toContain("404");
+      });
     });
   });
 

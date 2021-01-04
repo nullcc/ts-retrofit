@@ -17,6 +17,14 @@ const sleep = async (milliseconds: number): Promise<void> => {
   });
 };
 
+app.post("/posts/body-as-array", jsonParser, function (req, res) {
+  res.status(201).json(req.body);
+});
+
+app.get("/posts/not-found", jsonParser, function (req, res) {
+  res.status(404).send({});
+});
+
 app.get("/posts", jsonParser, function (req, res) {
   res.status(200).json(posts);
 });
@@ -49,11 +57,6 @@ app.head("/posts/:id", jsonParser, function (req, res) {
 app.options("/posts/:id", jsonParser, function (req, res) {
   res.status(204).json(posts.find((p) => p.id === Number(req.params["id"])));
 });
-
-app.post("/posts/body-as-array", jsonParser, function (req, res) {
-  res.status(201).json(req.body);
-});
-
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 app.post("/api/v1/form-url-encoded", jsonParser, function (req, res) {

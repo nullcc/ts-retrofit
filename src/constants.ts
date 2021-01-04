@@ -25,6 +25,7 @@ export enum CONTENT_TYPE {
   MULTIPART_FORM_DATA = "multipart/form-data",
   APPLICATION_JSON = "application/json",
   XML = "text/xml",
+  HTML = "text/html",
 }
 
 export type HeadersParamType = {

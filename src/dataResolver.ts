@@ -1,6 +1,6 @@
 import * as qs from "qs";
 import FormData from "form-data";
-import { CONTENT_TYPE, DataType, HeadersParamType } from "./constants";
+import { CONTENT_TYPE, CONTENT_TYPE_HEADER, DataType, HeadersParamType } from "./constants";
 import { ErrorMessages } from "./baseService";
 
 export class BaseDataResolver {
@@ -67,7 +67,7 @@ export class JsonResolver extends BaseDataResolver {
   }
 
   public resolve(headers: HeadersParamType, data: DataType): DataType {
-    return data;
+    return data && typeof data === "string" ? JSON.parse(data) : data;
   }
 }
 
@@ -82,13 +82,20 @@ export class TextXmlResolver extends BaseDataResolver {
 }
 
 const dataResolverMap = new Map<string, typeof BaseDataResolver>();
-dataResolverMap.set("application/x-www-form-urlencoded", FormUrlencodedResolver);
-dataResolverMap.set("multipart/form-data", MultiPartResolver);
-dataResolverMap.set("application/json", JsonResolver);
-dataResolverMap.set("text/xml", TextXmlResolver);
+dataResolverMap.set(CONTENT_TYPE.FORM_URL_ENCODED, FormUrlencodedResolver);
+dataResolverMap.set(CONTENT_TYPE.MULTIPART_FORM_DATA, MultiPartResolver);
+dataResolverMap.set(CONTENT_TYPE.APPLICATION_JSON, JsonResolver);
+dataResolverMap.set(CONTENT_TYPE.XML, TextXmlResolver);
+dataResolverMap.set(CONTENT_TYPE.HTML, TextXmlResolver);
 
 export class DataResolverFactory {
-  public createDataResolver(contentType: string): BaseDataResolver {
+  public static createDataResolver(contentType: string): BaseDataResolver;
+  public static createDataResolver(headers: HeadersParamType): BaseDataResolver;
+
+  public static createDataResolver(arg: string | HeadersParamType): BaseDataResolver {
+    const argElement = arg[CONTENT_TYPE_HEADER] || arg[CONTENT_TYPE_HEADER.toLocaleLowerCase()];
+    const contentType = typeof arg === "string" ? arg : (argElement as string);
+
     const contentTypeLowCased = contentType.toLowerCase();
     for (const dataContentType of Object.values(CONTENT_TYPE)) {
       if (contentTypeLowCased.includes(dataContentType)) {
@@ -99,7 +106,7 @@ export class DataResolverFactory {
     return new (this._getDataResolverCls(CONTENT_TYPE.APPLICATION_JSON))();
   }
 
-  private _getDataResolverCls(dataContentType: string): typeof BaseDataResolver {
+  private static _getDataResolverCls(dataContentType: string): typeof BaseDataResolver {
     return dataResolverMap.get(dataContentType) || JsonResolver;
   }
 }

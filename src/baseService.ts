@@ -7,6 +7,7 @@ import {
   HeadersParamType,
   HttpMethod,
   HttpMethodOptions,
+  Primitive,
   QueriesParamType,
 } from "./constants";
 import { ValidationErrors } from "../src";
@@ -18,6 +19,7 @@ import { requestHeadersResolver } from "./request-resolvers/headers-request-reso
 import { requestQueryParamsResolver } from "./request-resolvers/query-params-request-resolver";
 import { requestBodyResolver } from "./request-resolvers/body-request-resolver";
 import { validateSync } from "class-validator";
+import { DataResolverFactory } from "./dataResolver";
 
 axios.defaults.withCredentials = true;
 
@@ -119,29 +121,42 @@ export class BaseService {
       });
   }
 
-  private _wrapToAxiosResponse<T = DataType | DataType[]>(methodName: string, args: unknown[]): ApiResponse<T> {
+  private async _wrapToAxiosResponse<T = DataType | DataType[]>(methodName: string, args: unknown[]): ApiResponse<T> {
     this._resolveConverterAndValidator(methodName);
 
     const { url, method, headers, query, data } = this._resolveParameters(methodName, args);
     const config = this._makeConfig(methodName, url, method, headers, query, data);
 
-    const promise = this._httpClient.sendRequest<T>(config);
+    const result = await this._httpClient.sendRequest<T>(config);
 
-    this._saveToRequestHistory(promise);
+    this._responseValidator(result, methodName);
 
-    return promise;
+    this._saveToRequestHistory(result);
+
+    return result;
   }
 
   private _wrapToInlinedResponse<T extends Record<string, unknown>>(methodName: string, args: unknown[]): Promise<T> {
     return this._wrapToAxiosResponse<T>(methodName, args).then((r) => r.data);
   }
 
-  private _saveToRequestHistory<T>(promise: Promise<AxiosResponse<T>>) {
+  private _saveToRequestHistory<T>(result: AxiosResponse<T>) {
     if (!this.serviceBuilder.shouldSaveRequestHistory) return;
 
-    promise.then((result) => {
-      this.__requestsHistory.push(result);
-    });
+    this.__requestsHistory.push(result);
+  }
+
+  private _responseValidator<T>(response: AxiosResponse<T>, methodName: string) {
+    const metadata = this.__meta__.getMetadata(methodName);
+    if (!this.serviceBuilder.responseValidator || !metadata.convertTo) return;
+
+    const errors = Array.isArray(response.data)
+      ? Array.prototype.concat.apply(
+          [],
+          response.data.map((e) => validateSync(e)),
+        )
+      : validateSync(response.data);
+    if (errors.length !== 0) throw new ValidationErrors(errors);
   }
 
   private _resolveConverterAndValidator(methodName: string) {
@@ -154,25 +169,13 @@ export class BaseService {
       };
 
       metadata.responseTransformer.push((data) => {
+        if (!data) return data;
+
         if (Array.isArray(data)) {
           return data.map(convert);
         } else {
           return convert(data);
         }
-      });
-    }
-
-    if (this.serviceBuilder.responseValidator && metadata.convertTo) {
-      metadata.responseTransformer.push((data) => {
-        const errors = Array.isArray(data)
-          ? Array.prototype.concat.apply(
-              [],
-              data.map((e) => validateSync(e)),
-            )
-          : validateSync(data);
-        if (errors.length !== 0) throw new ValidationErrors(errors);
-
-        return data;
       });
     }
   }
@@ -238,9 +241,8 @@ export class BaseService {
     // response transformer
     if (metadata.responseTransformer.length > 0) {
       config.transformResponse = [
-        (body: string, headers?: { [key: string]: unknown }) => {
-          // @TODO what if not json ??? response content type?
-          return JSON.parse(body);
+        (body: string, headers: { [key: string]: Primitive }) => {
+          return DataResolverFactory.createDataResolver(headers).resolve(headers, body);
         },
         ...metadata.responseTransformer,
       ];
@@ -309,7 +311,7 @@ export type ResponseInterceptorFunction<T extends Record<string, unknown> = Reco
 
 abstract class BaseInterceptor {
   public onRejected(error: Error) {
-    return;
+    throw error;
   }
 }
 
