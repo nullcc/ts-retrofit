@@ -1,3 +1,4 @@
+.*
 src
 tests
 tsconfig.json
@@ -5,8 +6,8 @@ tslint.json
 jest.config.js
 coverage
 response-samples
-.idea
-.DS_Store
 package-lock.json
-.travis.yml
-.npmrc
+TODO.txt
+yarn-error.log
+commitlint.config.js
+renovate.json

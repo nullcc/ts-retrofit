@@ -21,7 +21,6 @@
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "outDir": "dist",
-    "declarationDir": "dist/types"
   },
   "include": [
     "src/**/*"

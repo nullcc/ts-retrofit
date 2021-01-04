@@ -4,3 +4,6 @@ dist
 .DS_Store
 coverage
 package-lock.json
+yarn-error.log
+TODO.txt
+package
