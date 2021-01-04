@@ -9,8 +9,8 @@ import {
   HttpMethodOptions,
   Primitive,
   QueriesParamType,
+  ValidationErrors,
 } from "./constants";
-import { ValidationErrors } from "../src";
 import { isNode } from "./util";
 import { RetrofitHttpClient } from "./http.client";
 import { ServiceBuilder } from "./service.builder";
