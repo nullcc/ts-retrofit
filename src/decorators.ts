@@ -237,7 +237,7 @@ export const RequestTransformer = <T extends BaseService, P1 extends DataType>(
  *           return json;
  *         })
  */
-export const ResponseTransformer = <T extends BaseService, P1 extends DataType>(
+export const ResponseTransformer = <T extends BaseService, P1 extends DataType | DataType[]>(
   ...transformers: TransformerType<P1>[]
 ) => {
   return (target: T, methodName: string) => {

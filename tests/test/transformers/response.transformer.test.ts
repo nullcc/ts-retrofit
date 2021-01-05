@@ -1,6 +1,6 @@
 import { ServiceBuilder } from "../../../src";
 import { testServer, verifyBody, verifyRequest } from "../../testHelpers";
-import { Post, PostCreateDTO, PostsApiService } from "../../fixture/fixtures";
+import { Post, PostCreateDTO, posts, PostsApiService } from "../../fixture/fixtures";
 import { ResponseTransformerApiService } from "../../fixture/fixtures.transformer";
 import { AxiosResponse } from "axios";
 
@@ -11,8 +11,20 @@ describe("Response transformer", () => {
     service = new ServiceBuilder().baseUrl(testServer.url).build(ResponseTransformerApiService);
   });
 
+  test("1 transformer - array", async () => {
+    const { data } = await service.array();
+
+    expect(data).toHaveLength(posts.length);
+
+    expect(data[0]).toMatchObject({
+      ...posts[0],
+      title: "transformer",
+    });
+    expect(data[1]).toMatchObject(posts[1]);
+  });
+
   test("1 transformer", async () => {
-    const response = await service.responseTransformer(PostsApiService.dto);
+    const response = await service.single(PostsApiService.dto);
 
     verify(response, {
       ...PostsApiService.dto,

@@ -3,6 +3,7 @@ import {
   BasePath,
   BaseService,
   Body,
+  GET,
   POST,
   RequestTransformer,
   ResponseTransformer,
@@ -53,12 +54,21 @@ export class RequestTransformerApiService extends BaseService {
 
 @BasePath(PostsApiService.BASE_PATH)
 export class ResponseTransformerApiService extends BaseService {
+  @GET("/")
+  @ResponseTransformer((data: Record<string, unknown>[], headers?: { [key: string]: unknown }) => {
+    data[0].title = "transformer";
+    return data;
+  })
+  async array(): ApiResponse<Post> {
+    return STUB_RESPONSE();
+  }
+
   @POST("/")
   @ResponseTransformer((data: Record<string, unknown>, headers?: { [key: string]: unknown }) => {
     data.title = "updated title2";
     return data;
   })
-  async responseTransformer(@Body body: PostCreateDTO): ApiResponse<Post> {
+  async single(@Body body: PostCreateDTO): ApiResponse<Post> {
     return STUB_RESPONSE();
   }
 
