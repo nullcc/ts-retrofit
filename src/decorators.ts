@@ -17,14 +17,9 @@ import { BaseService } from "./baseService";
 /**
  * Register HTTP method and path in API method.
  */
-const registerMethod = <T extends BaseService>(
-  method: HttpMethod,
-  url: string,
-  returnClass?: ResponseConvertTo,
-  options?: HttpMethodOptions,
-) => {
+const registerMethod = <T extends BaseService>(method: HttpMethod, url: string, options?: HttpMethodOptions) => {
   return (target: T, methodName: string, descriptor: PropertyDescriptor) => {
-    if (returnClass) handleConvertTo(target, methodName, returnClass);
+    if (options?.convertTo) handleConvertTo(target, methodName, options?.convertTo);
 
     target.__getServiceMetadata().setMetadata(methodName, (prev: MethodMetadata) => ({
       httpMethod: method,
@@ -37,36 +32,21 @@ const registerMethod = <T extends BaseService>(
   };
 };
 
-export const GET = <T extends BaseService>(url: string, returnClass?: ResponseConvertTo, options?: HttpMethodOptions) =>
-  registerMethod<T>("GET", url, returnClass, options);
+export const GET = <T extends BaseService>(url: string, options?: HttpMethodOptions) =>
+  registerMethod<T>("GET", url, options);
 
-export const POST = <T extends BaseService>(
-  url: string,
-  returnClass?: ResponseConvertTo,
-  options?: HttpMethodOptions,
-) => registerMethod<T>("POST", url, returnClass, options);
-export const PUT = <T extends BaseService>(url: string, returnClass?: ResponseConvertTo, options?: HttpMethodOptions) =>
-  registerMethod<T>("PUT", url, returnClass, options);
-export const PATCH = <T extends BaseService>(
-  url: string,
-  returnClass?: ResponseConvertTo,
-  options?: HttpMethodOptions,
-) => registerMethod<T>("PATCH", url, returnClass, options);
-export const DELETE = <T extends BaseService>(
-  url: string,
-  returnClass?: ResponseConvertTo,
-  options?: HttpMethodOptions,
-) => registerMethod<T>("DELETE", url, returnClass, options);
-export const HEAD = <T extends BaseService>(
-  url: string,
-  returnClass?: ResponseConvertTo,
-  options?: HttpMethodOptions,
-) => registerMethod<T>("HEAD", url, returnClass, options);
-export const OPTIONS = <T extends BaseService>(
-  url: string,
-  returnClass?: ResponseConvertTo,
-  options?: HttpMethodOptions,
-) => registerMethod<T>("OPTIONS", url, returnClass, options);
+export const POST = <T extends BaseService>(url: string, options?: HttpMethodOptions) =>
+  registerMethod<T>("POST", url, options);
+export const PUT = <T extends BaseService>(url: string, options?: HttpMethodOptions) =>
+  registerMethod<T>("PUT", url, options);
+export const PATCH = <T extends BaseService>(url: string, options?: HttpMethodOptions) =>
+  registerMethod<T>("PATCH", url, options);
+export const DELETE = <T extends BaseService>(url: string, options?: HttpMethodOptions) =>
+  registerMethod<T>("DELETE", url, options);
+export const HEAD = <T extends BaseService>(url: string, options?: HttpMethodOptions) =>
+  registerMethod<T>("HEAD", url, options);
+export const OPTIONS = <T extends BaseService>(url: string, options?: HttpMethodOptions) =>
+  registerMethod<T>("OPTIONS", url, options);
 
 /**
  * @sample @BasePath("/api/v1")

@@ -76,7 +76,7 @@ export class ValidationPassServiceInlinedResponse extends BaseService {
 
 @BasePath(PostsApiService.BASE_PATH)
 export class ValidationFailService extends BaseService {
-  @GET("/not-found2222", ValidationFailsOneField, { ignoreBasePath: true })
+  @GET("/not-found2222", { ignoreBasePath: true, convertTo: ValidationFailsOneField })
   async wrongUrlAndOneField(): ApiResponse<ValidationFailsOneField[]> {
     return STUB_RESPONSE();
   }

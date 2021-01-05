@@ -68,6 +68,7 @@ export type MethodMetadata = {
 
 export type HttpMethodOptions = {
   ignoreBasePath?: boolean;
+  convertTo?: ResponseConvertTo;
 };
 
 export interface PartDescriptor<T> {

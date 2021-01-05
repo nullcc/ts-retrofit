@@ -86,7 +86,7 @@ export class PostsApiService extends BaseService {
     return STUB_RESPONSE();
   }
 
-  @GET("/posts", undefined, { ignoreBasePath: true })
+  @GET("/posts", { ignoreBasePath: true })
   async getIgnoreBasePath(): ApiResponse<Post[]> {
     return STUB_RESPONSE();
   }
@@ -225,7 +225,7 @@ export class PostsApiService extends BaseService {
     return STUB_RESPONSE();
   }
 
-  @GET("/asdasda/sdasdasda/sdasd/asdkjajkldkasd", undefined, { ignoreBasePath: true })
+  @GET("/asdasda/sdasdasda/sdasd/asdkjajkldkasd", { ignoreBasePath: true })
   async wrongUrl(): ApiResponse {
     return STUB_RESPONSE();
   }
@@ -238,7 +238,7 @@ export class ResponseBodyPostsApiService extends BaseService {
     return STUB_RESPONSE();
   }
 
-  @GET("/posts", undefined, { ignoreBasePath: true })
+  @GET("/posts", { ignoreBasePath: true })
   async getIgnoreBasePath(): Promise<Post[]> {
     return STUB_RESPONSE();
   }
@@ -372,7 +372,7 @@ export class ResponseBodyPostsApiService extends BaseService {
     return STUB_RESPONSE();
   }
 
-  @GET("/asdasda/sdasdasda/sdasd/asdkjajkldkasd", undefined, { ignoreBasePath: true })
+  @GET("/asdasda/sdasdasda/sdasd/asdkjajkldkasd", { ignoreBasePath: true })
   async wrongUrl(): Promise<never> {
     return STUB_RESPONSE();
   }

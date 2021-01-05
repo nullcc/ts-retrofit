@@ -9,7 +9,7 @@ export class ConvertServiceInline extends BaseService {
     return STUB_RESPONSE();
   }
 
-  @GET("/", PostAsClass)
+  @GET("/", { convertTo: PostAsClass })
   async getConvertInMethod(): Promise<PostAsClass[]> {
     return STUB_RESPONSE();
   }
@@ -25,7 +25,7 @@ export class ConvertServiceInline extends BaseService {
     return STUB_RESPONSE();
   }
 
-  @GET("/{id}", PostAsClass)
+  @GET("/{id}", { convertTo: PostAsClass })
   async getWithPathInMethod(@Path("id") id: number): Promise<PostAsClass> {
     return STUB_RESPONSE();
   }
