@@ -137,6 +137,7 @@ describe("Validate", () => {
     async function validateSingleFieldInArray(service: ValidationFailServiceInlinedBody | ValidationFailService) {
       await validateThrows<ValidationErrors>(service.array, (er) => {
         expect(er.errors).toHaveLength(posts.length);
+        expect(JSON.parse(er.response)).toMatchObject(posts);
         er.errors.forEach((o) => {
           expect(o.property).toBe("body");
         });

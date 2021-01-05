@@ -152,21 +152,23 @@ export class BaseService {
 
   private _responseValidator<T>(response: AxiosResponse<T>, methodName: string) {
     const metadata = this.__meta__.getMetadata(methodName);
-    if (!this.serviceBuilder.responseValidator || !metadata.convertTo) return;
+    if (!response || !this.serviceBuilder.responseValidator || !metadata.convertTo) return;
+
+    const data = response.data;
 
     let errors: ValidationError[] = [];
-    if (Array.isArray(response.data)) {
+    if (Array.isArray(data)) {
       errors = Array.prototype.concat.apply(
         [],
-        response.data.map((e) => validateSync(e)),
+        data.map((e) => validateSync(e)),
       );
-    } else if (typeof response.data === "object") {
-      errors = validateSync(response.data);
+    } else if (typeof data === "object") {
+      errors = validateSync(data);
     } else {
-      throw new Error(ErrorMessages.VALIDATION_NOT_OBJECT.replace("{}", "" + response.data));
+      throw new Error(ErrorMessages.VALIDATION_NOT_OBJECT.replace("{}", "" + data));
     }
 
-    if (errors.length !== 0) throw new ValidationErrors(errors);
+    if (errors.length !== 0) throw new ValidationErrors(errors, JSON.stringify(data));
   }
 
   private _resolveConverterAndValidator(methodName: string) {

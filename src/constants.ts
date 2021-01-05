@@ -6,8 +6,8 @@ export enum ValidationMethod {
 }
 
 export class ValidationErrors extends Error {
-  constructor(public errors: ValidationError[]) {
-    super(`Response validation errors: ${errors.length}\n${errors.map((e) => e.toString())}`);
+  constructor(public errors: ValidationError[], public response: string) {
+    super(`Response:\n${response}\n\nHas validation errors: ${errors.length}\n${errors.map((e) => e.toString())}`);
   }
 }
 
