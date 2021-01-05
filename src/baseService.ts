@@ -20,6 +20,7 @@ import { requestQueryParamsResolver } from "./request-resolvers/query-params-req
 import { requestBodyResolver } from "./request-resolvers/body-request-resolver";
 import { validateSync } from "class-validator";
 import { DataResolverFactory } from "./dataResolver";
+import { plainToClass } from "class-transformer";
 
 axios.defaults.withCredentials = true;
 
@@ -165,7 +166,8 @@ export class BaseService {
     if (metadata.convertTo) {
       const convert = (data: Record<string, unknown>) => {
         if (!metadata.convertTo) throw new Error("metadata.convertTo null???");
-        return Object.assign(new metadata.convertTo(), data);
+
+        return plainToClass(metadata.convertTo, data);
       };
 
       metadata.responseTransformer.push((data) => {
