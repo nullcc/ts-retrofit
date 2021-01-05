@@ -21,6 +21,7 @@ import { requestBodyResolver } from "./request-resolvers/body-request-resolver";
 import { validateSync } from "class-validator";
 import { DataResolverFactory } from "./dataResolver";
 import { plainToClass } from "class-transformer";
+import { ValidationError } from "class-validator/types/validation/ValidationError";
 
 axios.defaults.withCredentials = true;
 
@@ -48,6 +49,8 @@ export const ErrorMessages = {
 
   MULTIPART_WITH_ARRAY_BODY: "@Multipart can't be used with array @Body",
   MULTIPART_PARAM_WRONG_TYPE: "Multipart param should be PartDescriptor",
+
+  VALIDATION_NOT_OBJECT: `Response is not an object or array: "{}"`,
 
   __TEST_NO_REQUESTS_IN_HISTORY: "No requests in history",
 };
@@ -151,12 +154,18 @@ export class BaseService {
     const metadata = this.__meta__.getMetadata(methodName);
     if (!this.serviceBuilder.responseValidator || !metadata.convertTo) return;
 
-    const errors = Array.isArray(response.data)
-      ? Array.prototype.concat.apply(
-          [],
-          response.data.map((e) => validateSync(e)),
-        )
-      : validateSync(response.data);
+    let errors: ValidationError[] = [];
+    if (Array.isArray(response.data)) {
+      errors = Array.prototype.concat.apply(
+        [],
+        response.data.map((e) => validateSync(e)),
+      );
+    } else if (typeof response.data === "object") {
+      errors = validateSync(response.data);
+    } else {
+      throw new Error(ErrorMessages.VALIDATION_NOT_OBJECT.replace("{}", "" + response.data));
+    }
+
     if (errors.length !== 0) throw new ValidationErrors(errors);
   }
 
@@ -166,6 +175,8 @@ export class BaseService {
     if (metadata.convertTo) {
       const convert = (data: Record<string, unknown>) => {
         if (!metadata.convertTo) throw new Error("metadata.convertTo null???");
+
+        if (typeof data !== "object") return data;
 
         return plainToClass(metadata.convertTo, data);
       };

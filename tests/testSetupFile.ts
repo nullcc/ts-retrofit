@@ -1,3 +1,4 @@
+import "reflect-metadata";
 import http from "http";
 import { app } from "./fixture/server";
 import { testServer, testServerUrl } from "./testHelpers";

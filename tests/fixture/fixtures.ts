@@ -25,6 +25,8 @@ import {
   STUB_RESPONSE,
 } from "../../src";
 import { JSONPLACEHOLDER_URL } from "../testHelpers";
+import { Type } from "class-transformer";
+import { IsNotEmpty } from "class-validator";
 
 export const API_PREFIX = "/api/v1";
 export const TOKEN = "abcdef123456";
@@ -44,6 +46,17 @@ export class PostAsClass {
   methodInside() {
     return this.id;
   }
+}
+
+export class PostAsClassWithTransfromAndValidate {
+  id = -1;
+  userId = -1;
+  title = "";
+  @IsNotEmpty()
+  body = "";
+
+  @Type(() => Date)
+  date: Date = new Date();
 }
 
 export interface Post extends PostCreateDTO {
@@ -83,6 +96,11 @@ export class PostsApiService extends BaseService {
 
   @GET("/")
   async get(): ApiResponse<Post[]> {
+    return STUB_RESPONSE();
+  }
+
+  @GET("/just-string")
+  async getJustString(): ApiResponse<string> {
     return STUB_RESPONSE();
   }
 

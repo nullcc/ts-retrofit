@@ -17,6 +17,10 @@ const sleep = async (milliseconds: number): Promise<void> => {
   });
 };
 
+app.get("/posts/just-string", jsonParser, function (req, res) {
+  res.status(200).send("just string");
+});
+
 app.post("/posts/body-as-array", jsonParser, function (req, res) {
   res.status(201).json(req.body);
 });

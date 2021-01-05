@@ -1,5 +1,5 @@
-import { ServiceBuilder } from "../../../src";
-import { testServer, verifyRequest } from "../../testHelpers";
+import { ErrorMessages, ServiceBuilder } from "../../../src";
+import { testServer, validateThrows, verifyRequest } from "../../testHelpers";
 import { ConvertServiceInline, ConvertToServiceRaw } from "../../fixture/fixtures.convertTo";
 import { PostAsClass, posts } from "../../fixture/fixtures";
 
@@ -8,7 +8,11 @@ describe("@ConvertTo", () => {
     let service: ConvertToServiceRaw;
 
     beforeAll(() => {
-      service = new ServiceBuilder().baseUrl(testServer.url).saveRequestHistory().build(ConvertToServiceRaw);
+      service = new ServiceBuilder()
+        .baseUrl(testServer.url)
+        .validateResponse()
+        .saveRequestHistory()
+        .build(ConvertToServiceRaw);
     });
 
     test("@GET", async () => {
@@ -34,6 +38,16 @@ describe("@ConvertTo", () => {
       const result = await service.getNoConvertTo();
       expect(result.data[0].methodInside).toBeUndefined();
       expect(result.data[1].methodInside).toBeUndefined();
+    });
+
+    test("Wrong - Response is string", async () => {
+      await validateThrows(
+        () => service.wrongConvertWhenReturnIsString(),
+        (er) => {
+          const errorMessage = ErrorMessages.VALIDATION_NOT_OBJECT.replace("{}", "just string");
+          expect(er.message).toBe(errorMessage);
+        },
+      );
     });
   });
 

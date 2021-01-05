@@ -1,5 +1,5 @@
 import { ApiResponse, BasePath, BaseService, GET, Path, ConvertTo, STUB_RESPONSE } from "../../src";
-import { Post, PostAsClass, PostsApiService } from "./fixtures";
+import { Post, PostAsClass, PostAsClassWithTransfromAndValidate, PostsApiService } from "./fixtures";
 
 @BasePath(PostsApiService.BASE_PATH)
 export class ConvertServiceInline extends BaseService {
@@ -57,6 +57,11 @@ export class ConvertToServiceRaw extends BaseService {
 
   @GET("/")
   async getToType(): ApiResponse<Post[]> {
+    return STUB_RESPONSE();
+  }
+
+  @GET("/just-string", { convertTo: PostAsClassWithTransfromAndValidate })
+  async wrongConvertWhenReturnIsString(): ApiResponse<string> {
     return STUB_RESPONSE();
   }
 }

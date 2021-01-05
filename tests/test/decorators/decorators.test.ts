@@ -23,6 +23,11 @@ describe("Decorators", () => {
     verifyRequest(response, "get");
   });
 
+  test("@GET - return is just string", async () => {
+    const response = await service.getJustString();
+    expect(response.data).toBe("just string");
+  });
+
   test("@GET - without base path", async () => {
     const service = new ServiceBuilder().baseUrl(testServer.url).build(ServiceWithoutBasePath);
     const response = await service.get();
