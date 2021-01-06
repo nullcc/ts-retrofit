@@ -30,6 +30,7 @@ import { IsNotEmpty } from "class-validator";
 
 export const API_PREFIX = "/api/v1";
 export const TOKEN = "abcdef123456";
+export const TEST_HEADER = "TEST_HEADER";
 
 export interface PostCreateDTO {
   userId: number;
@@ -392,6 +393,30 @@ export class ResponseBodyPostsApiService extends BaseService {
 
   @GET("/asdasda/sdasdasda/sdasd/asdkjajkldkasd", { ignoreBasePath: true })
   async wrongUrl(): Promise<never> {
+    return STUB_RESPONSE();
+  }
+}
+
+export class WithHeaderService extends BaseService {
+  @GET("/with-headers")
+  async withHeaders(): ApiResponse<string> {
+    return STUB_RESPONSE();
+  }
+
+  @GET("/with-oauth")
+  async withOauth(): ApiResponse<string> {
+    return STUB_RESPONSE();
+  }
+}
+
+export class ResponseBodyWithHeaderService extends BaseService {
+  @GET("/with-headers")
+  async withHeaders(): Promise<unknown> {
+    return STUB_RESPONSE();
+  }
+
+  @GET("/with-oauth")
+  async withOauth(): Promise<string> {
     return STUB_RESPONSE();
   }
 }

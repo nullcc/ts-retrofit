@@ -1,11 +1,11 @@
-import { AxiosInstance } from "axios";
+import { AxiosInstance, AxiosRequestConfig } from "axios";
 import {
   RequestInterceptor,
   RequestInterceptorFunction,
   ResponseInterceptor,
   ResponseInterceptorFunction,
 } from "./baseService";
-import { ValidationMethod } from "./constants";
+import { Primitive, ValidationMethod } from "./constants";
 
 export class ServiceBuilder {
   private _endpoint = "";
@@ -53,6 +53,28 @@ export class ServiceBuilder {
 
   public setTimeout(timeout: number): ServiceBuilder {
     this._timeout = timeout;
+    return this;
+  }
+
+  /**
+   * Sends request header "Authorization": "Bearer ${token}"
+   */
+  public withOauth(token?: string): ServiceBuilder {
+    return this.withRequestHeader("Authorization", `Bearer ${token ? token : ""}`);
+  }
+
+  public withRequestHeader(key: string, value?: Primitive): ServiceBuilder {
+    this.setRequestInterceptors((config: AxiosRequestConfig) => {
+      if (!value) return config;
+
+      return {
+        ...config,
+        headers: {
+          ...config.headers,
+          [key]: value,
+        },
+      };
+    });
     return this;
   }
 

@@ -1,7 +1,7 @@
 import express from "express";
 import bodyParser from "body-parser";
 import multer from "multer";
-import { posts } from "./fixtures";
+import { posts, TEST_HEADER } from "./fixtures";
 
 export const app = express();
 
@@ -27,6 +27,14 @@ app.post("/posts/body-as-array", jsonParser, function (req, res) {
 
 app.get("/posts/not-found", jsonParser, function (req, res) {
   res.status(404).send({});
+});
+
+app.get("/with-headers", jsonParser, function (req, res) {
+  res.status(200).send(req.header(TEST_HEADER));
+});
+
+app.get("/with-oauth", jsonParser, function (req, res) {
+  res.status(200).send(req.header("Authorization"));
 });
 
 app.get("/posts", jsonParser, function (req, res) {
