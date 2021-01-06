@@ -16,6 +16,7 @@ export class ServiceBuilder {
   private _responseValidator?: ValidationMethod;
   private _shouldSaveRequestHistory = false;
   private _timeout = 60000;
+  private _loggerOptions: { showLogs?: boolean; logLevel?: "LOG" | "DEBUG" } = { showLogs: false };
 
   public build<T>(service: new (builder: ServiceBuilder) => T): T {
     return new service(this);
@@ -55,6 +56,13 @@ export class ServiceBuilder {
     return this;
   }
 
+  public withRequestLogger(
+    options: { showLogs?: boolean; logLevel?: "LOG" | "DEBUG" } = { showLogs: true },
+  ): ServiceBuilder {
+    this._loggerOptions = options;
+    return this;
+  }
+
   public inlineResponseBody(): ServiceBuilder {
     this._withInlineResponseBody = true;
     return this;
@@ -63,6 +71,10 @@ export class ServiceBuilder {
   public saveRequestHistory(): ServiceBuilder {
     this._shouldSaveRequestHistory = true;
     return this;
+  }
+
+  get loggerOptions() {
+    return this._loggerOptions;
   }
 
   get shouldSaveRequestHistory() {

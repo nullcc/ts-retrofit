@@ -8,7 +8,7 @@ describe("Decorators", () => {
   let service: PostsApiService;
 
   beforeAll(() => {
-    service = new ServiceBuilder().baseUrl(testServer.url).build(PostsApiService);
+    service = new ServiceBuilder().baseUrl(testServer.url).withRequestLogger().build(PostsApiService);
   });
 
   test("@BasePath", async () => {

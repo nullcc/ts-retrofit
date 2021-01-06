@@ -1,5 +1,4 @@
 import {
-  BaseDataResolver,
   DataResolverFactory,
   FormUrlencodedResolver,
   JsonResolver,
@@ -10,14 +9,6 @@ import * as fs from "fs";
 import { CONTENT_TYPE, CONTENT_TYPE_HEADER } from "../../src/constants";
 
 describe("Data resolver.", () => {
-  test("BaseDataResolver", async () => {
-    const baseDataResolver = new BaseDataResolver();
-    const t = () => {
-      baseDataResolver.resolve({}, {});
-    };
-    expect(t).toThrowError("Can not call this method in BaseDataResolver.");
-  });
-
   test("FormUrlencodedResolver with flat object.", async () => {
     const formUrlencodedResolver = new FormUrlencodedResolver();
     const headers = {

@@ -8,7 +8,7 @@ describe("Request transformer", () => {
   let service: RequestTransformerApiService;
 
   beforeAll(() => {
-    service = new ServiceBuilder().baseUrl(testServer.url).build(RequestTransformerApiService);
+    service = new ServiceBuilder().baseUrl(testServer.url).withRequestLogger().build(RequestTransformerApiService);
   });
 
   test("Single", async () => {

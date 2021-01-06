@@ -10,10 +10,6 @@ export class BaseDataResolver {
 }
 
 export class FormUrlencodedResolver extends BaseDataResolver {
-  constructor() {
-    super();
-  }
-
   public resolve(headers: HeadersParamType, data: DataType): DataType {
     const deepStringify = (obj: Record<string, unknown>) => {
       const res = {};
@@ -34,10 +30,6 @@ export class FormUrlencodedResolver extends BaseDataResolver {
 }
 
 export class MultiPartResolver extends BaseDataResolver {
-  constructor() {
-    super();
-  }
-
   public resolve(headers: HeadersParamType, data: Record<string, unknown>): FormData {
     const formData = new FormData();
     Object.entries(data).map((e) => {
@@ -62,20 +54,12 @@ export class MultiPartResolver extends BaseDataResolver {
 }
 
 export class JsonResolver extends BaseDataResolver {
-  constructor() {
-    super();
-  }
-
   public resolve(headers: HeadersParamType, data: DataType): DataType {
     return data && typeof data === "string" ? JSON.parse(data) : data;
   }
 }
 
 export class TextXmlResolver extends BaseDataResolver {
-  constructor() {
-    super();
-  }
-
   public resolve(headers: HeadersParamType, data: DataType): DataType {
     return data;
   }

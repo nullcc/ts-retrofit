@@ -18,6 +18,7 @@ describe("Decorators - inlined response", () => {
       .saveRequestHistory()
       .baseUrl(testServer.url)
       .inlineResponseBody()
+      .withRequestLogger({ showLogs: true, logLevel: "LOG" }) // to test logger
       .build(ResponseBodyPostsApiService);
   });
 

@@ -7,7 +7,7 @@ import {
   HeadersParamType,
   HttpMethod,
   HttpMethodOptions,
-  Primitive,
+  MethodMetadata,
   QueriesParamType,
   ValidationErrors,
 } from "./constants";
@@ -19,9 +19,9 @@ import { requestHeadersResolver } from "./request-resolvers/headers-request-reso
 import { requestQueryParamsResolver } from "./request-resolvers/query-params-request-resolver";
 import { requestBodyResolver } from "./request-resolvers/body-request-resolver";
 import { validateSync } from "class-validator";
-import { DataResolverFactory } from "./dataResolver";
 import { plainToClass } from "class-transformer";
 import { ValidationError } from "class-validator/types/validation/ValidationError";
+import { makeConfig } from "./request-config-builder";
 
 axios.defaults.withCredentials = true;
 
@@ -61,13 +61,11 @@ export class BaseService {
   private __meta__: ServiceMetaData<this>;
   private readonly _endpoint: string;
   private readonly _httpClient: RetrofitHttpClient;
-  private readonly _timeout: number;
   public readonly __requestsHistory: AxiosResponse[] = [];
 
   constructor(private serviceBuilder: ServiceBuilder) {
     this._endpoint = serviceBuilder.endpoint;
     this._httpClient = new RetrofitHttpClient(serviceBuilder);
-    this._timeout = serviceBuilder.timeout;
 
     const methodNames = this._getInstanceMethodNames();
 
@@ -126,14 +124,15 @@ export class BaseService {
   }
 
   private async _wrapToAxiosResponse<T = DataType | DataType[]>(methodName: string, args: unknown[]): ApiResponse<T> {
-    this._resolveConverterAndValidator(methodName);
+    const metadata = this.__meta__.getMetadata(methodName);
+    this._resolveConverterAndValidator(methodName, metadata);
 
     const { url, method, headers, query, data } = this._resolveParameters(methodName, args);
-    const config = this._makeConfig(methodName, url, method, headers, query, data);
+    const config = makeConfig(metadata, this.serviceBuilder, methodName, url, method, headers, query, data);
 
     const result = await this._httpClient.sendRequest<T>(config);
 
-    this._responseValidator(result, methodName);
+    this._responseValidator(result, methodName, metadata);
 
     this._saveToRequestHistory(result);
 
@@ -150,8 +149,7 @@ export class BaseService {
     this.__requestsHistory.push(result);
   }
 
-  private _responseValidator<T>(response: AxiosResponse<T>, methodName: string) {
-    const metadata = this.__meta__.getMetadata(methodName);
+  private _responseValidator<T>(response: AxiosResponse<T>, methodName: string, metadata: MethodMetadata) {
     if (!response || !this.serviceBuilder.responseValidator || !metadata.convertTo) return;
 
     const data = response.data;
@@ -171,9 +169,7 @@ export class BaseService {
     if (errors.length !== 0) throw new ValidationErrors(errors, JSON.stringify(data));
   }
 
-  private _resolveConverterAndValidator(methodName: string) {
-    const metadata = this.__meta__.getMetadata(methodName);
-
+  private _resolveConverterAndValidator(methodName: string, metadata: MethodMetadata) {
     if (metadata.convertTo) {
       const convert = (data: Record<string, unknown>) => {
         if (!metadata.convertTo) throw new Error("metadata.convertTo null???");
@@ -220,56 +216,6 @@ export class BaseService {
       headers = { ...headers, ...(data as FormData).getHeaders() };
     }
     return { url, method, headers, query, data };
-  }
-
-  private _makeConfig(
-    methodName: string,
-    url: string,
-    method: HttpMethod,
-    headers: HeadersParamType,
-    query: QueriesParamType,
-    data: unknown,
-  ): AxiosRequestConfig {
-    let config: AxiosRequestConfig = {
-      url,
-      method,
-      headers,
-      params: query,
-      data,
-    };
-    const metadata = this.__meta__.getMetadata(methodName);
-
-    // response type
-    if (metadata.responseType) {
-      config.responseType = metadata.responseType;
-    }
-    // request transformer
-    if (metadata.requestTransformer.length > 0) {
-      config.transformRequest = [
-        ...metadata.requestTransformer,
-        (data: string, headers?: { [key: string]: unknown }) => {
-          // @TODO what if not json ??? response content type?
-          return JSON.stringify(data);
-        },
-      ];
-    }
-    // response transformer
-    if (metadata.responseTransformer.length > 0) {
-      config.transformResponse = [
-        (body: string, headers: { [key: string]: Primitive }) => {
-          return DataResolverFactory.createDataResolver(headers).resolve(headers, body);
-        },
-        ...metadata.responseTransformer,
-      ];
-    }
-    // timeout
-    config.timeout = metadata.timeout || this._timeout;
-    // mix in config set by @Config
-    config = {
-      ...config,
-      ...metadata.config,
-    };
-    return config;
   }
 
   private _resolveUrl(methodName: string, args: unknown[]): string {

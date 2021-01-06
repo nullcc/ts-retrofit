@@ -11,6 +11,7 @@ describe("@ConvertTo", () => {
       service = new ServiceBuilder()
         .baseUrl(testServer.url)
         .validateResponse()
+        .withRequestLogger({ showLogs: false, logLevel: "LOG" }) // to test logger
         .saveRequestHistory()
         .build(ConvertToServiceRaw);
     });
