@@ -153,7 +153,11 @@ export class BaseService {
     this.__requestsHistory.push(result);
   }
 
-  private _responseValidator<T>(response: AxiosResponse<T>, methodName: string, metadata: MethodMetadata) {
+  private _responseValidator<T extends unknown | Array<unknown>>(
+    response: AxiosResponse<T>,
+    methodName: string,
+    metadata: MethodMetadata,
+  ) {
     if (!response || !this.serviceBuilder.responseValidator || !metadata.convertTo) return;
 
     const data = response.data;
@@ -165,7 +169,7 @@ export class BaseService {
         data.map((e) => validateSync(e)),
       );
     } else if (typeof data === "object") {
-      errors = validateSync(data);
+      errors = validateSync(data as Record<string, unknown>);
     } else {
       throw new Error(ErrorMessages.VALIDATION_NOT_OBJECT.replace("{}", "" + data));
     }
