@@ -1,16 +1,16 @@
-import { ApiResponse, BasePath, BaseService, GET, Path, ConvertTo, STUB_RESPONSE } from "../../src";
+import { ApiResponse, BasePath, BaseService, GET, Path, ConvertTo, ApiResponseBody } from "../../src";
 import { PostsApiService } from "./fixtures";
 import { IsNegative, IsPositive, MinLength } from "class-validator";
 
 export class ValidationPass {
   @IsPositive()
-  id = -1;
+  id!: number;
 
   @MinLength(1)
-  body = "";
+  body!: string;
 
   @IsPositive()
-  userId = -1;
+  userId!: number;
 
   methodInside() {
     return this.id;
@@ -18,12 +18,12 @@ export class ValidationPass {
 }
 
 export class ValidationFailsOneField {
-  id = -1;
+  id!: number;
 
   @MinLength(100)
-  body = "";
+  body!: string;
 
-  userId = -1;
+  userId!: number;
 
   methodInside() {
     return this.id;
@@ -31,13 +31,13 @@ export class ValidationFailsOneField {
 }
 
 export class ValidationFailsTwoFields {
-  id = -1;
+  id!: number;
 
   @MinLength(100)
-  body = "";
+  body!: string;
 
   @IsNegative()
-  userId = -1;
+  userId!: number;
 
   methodInside() {
     return this.id;
@@ -48,87 +48,61 @@ export class ValidationFailsTwoFields {
 export class ValidationPassService extends BaseService {
   @GET("/")
   @ConvertTo(ValidationPass)
-  async getAll(): ApiResponse<ValidationPass[]> {
-    return STUB_RESPONSE();
-  }
+  getAll(): ApiResponse<ValidationPass[]> {}
 
   @GET("/{id}")
   @ConvertTo(ValidationPass)
-  async single(@Path("id") id: number): ApiResponse<ValidationPass> {
-    return STUB_RESPONSE();
-  }
+  single(@Path("id") id: number): ApiResponse<ValidationPass> {}
 }
 
 @BasePath(PostsApiService.BASE_PATH)
 export class ValidationPassServiceInlinedResponse extends BaseService {
   @GET("/")
   @ConvertTo(ValidationPass)
-  async getAll(): Promise<ValidationPass[]> {
-    return STUB_RESPONSE();
-  }
+  getAll(): ApiResponseBody<ValidationPass[]> {}
 
   @GET("/{id}")
   @ConvertTo(ValidationPass)
-  async single(@Path("id") id: number): Promise<ValidationPass> {
-    return STUB_RESPONSE();
-  }
+  single(@Path("id") id: number): ApiResponseBody<ValidationPass> {}
 }
 
 @BasePath(PostsApiService.BASE_PATH)
 export class ValidationFailService extends BaseService {
   @GET("/not-found2222", { ignoreBasePath: true, convertTo: ValidationFailsOneField })
-  async wrongUrlAndOneField(): ApiResponse<ValidationFailsOneField[]> {
-    return STUB_RESPONSE();
-  }
+  wrongUrlAndOneField(): ApiResponse<ValidationFailsOneField[]> {}
 
   @GET("/")
   @ConvertTo(ValidationFailsOneField)
-  async array(): ApiResponse<ValidationFailsOneField[]> {
-    return STUB_RESPONSE();
-  }
+  array(): ApiResponse<ValidationFailsOneField[]> {}
 
   @GET("/")
   @ConvertTo(ValidationFailsTwoFields)
-  async arrayTwoFields(): ApiResponse<ValidationFailsTwoFields[]> {
-    return STUB_RESPONSE();
-  }
+  arrayTwoFields(): ApiResponse<ValidationFailsTwoFields[]> {}
 
   @GET("/{id}")
   @ConvertTo(ValidationFailsOneField)
-  async singleOneField(@Path("id") id: number): ApiResponse<ValidationFailsOneField> {
-    return STUB_RESPONSE();
-  }
+  singleOneField(@Path("id") id: number): ApiResponse<ValidationFailsOneField> {}
 
   @GET("/{id}")
   @ConvertTo(ValidationFailsTwoFields)
-  async singleTwoFields(@Path("id") id: number): ApiResponse<ValidationFailsTwoFields> {
-    return STUB_RESPONSE();
-  }
+  singleTwoFields(@Path("id") id: number): ApiResponse<ValidationFailsTwoFields> {}
 }
 
 @BasePath(PostsApiService.BASE_PATH)
 export class ValidationFailServiceInlinedBody extends BaseService {
   @GET("/")
   @ConvertTo(ValidationFailsOneField)
-  async array(): Promise<ValidationFailsOneField[]> {
-    return STUB_RESPONSE();
-  }
+  array(): ApiResponseBody<ValidationFailsOneField[]> {}
 
   @GET("/")
   @ConvertTo(ValidationFailsTwoFields)
-  async arrayTwoFields(): Promise<ValidationFailsTwoFields[]> {
-    return STUB_RESPONSE();
-  }
+  arrayTwoFields(): ApiResponseBody<ValidationFailsTwoFields[]> {}
 
   @GET("/{id}")
   @ConvertTo(ValidationFailsOneField)
-  async singleOneField(@Path("id") id: number): Promise<ValidationFailsOneField> {
-    return STUB_RESPONSE();
-  }
+  singleOneField(@Path("id") id: number): ApiResponseBody<ValidationFailsOneField> {}
 
   @GET("/{id}")
   @ConvertTo(ValidationFailsTwoFields)
-  async singleTwoFields(@Path("id") id: number): Promise<ValidationFailsTwoFields> {
-    return STUB_RESPONSE();
-  }
+  singleTwoFields(@Path("id") id: number): ApiResponseBody<ValidationFailsTwoFields> {}
 }

@@ -1,5 +1,6 @@
 import {
   ApiResponse,
+  ApiResponseBody,
   BasePath,
   BaseService,
   Body,
@@ -22,7 +23,6 @@ import {
   Query,
   QueryMap,
   ResponseStatus,
-  STUB_RESPONSE,
 } from "../../src";
 import { JSONPLACEHOLDER_URL } from "../testHelpers";
 import { Type } from "class-transformer";
@@ -39,10 +39,10 @@ export interface PostCreateDTO {
 }
 
 export class PostAsClass {
-  id = -1;
-  userId = -1;
-  title = "";
-  body = "";
+  id!: number;
+  userId!: number;
+  title!: string;
+  body!: string;
 
   methodInside() {
     return this.id;
@@ -96,83 +96,53 @@ export class PostsApiService extends BaseService {
   };
 
   @GET("/")
-  async get(): ApiResponse<Post[]> {
-    return STUB_RESPONSE();
-  }
+  get(): ApiResponse<Post[]> {}
 
   @GET("/just-string")
-  async getJustString(): ApiResponse<string> {
-    return STUB_RESPONSE();
-  }
+  getJustString(): ApiResponse<string> {}
 
   @GET("/posts", { ignoreBasePath: true })
-  async getIgnoreBasePath(): ApiResponse<Post[]> {
-    return STUB_RESPONSE();
-  }
+  getIgnoreBasePath(): ApiResponse<Post[]> {}
 
   @GET(`${JSONPLACEHOLDER_URL}${PostsApiService.BASE_PATH}`)
-  async getAbsoluteUrl(): ApiResponse<Post[]> {
-    return STUB_RESPONSE();
-  }
+  getAbsoluteUrl(): ApiResponse<Post[]> {}
 
   @GET("/{id}")
-  async getWithPath(@Path("id") id: string): ApiResponse<Post> {
-    return STUB_RESPONSE();
-  }
+  getWithPath(@Path("id") id: string): ApiResponse<Post> {}
 
   @POST("/")
-  async post(@Body body: PostCreateDTO): ApiResponse<Post> {
-    return STUB_RESPONSE();
-  }
+  post(@Body body: PostCreateDTO): ApiResponse<Post> {}
 
   @POST("/body-as-array")
-  async bodyAsArray(@Body body: PostCreateDTO[]): ApiResponse<Post[]> {
-    return STUB_RESPONSE();
-  }
+  bodyAsArray(@Body body: PostCreateDTO[]): ApiResponse<Post[]> {}
 
   @PUT("/{id}")
-  async put(@Path("id") id: number, @Body body: PostCreateDTO): ApiResponse<Post> {
-    return STUB_RESPONSE<ApiResponse<Post>>();
-  }
+  put(@Path("id") id: number, @Body body: PostCreateDTO): ApiResponse<Post> {}
 
   @PATCH("/{id}")
-  async patch(@Path("id") id: number, @Body body: PostCreateDTO): ApiResponse<Post> {
-    return STUB_RESPONSE();
-  }
+  patch(@Path("id") id: number, @Body body: PostCreateDTO): ApiResponse<Post> {}
 
   @DELETE("/{id}")
-  async delete(@Path("id") id: number): ApiResponse<never> {
-    return STUB_RESPONSE();
-  }
+  delete(@Path("id") id: number): ApiResponse<never> {}
 
   @HEAD("/{id}")
-  async head(@Path("id") id: number): ApiResponse {
-    return STUB_RESPONSE();
-  }
+  head(@Path("id") id: number): ApiResponse {}
 
   @OPTIONS("/{id}")
-  async options(@Path("id") id: number): ApiResponse {
-    return STUB_RESPONSE();
-  }
+  options(@Path("id") id: number): ApiResponse {}
 
   @POST("/")
   @Headers({
     Header1: "Value1",
     Header2: "Value2",
   })
-  async headers(@Body body: PostCreateDTO): ApiResponse {
-    return STUB_RESPONSE();
-  }
+  headers(@Body body: PostCreateDTO): ApiResponse {}
 
   @GET("/")
-  async header(@Header("Header") header: string): ApiResponse {
-    return STUB_RESPONSE();
-  }
+  header(@Header("Header") header: string): ApiResponse {}
 
   @GET("/")
-  async headerMap(@HeaderMap headers: { [key: string]: unknown }): ApiResponse {
-    return STUB_RESPONSE();
-  }
+  headerMap(@HeaderMap headers: { [key: string]: unknown }): ApiResponse {}
 
   @GET("/")
   @Queries({
@@ -180,146 +150,98 @@ export class PostsApiService extends BaseService {
     size: 20,
     sort: "createdAt:desc",
   })
-  async queries(): ApiResponse {
-    return STUB_RESPONSE();
-  }
+  queries(): ApiResponse {}
 
   @GET("/")
-  async query(@Query("userId") userId: number): ApiResponse {
-    return STUB_RESPONSE();
-  }
+  query(@Query("userId") userId: number): ApiResponse {}
 
   @GET("/")
-  async queryMap(@QueryMap query: SearchQuery): ApiResponse {
-    return STUB_RESPONSE();
-  }
+  queryMap(@QueryMap query: SearchQuery): ApiResponse {}
 
   @POST("/")
   @FormUrlEncoded
-  async formUrlEncoded(
+  formUrlEncoded(
     @Field("userId") userId: number,
     @Field("title") title: string,
     @Field("body") body: string,
-  ): ApiResponse<Post> {
-    return STUB_RESPONSE();
-  }
+  ): ApiResponse<Post> {}
 
   @POST("/")
   @FormUrlEncoded
-  async formUrlEncodedWithBody(@Body body: PostCreateDTO): ApiResponse<Post> {
-    return STUB_RESPONSE();
-  }
+  formUrlEncodedWithBody(@Body body: PostCreateDTO): ApiResponse<Post> {}
 
   @POST("/")
   @FormUrlEncoded
-  async fieldMapUrlEncoded(@FieldMap body: PostCreateDTO): ApiResponse<Post> {
-    return STUB_RESPONSE();
-  }
+  fieldMapUrlEncoded(@FieldMap body: PostCreateDTO): ApiResponse<Post> {}
 
   @POST("/")
-  async fieldMap(@FieldMap body: PostCreateDTO): ApiResponse<Post> {
-    return STUB_RESPONSE();
-  }
+  fieldMap(@FieldMap body: PostCreateDTO): ApiResponse<Post> {}
 
   @POST("/")
-  async field(
+  field(
     @Field("userId") userId: number,
     @Field("title") title: string,
     @Field("body") body: string,
-  ): ApiResponse<Post> {
-    return STUB_RESPONSE();
-  }
+  ): ApiResponse<Post> {}
 
   @GET("/")
   @ResponseStatus(200)
-  async responseStatus(): ApiResponse<Post[]> {
-    return STUB_RESPONSE();
-  }
+  responseStatus(): ApiResponse<Post[]> {}
 
   @GET("/")
   @Config({
     maxRedirects: 3,
   })
-  async config(): ApiResponse<Post[]> {
-    return STUB_RESPONSE();
-  }
+  config(): ApiResponse<Post[]> {}
 
   @GET("/asdasda/sdasdasda/sdasd/asdkjajkldkasd", { ignoreBasePath: true })
-  async wrongUrl(): ApiResponse {
-    return STUB_RESPONSE();
-  }
+  wrongUrl(): ApiResponse {}
 }
 
 @BasePath(PostsApiService.BASE_PATH)
 export class ResponseBodyPostsApiService extends BaseService {
   @GET("/")
-  async get(): Promise<Post[]> {
-    return STUB_RESPONSE();
-  }
+  get(): ApiResponseBody<Post[]> {}
 
   @GET("/posts", { ignoreBasePath: true })
-  async getIgnoreBasePath(): Promise<Post[]> {
-    return STUB_RESPONSE();
-  }
+  getIgnoreBasePath(): ApiResponseBody<Post[]> {}
 
   @GET(`${JSONPLACEHOLDER_URL}${PostsApiService.BASE_PATH}`)
-  async getAbsoluteUrl(): Promise<Post[]> {
-    return STUB_RESPONSE();
-  }
+  getAbsoluteUrl(): ApiResponseBody<Post[]> {}
 
   @GET("/{id}")
-  async getWithPath(@Path("id") id: string): Promise<Post> {
-    return STUB_RESPONSE();
-  }
+  getWithPath(@Path("id") id: string): ApiResponseBody<Post> {}
 
   @POST("/")
-  async post(@Body body: PostCreateDTO): Promise<Post> {
-    return STUB_RESPONSE();
-  }
+  post(@Body body: PostCreateDTO): ApiResponseBody<Post> {}
 
   @PUT("/{id}")
-  async put(@Path("id") id: number, @Body body: PostCreateDTO): Promise<Post> {
-    return STUB_RESPONSE();
-  }
+  put(@Path("id") id: number, @Body body: PostCreateDTO): ApiResponseBody<Post> {}
 
   @PATCH("/{id}")
-  async patch(@Path("id") id: number, @Body body: PostCreateDTO): Promise<Post> {
-    return STUB_RESPONSE();
-  }
+  patch(@Path("id") id: number, @Body body: PostCreateDTO): ApiResponseBody<Post> {}
 
   @DELETE("/{id}")
-  async delete(@Path("id") id: number): Promise<never> {
-    return STUB_RESPONSE();
-  }
+  delete(@Path("id") id: number): ApiResponseBody<never> {}
 
   @HEAD("/{id}")
-  async head(@Path("id") id: number): Promise<never> {
-    return STUB_RESPONSE();
-  }
+  head(@Path("id") id: number): ApiResponseBody<never> {}
 
   @OPTIONS("/{id}")
-  async options(@Path("id") id: number): Promise<never> {
-    return STUB_RESPONSE();
-  }
+  options(@Path("id") id: number): ApiResponseBody<never> {}
 
   @POST("/")
   @Headers({
     Header1: "Value1",
     Header2: "Value2",
   })
-  async headers(@Body body: PostCreateDTO): Promise<never> {
-    return STUB_RESPONSE();
-  }
+  headers(@Body body: PostCreateDTO): ApiResponseBody<never> {}
 
   @GET("/")
-  async header(@Header("Header") header: string): Promise<never> {
-    return STUB_RESPONSE();
-  }
+  header(@Header("Header") header: string): ApiResponseBody<never> {}
 
   @GET("/")
-  async headerMap(@HeaderMap headers: { [key: string]: unknown }): Promise<never> {
-    return STUB_RESPONSE();
-  }
+  headerMap(@HeaderMap headers: { [key: string]: unknown }): ApiResponseBody<never> {}
 
   @GET("/")
   @Queries({
@@ -327,122 +249,86 @@ export class ResponseBodyPostsApiService extends BaseService {
     size: 20,
     sort: "createdAt:desc",
   })
-  async queries(): Promise<never> {
-    return STUB_RESPONSE();
-  }
+  queries(): ApiResponseBody<never> {}
 
   @GET("/")
-  async query(@Query("userId") userId: number): Promise<never> {
-    return STUB_RESPONSE();
-  }
+  query(@Query("userId") userId: number): ApiResponseBody<never> {}
 
   @GET("/")
-  async queryMap(@QueryMap query: SearchQuery): Promise<never> {
-    return STUB_RESPONSE();
-  }
+  queryMap(@QueryMap query: SearchQuery): ApiResponseBody<never> {}
 
   @POST("/")
   @FormUrlEncoded
-  async formUrlEncoded(
+  formUrlEncoded(
     @Field("userId") userId: number,
     @Field("title") title: string,
     @Field("body") body: string,
-  ): Promise<Post> {
-    return STUB_RESPONSE();
-  }
+  ): ApiResponseBody<Post> {}
 
   @POST("/")
   @FormUrlEncoded
-  async formUrlEncodedWithBody(@Body body: PostCreateDTO): Promise<Post> {
-    return STUB_RESPONSE();
-  }
+  formUrlEncodedWithBody(@Body body: PostCreateDTO): ApiResponseBody<Post> {}
 
   @POST("/")
   @FormUrlEncoded
-  async fieldMapUrlEncoded(@FieldMap body: PostCreateDTO): Promise<Post> {
-    return STUB_RESPONSE();
-  }
+  fieldMapUrlEncoded(@FieldMap body: PostCreateDTO): ApiResponseBody<Post> {}
 
   @POST("/")
-  async fieldMap(@FieldMap body: PostCreateDTO): Promise<Post> {
-    return STUB_RESPONSE();
-  }
+  fieldMap(@FieldMap body: PostCreateDTO): ApiResponseBody<Post> {}
 
   @POST("/")
-  async field(
+  field(
     @Field("userId") userId: number,
     @Field("title") title: string,
     @Field("body") body: string,
-  ): Promise<Post> {
-    return STUB_RESPONSE();
-  }
+  ): ApiResponseBody<Post> {}
 
   @GET("/")
   @ResponseStatus(200)
-  async responseStatus(): Promise<Post[]> {
-    return STUB_RESPONSE();
-  }
+  responseStatus(): ApiResponseBody<Post[]> {}
 
   @GET("/")
   @Config({
     maxRedirects: 3,
   })
-  async config(): Promise<Post[]> {
-    return STUB_RESPONSE();
-  }
+  config(): ApiResponseBody<Post[]> {}
 
   @GET("/asdasda/sdasdasda/sdasd/asdkjajkldkasd", { ignoreBasePath: true })
-  async wrongUrl(): Promise<never> {
-    return STUB_RESPONSE();
-  }
+  wrongUrl(): ApiResponseBody<never> {}
 }
 
 export class WithHeaderService extends BaseService {
   @GET("/with-headers")
-  async withHeaders(): ApiResponse<string> {
-    return STUB_RESPONSE();
-  }
+  withHeaders(): ApiResponse<string> {}
 
   @GET("/with-oauth")
-  async withOauth(): ApiResponse<string> {
-    return STUB_RESPONSE();
-  }
+  withOauth(): ApiResponse<string> {}
 }
 
 export class ResponseBodyWithHeaderService extends BaseService {
   @GET("/with-headers")
-  async withHeaders(): Promise<unknown> {
-    return STUB_RESPONSE();
-  }
+  withHeaders(): ApiResponseBody<unknown> {}
 
   @GET("/with-oauth")
-  async withOauth(): Promise<string> {
-    return STUB_RESPONSE();
-  }
+  withOauth(): ApiResponseBody<string> {}
 }
 
 export class ServiceWithoutBasePath extends BaseService {
   @GET("/posts")
-  async get(): ApiResponse<Post[]> {
-    return STUB_RESPONSE();
-  }
+  get(): ApiResponse<Post[]> {}
 }
 
 export class ResponseBodyServiceWithoutBasePath extends BaseService {
   @GET("/posts")
-  async get(): ApiResponse<Post[]> {
-    return STUB_RESPONSE();
-  }
+  get(): ApiResponse<Post[]> {}
 }
 
 @BasePath(PostsApiService.BASE_PATH)
 export class WithMethodsService extends BaseService {
   @GET("/")
-  async get(): ApiResponse<Post[]> {
-    return STUB_RESPONSE();
-  }
+  get(): ApiResponse<Post[]> {}
 
-  async methodCallsGet() {
+  methodCallsGet() {
     return this.get();
   }
 }

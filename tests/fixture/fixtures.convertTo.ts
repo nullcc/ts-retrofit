@@ -1,67 +1,45 @@
-import { ApiResponse, BasePath, BaseService, GET, Path, ConvertTo, STUB_RESPONSE } from "../../src";
+import { ApiResponse, ApiResponseBody, BasePath, BaseService, ConvertTo, GET, Path } from "../../src";
 import { Post, PostAsClass, PostAsClassWithTransfromAndValidate, PostsApiService } from "./fixtures";
 
 @BasePath(PostsApiService.BASE_PATH)
 export class ConvertServiceInline extends BaseService {
   @GET("/")
   @ConvertTo(PostAsClass)
-  async get(): Promise<PostAsClass[]> {
-    return STUB_RESPONSE();
-  }
+  get(): ApiResponseBody<PostAsClass[]> {}
 
   @GET("/", { convertTo: PostAsClass })
-  async getConvertInMethod(): Promise<PostAsClass[]> {
-    return STUB_RESPONSE();
-  }
+  getConvertInMethod(): ApiResponseBody<PostAsClass[]> {}
 
   @GET("/")
-  async getNoConvertTo(): Promise<PostAsClass[]> {
-    return STUB_RESPONSE();
-  }
+  getNoConvertTo(): ApiResponseBody<PostAsClass[]> {}
 
   @GET("/{id}")
   @ConvertTo(PostAsClass)
-  async getWithPath(@Path("id") id: number): Promise<PostAsClass> {
-    return STUB_RESPONSE();
-  }
+  getWithPath(@Path("id") id: number): ApiResponseBody<PostAsClass> {}
 
   @GET("/{id}", { convertTo: PostAsClass })
-  async getWithPathInMethod(@Path("id") id: number): Promise<PostAsClass> {
-    return STUB_RESPONSE();
-  }
+  getWithPathInMethod(@Path("id") id: number): ApiResponseBody<PostAsClass> {}
 
   @GET("/")
-  async getToType(): Promise<Post[]> {
-    return STUB_RESPONSE();
-  }
+  getToType(): ApiResponseBody<Post[]> {}
 }
 
 @BasePath(PostsApiService.BASE_PATH)
 export class ConvertToServiceRaw extends BaseService {
   @GET("/")
   @ConvertTo(PostAsClass)
-  async get(): ApiResponse<PostAsClass[]> {
-    return STUB_RESPONSE();
-  }
+  get(): ApiResponse<PostAsClass[]> {}
 
   @GET("/")
-  async getNoConvertTo(): ApiResponse<PostAsClass[]> {
-    return STUB_RESPONSE();
-  }
+  getNoConvertTo(): ApiResponse<PostAsClass[]> {}
 
   @GET("/{id}")
   @ConvertTo(PostAsClass)
-  async getWithPath(@Path("id") id: number): ApiResponse<PostAsClass> {
-    return STUB_RESPONSE();
-  }
+  getWithPath(@Path("id") id: number): ApiResponse<PostAsClass> {}
 
   @GET("/")
-  async getToType(): ApiResponse<Post[]> {
-    return STUB_RESPONSE();
-  }
+  getToType(): ApiResponse<Post[]> {}
 
   @GET("/just-string", { convertTo: PostAsClassWithTransfromAndValidate })
-  async wrongConvertWhenReturnIsString(): ApiResponse<string> {
-    return STUB_RESPONSE();
-  }
+  wrongConvertWhenReturnIsString(): ApiResponse<string> {}
 }

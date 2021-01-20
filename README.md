@@ -16,7 +16,7 @@
 
 | Statements                  | Branches                | Functions                 | Lines                |
 | --------------------------- | ----------------------- | ------------------------- | -------------------- |
-| ![Statements](https://img.shields.io/badge/Coverage-98.87%25-brightgreen.svg) | ![Branches](https://img.shields.io/badge/Coverage-94.44%25-brightgreen.svg) | ![Functions](https://img.shields.io/badge/Coverage-98.61%25-brightgreen.svg) | ![Lines](https://img.shields.io/badge/Coverage-99.56%25-brightgreen.svg)    |
+| ![Statements](https://img.shields.io/badge/Coverage-98.87%25-brightgreen.svg) | ![Branches](https://img.shields.io/badge/Coverage-94.44%25-brightgreen.svg) | ![Functions](https://img.shields.io/badge/Coverage-98.6%25-brightgreen.svg) | ![Lines](https://img.shields.io/badge/Coverage-99.56%25-brightgreen.svg)    |
 
 
 
@@ -40,13 +40,30 @@ Automatically turn your decorated methods into axios HTTP requests.
 ```typescript
 export class GitHubService extends BaseService {
   @GET("/users/{user}/repos")
-  async listRepos(@Path("user") user: string): Promise<Repo[]> {
-    return STUB_RESPONSE();
-  }
+  listRepos(@Path("user") user: string): ApiResponse<Repo[]> {}
 }
 ```
 
 Build a service:
+
+```typescript
+const service = new ServiceBuilder()
+  .baseUrl("https://api.github.com/")
+  .build(GitHubService);
+
+const repose = await service.listRepos("octocat");
+```
+
+Use decorators to describe the HTTP request.
+
+### Inlined response body
+If you need only response body you can inline it
+```typescript
+export class GitHubService extends BaseService {
+  @GET("/users/{user}/repos")
+  listReposWithInlinedBody(@Path("user") user: string): ApiResponseBody<Repo[]> {}
+}
+```
 
 ```typescript
 const service = new ServiceBuilder()
@@ -56,7 +73,6 @@ const service = new ServiceBuilder()
 
 const repose = await service.listRepos("octocat");
 ```
-Use decorators to describe the HTTP request.
 
 ## API Declaration
 Decorators on the methods and its parameters indicate how a request will be handled.
@@ -75,59 +91,47 @@ You can also specify query parameters in the URL.
 A request URL can be updated dynamically using replacement blocks and parameters on the method. A replacement block is an alphanumeric string surrounded by { and }. A corresponding parameter must be decorated with `@Path` using the same string.
 ```typescript
 @GET("group/{id}/users")
-async groupList(@Path("id") groupId: string): Promise<User[]> {
-  return STUB_RESPONSE();
-}
+groupList(@Path("id") groupId: string): ApiResponse<User[]> {}
 ```
 
 Query parameters can also be added using `@Query`.
 
 ```typescript
 @GET("group/{id}/users")
-async groupList(@Path("id") groupId: string, @Query("sort") sort: string): Promise<User[]> {
-  return STUB_RESPONSE();
-}
+groupList(@Path("id") groupId: string, @Query("sort") sort: string): ApiResponse<User[]> {}
 ```
 
 For complex query parameter can be added using `@QueryMap`. It should be object with primitive properties.
 
 ```typescript
 @GET("group/{id}/users")
-async groupList(@Path("id") groupId: string, @QueryMap query: SearchQuery): Promise<User[]> {
-  return STUB_RESPONSE();
-}
+groupList(@Path("id") groupId: string, @QueryMap query: SearchQuery): ApiResponse<User[]> {}
 ```
 
 ### REQUEST BODY
 ```typescript
 @POST("users/new")
-async groupList(@Body user: User): Promise<User> {
-  return STUB_RESPONSE();
-}
+groupList(@Body user: User): ApiResponse<User> {}
 ```
 
 ### FORM ENCODED AND MULTIPART
 ```typescript
 @POST("/user/edit")
 @FormUrlEncoded
-async formUrlEncoded(
+formUrlEncoded(
   @Field("first_name") first: string,
   @Field("last_name") last: string,
-): Promise<User> {
-  return STUB_RESPONSE();
-}
+): ApiResponse<User> {}
 ```
 
 Multipart requests are used when @Multipart is present on the method. Parts are declared using the @Part decorator.
 ```typescript
 @PUT("user/photo")
 @Multipart
-async updateUser(
+updateUser(
   @Part("description") description: PartDescriptor<string>,
   @Part("photo") file: PartDescriptor<Buffer>,
-): Promise<User> {
-return STUB_RESPONSE();
-}
+): ApiResponse<User> {}
 ```
 
 ### HEADER MANIPULATION
@@ -138,9 +142,7 @@ You can set static headers for a method using the @Headers decorator.
 @Headers({
   "Cache-Control": "max-age=640000",
 })
-async widgetList(): Promise<Widget> {
-  return STUB_RESPONSE();
-}
+widgetList(): ApiResponse<Widget> {}
 ```
 ```typescript
 @GET("users/{username}")
@@ -148,26 +150,20 @@ async widgetList(): Promise<Widget> {
   "Accept": "application/vnd.github.v3.full+json",
   "User-Agent": "Retrofit-Sample-App"
 })
-async getUser(@Path("username") username: string): Promise<Widget> {
-  return STUB_RESPONSE();
-}
+getUser(@Path("username") username: string): ApiResponse<Widget> {}
 ```
 
 A request Header can be updated dynamically using the `@Header` decorator. A corresponding parameter must be provided to the @Header. If the value is null, the header will be omitted. Otherwise, toString will be called on the value, and the result used.
 
 ```typescript
 @GET("user")
-async getUser(@Header("Authorization") authorization: string): Promise<User> {
-  return STUB_RESPONSE();
-}
+getUser(@Header("Authorization") authorization: string): ApiResponse<User> {}
 ```
 Similar to query parameters, for complex header combinations, a `@HeaderMap` can be used.
 
 ```typescript
 @GET("user")
-async getUser(@HeaderMap headers: MyHeaders): Promise<User> {
-  return STUB_RESPONSE();
-}
+getUser(@HeaderMap headers: MyHeaders): ApiResponse<User> {}
 ```
 Headers that need to be added to every request can be specified using an interceptor.
 

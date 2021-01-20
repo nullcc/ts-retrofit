@@ -19,146 +19,103 @@ import {
   Query,
   QueryMap,
   ResponseStatus,
-  STUB_RESPONSE,
 } from "../../src";
 import { API_PREFIX, Post, PostsApiService } from "./fixtures";
 import { PartDescriptor } from "../../src/constants";
 
 export class WrongHeaderService extends BaseService {
   @GET("/")
-  async wrongHeaderMap(@HeaderMap headers: { [key: string]: unknown }): ApiResponse {
-    return STUB_RESPONSE();
-  }
+  wrongHeaderMap(@HeaderMap headers: { [key: string]: unknown }): ApiResponse {}
 
   @GET("/")
-  async wrongHeaderType(@Header("Header") header: unknown): ApiResponse {
-    return STUB_RESPONSE();
-  }
+  wrongHeaderType(@Header("Header") header: unknown): ApiResponse {}
 
   @GET("/")
-  async emptyHeaderKey(@Header("") header: unknown): ApiResponse {
-    return STUB_RESPONSE();
-  }
+  emptyHeaderKey(@Header("") header: unknown): ApiResponse {}
 }
 
 @BasePath(PostsApiService.BASE_PATH)
 export class WrongFieldService extends BaseService {
   @POST("/")
-  async wrongFieldMap(@FieldMap param: { [key: string]: unknown }): ApiResponse {
-    return STUB_RESPONSE();
-  }
+  wrongFieldMap(@FieldMap param: { [key: string]: unknown }): ApiResponse {}
 
   @POST("/")
-  async wrongFieldMapType(@FieldMap param: string[]): ApiResponse {
-    return STUB_RESPONSE();
-  }
+  wrongFieldMapType(@FieldMap param: string[]): ApiResponse {}
 
   @POST("/")
-  async fieldMapWithBodyArray(@FieldMap param: { [key: string]: unknown }, @Body body: string[]): ApiResponse {
-    return STUB_RESPONSE();
-  }
+  fieldMapWithBodyArray(@FieldMap param: { [key: string]: unknown }, @Body body: string[]): ApiResponse {}
 
   @POST("/")
-  async emptyFieldKey(@Field("") param: unknown): ApiResponse {
-    return STUB_RESPONSE();
-  }
+  emptyFieldKey(@Field("") param: unknown): ApiResponse {}
 
   @POST("/")
-  async fieldWithBodyArray(@Field("p") param: unknown, @Body body: number[]): ApiResponse {
-    return STUB_RESPONSE();
-  }
+  fieldWithBodyArray(@Field("p") param: unknown, @Body body: number[]): ApiResponse {}
 }
 
 export class WrongQueryService extends BaseService {
   @GET("/")
-  async wrongQuery(@Query("userId") userId: unknown): ApiResponse {
-    return STUB_RESPONSE();
-  }
+  wrongQuery(@Query("userId") userId: unknown): ApiResponse {}
 
   @GET("/")
-  async wrongQueryMap(@QueryMap query: unknown): ApiResponse {
-    return STUB_RESPONSE();
-  }
+  wrongQueryMap(@QueryMap query: unknown): ApiResponse {}
 
   @GET("/")
-  async emptyQueryKey(@Query("") query: unknown): ApiResponse {
-    return STUB_RESPONSE();
-  }
+  emptyQueryKey(@Query("") query: unknown): ApiResponse {}
 }
 
 @BasePath(API_PREFIX)
 export class WrongMultipartService extends BaseService {
   @POST("/upload")
   @Multipart
-  async emptyPartKey(@Part("") bucket: PartDescriptor<string>): ApiResponse {
-    return STUB_RESPONSE();
-  }
+  emptyPartKey(@Part("") bucket: PartDescriptor<string>): ApiResponse {}
 
   @POST("/upload")
   @Multipart
-  async partAsIsNotPartDescriptor(@Part("from") from: string): ApiResponse {
-    return STUB_RESPONSE();
-  }
+  partAsIsNotPartDescriptor(@Part("from") from: string): ApiResponse {}
 
   @POST("/upload")
   @Multipart
-  async withBody(@Part("bucket") bucket: PartDescriptor<string>, @Body body: number[]): ApiResponse {
-    return STUB_RESPONSE();
-  }
+  withBody(@Part("bucket") bucket: PartDescriptor<string>, @Body body: number[]): ApiResponse {}
 }
 
 export class NoHttpMethodService extends BaseService {
-  async path(@Path("id") id: number): ApiResponse {
-    return STUB_RESPONSE();
-  }
+  path(@Path("id") id: number): ApiResponse {}
 
   @Headers({
     Header1: "Value1",
     Header2: "Value2",
   })
-  async headers(): ApiResponse {
-    return STUB_RESPONSE();
-  }
+  headers(): ApiResponse {}
 
   @Queries({
     page: 1,
     size: 20,
     sort: "createdAt:desc",
   })
-  async queries(): ApiResponse {
-    return STUB_RESPONSE();
-  }
+  queries(): ApiResponse {}
 
   @FormUrlEncoded
-  async formUrlEncoded(): ApiResponse<Post> {
-    return STUB_RESPONSE();
-  }
+  formUrlEncoded(): ApiResponse<Post> {}
 
-  async field(@Field("userId") userId: number): ApiResponse<Post> {
-    return STUB_RESPONSE();
-  }
+  field(@Field("userId") userId: number): ApiResponse<Post> {}
 
   @ResponseStatus(200)
-  async responseStatus(): ApiResponse<Post[]> {
-    return STUB_RESPONSE();
-  }
+  responseStatus(): ApiResponse<Post[]> {}
 
   @Config({
     maxRedirects: 3,
   })
-  async config(): ApiResponse<Post[]> {
-    return STUB_RESPONSE();
-  }
+  config(): ApiResponse<Post[]> {}
 
-  async validMethodNoParams() {
+  validMethodNoParams() {
     return 100;
   }
 
-  async validMethodWithOneParam(a: string) {
+  validMethodWithOneParam(a: string) {
     return a;
   }
 
-  async validMethodWithTwoParams(a: string, b: string) {
+  validMethodWithTwoParams(a: string, b: string) {
     return a + b;
   }
 }

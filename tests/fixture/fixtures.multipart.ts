@@ -1,15 +1,4 @@
-import {
-  ApiResponse,
-  BasePath,
-  BaseService,
-  GET,
-  Multipart,
-  Part,
-  Path,
-  POST,
-  ResponseType,
-  STUB_RESPONSE,
-} from "../../src";
+import { BasePath, BaseService, GET, Multipart, Part, Path, POST, ResponseType, ApiResponse } from "../../src";
 import { PartDescriptor } from "../../src/constants";
 import { API_PREFIX } from "./fixtures";
 
@@ -17,25 +6,16 @@ import { API_PREFIX } from "./fixtures";
 export class FileService extends BaseService {
   @POST("/upload")
   @Multipart
-  async upload(
-    @Part("bucket") bucket: PartDescriptor<string>,
-    @Part("file") file: PartDescriptor<Buffer>,
-  ): ApiResponse {
-    return STUB_RESPONSE();
-  }
+  upload(@Part("bucket") bucket: PartDescriptor<string>, @Part("file") file: PartDescriptor<Buffer>): ApiResponse {}
 
   @GET("/file")
   @ResponseType("stream")
-  async getFile(@Path("fileId") fileId: string): ApiResponse {
-    return STUB_RESPONSE();
-  }
+  getFile(@Path("fileId") fileId: string): ApiResponse {}
 }
 
 @BasePath(API_PREFIX)
 export class MessagingService extends BaseService {
   @POST("/sms")
   @Multipart
-  async createSMS(@Part("from") from: PartDescriptor<string>, @Part("to") to: PartDescriptor<string[]>): ApiResponse {
-    return STUB_RESPONSE();
-  }
+  createSMS(@Part("from") from: PartDescriptor<string>, @Part("to") to: PartDescriptor<string[]>): ApiResponse {}
 }
