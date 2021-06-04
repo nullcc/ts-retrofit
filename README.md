@@ -3,11 +3,11 @@
 [![build status](https://travis-ci.org/nullcc/ts-retrofit.svg?branch=master)](https://travis-ci.org/nullcc/ts-retrofit)
 [![](https://img.shields.io/npm/dm/ts-retrofit.svg?style=flat)](https://www.npmjs.org/package/ts-retrofit)
 
-| Statements                               | Branches                                 | Functions                                | Lines                                    |
-| ---------------------------------------- | ---------------------------------------- | ---------------------------------------- | ---------------------------------------- |
-| ![Statements](https://img.shields.io/badge/Coverage-98.99%25-brightgreen.svg "Make me better!") | ![Branches](https://img.shields.io/badge/Coverage-83.87%25-yellow.svg "Make me better!") | ![Functions](https://img.shields.io/badge/Coverage-98.67%25-brightgreen.svg "Make me better!") | ![Lines](https://img.shields.io/badge/Coverage-98.99%25-brightgreen.svg "Make me better!") |
+| Statements | Branches | Functions | Lines |
+| -----------|----------|-----------|-------|
+| ![Statements](https://img.shields.io/badge/Coverage-96.17%25-brightgreen.svg "Make me better!") | ![Branches](https://img.shields.io/badge/Coverage-85.32%25-yellow.svg "Make me better!") | ![Functions](https://img.shields.io/badge/Coverage-88.12%25-yellow.svg "Make me better!") | ![Lines](https://img.shields.io/badge/Coverage-96.17%25-brightgreen.svg "Make me better!") |
 
-> A declarative and axios based retrofit implementation for JavaScript and TypeScript.
+> A declarative and [axios](https://github.com/axios/axios) based retrofit implementation for JavaScript and TypeScript.
 
 ## Install
 
