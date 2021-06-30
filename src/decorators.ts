@@ -425,6 +425,7 @@ export const Config = (config: Partial<AxiosRequestConfig>) => {
  * A easy way to send GraphQL query.
  * @param query
  * @param operationName
+ * @sample @GraphQL(gqlQuery)
  * @constructor
  */
 export const GraphQL = (query: string, operationName?: string) => {
@@ -440,6 +441,7 @@ export const GraphQL = (query: string, operationName?: string) => {
  * @param target
  * @param methodName
  * @param paramIndex
+ * @sample @GraphQLVariables variables: any
  * @constructor
  */
 export const GraphQLVariables = (target: any, methodName: string, paramIndex: number) => {
