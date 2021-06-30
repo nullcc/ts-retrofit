@@ -127,3 +127,17 @@ app.get("/api/v1/config", async function (req, res) {
 app.get("/ping", async function (req, res) {
   res.status(200).json({ result: "pong" });
 });
+
+app.post("/graphql", async function (req, res) {
+  res.status(200).json({
+    data: {
+      viewer: {
+        name: "nullcc",
+        location: "Xiamen China" },
+        repository: {
+          stargazerCount: 45,
+          forkCount: 11
+      }
+    }
+  });
+});
