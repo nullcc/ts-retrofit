@@ -420,3 +420,29 @@ export const Config = (config: Partial<AxiosRequestConfig>) => {
     target.__meta__[methodName].config = config;
   };
 };
+
+/**
+ * A easy way to send GraphQL query.
+ * @param query
+ * @param operationName
+ * @constructor
+ */
+export const GraphQL = (query: string, operationName?: string) => {
+  return (target: any, methodName: string) => {
+    ensureMeta(target, methodName);
+    target.__meta__[methodName].gqlQuery = query;
+    target.__meta__[methodName].gqlOperationName = operationName;
+  };
+};
+
+/**
+ * Adds variables to GraphQL query
+ * @param target
+ * @param methodName
+ * @param paramIndex
+ * @constructor
+ */
+export const GraphQLVariables = (target: any, methodName: string, paramIndex: number) => {
+  ensureMeta(target, methodName);
+  target.__meta__[methodName].gqlVariablesIndex = paramIndex;
+};

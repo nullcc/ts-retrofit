@@ -236,7 +236,11 @@ export class BaseService {
     const fields = meta[methodName].fields || {};
     const parts = meta[methodName].parts || {};
     const fieldMapIndex = meta[methodName].fieldMapIndex;
-    let data = {};
+    const gqlQuery = meta[methodName].gqlQuery;
+    const gqlOperationName = meta[methodName].gqlOperationName;
+    const gqlVariablesIndex = meta[methodName].gqlVariablesIndex;
+
+    let data: any = {};
 
     // @Body
     if (bodyIndex >= 0) {
@@ -278,6 +282,18 @@ export class BaseService {
         }
       }
       data = { ...data, ...reqData };
+    }
+
+    // @GraphQL
+    if (gqlQuery) {
+      data.query = gqlQuery;
+      if (gqlOperationName) {
+        data.operationName = gqlOperationName;
+      }
+      // @GraphQLVariables
+      if (gqlVariablesIndex >= 0) {
+        data.variables = args[gqlVariablesIndex];
+      }
     }
 
     const contentType = headers["content-type"] || "application/json";

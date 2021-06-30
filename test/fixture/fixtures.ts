@@ -1,7 +1,7 @@
 import {
   GET, POST, PUT, PATCH, DELETE, HEAD, OPTIONS, BasePath, Header, Queries, Headers, Path, Query, QueryMap, Body,
   FormUrlEncoded, Field, FieldMap, Multipart, ResponseType, Part, PartDescriptor, BaseService, Response, HeaderMap,
-  RequestTransformer, ResponseTransformer, Timeout, ResponseStatus, Config,
+  RequestTransformer, ResponseTransformer, Timeout, ResponseStatus, Config, GraphQL, GraphQLVariables
 } from "../../src";
 
 export const TEST_SERVER_HOST = "http://localhost";
@@ -222,4 +222,35 @@ export class HttpMethodOptionsService extends BaseService {
   @GET("/ping", { ignoreBasePath: true })
   @ResponseStatus(200)
   async ping(): Promise<Response> { return <Response>{} };
+}
+
+const gqlQuery =
+`query ($name: String!, $owner: String!) {
+  viewer {
+    name
+    location
+  }
+  repository(name: $name, owner: $owner) {
+    stargazerCount
+    forkCount
+  }
+}`;
+
+@BasePath("")
+export class GraphQLService extends BaseService {
+  @POST("/graphql")
+  @GraphQL(gqlQuery)
+  async graphql1(
+    @GraphQLVariables variables: any,
+  ): Promise<Response> { return <Response>{} };
+
+  @POST("/graphql")
+  @GraphQL(gqlQuery, "UserAndRepo")
+  async graphql2(
+    @GraphQLVariables variables: any,
+  ): Promise<Response> { return <Response>{} };
+
+  @POST("/graphql")
+  @GraphQL(gqlQuery, "UserAndRepo")
+  async graphql3(): Promise<Response> { return <Response>{} };
 }

@@ -27,6 +27,7 @@ import {
   ConfigService,
   AbsoluteURLService,
   HttpMethodOptionsService,
+  GraphQLService,
 } from "./fixture/fixtures";
 import { DATA_CONTENT_TYPES, HttpContentType } from "../src/constants";
 
@@ -527,5 +528,63 @@ describe("Test ts-retrofit.", () => {
     const response = await service.ping();
     expect(response.config.url).toEqual(`${TEST_SERVER_ENDPOINT}/ping`);
     expect(response.data).toEqual({ result: "pong" });
+  });
+
+  test("Test `@GraphQL` decorator.", async () => {
+    const service = new ServiceBuilder()
+      .setEndpoint(TEST_SERVER_ENDPOINT)
+      .build(GraphQLService);
+
+    const response1 = await service.graphql1(
+      {
+        name: "ts-retrofit",
+        owner: "nullcc"
+      }
+    );
+    expect(response1.config.data).toEqual("{\"query\":\"query ($name: String!, $owner: String!) {\\n  viewer {\\n    name\\n    location\\n  }\\n  repository(name: $name, owner: $owner) {\\n    stargazerCount\\n    forkCount\\n  }\\n}\",\"variables\":{\"name\":\"ts-retrofit\",\"owner\":\"nullcc\"}}");
+    expect(response1.data).toEqual({
+      data: {
+        viewer: {
+          name: "nullcc",
+          location: "Xiamen China" },
+        repository: {
+          stargazerCount: 45,
+          forkCount: 11
+        }
+      }
+    });
+
+    const response2 = await service.graphql2(
+      {
+        name: "ts-retrofit",
+        owner: "nullcc"
+      }
+    );
+    expect(response2.config.data).toEqual("{\"query\":\"query ($name: String!, $owner: String!) {\\n  viewer {\\n    name\\n    location\\n  }\\n  repository(name: $name, owner: $owner) {\\n    stargazerCount\\n    forkCount\\n  }\\n}\",\"operationName\":\"UserAndRepo\",\"variables\":{\"name\":\"ts-retrofit\",\"owner\":\"nullcc\"}}");
+    expect(response2.data).toEqual({
+      data: {
+        viewer: {
+          name: "nullcc",
+          location: "Xiamen China" },
+        repository: {
+          stargazerCount: 45,
+          forkCount: 11
+        }
+      }
+    });
+
+    const response3 = await service.graphql3();
+    expect(response3.config.data).toEqual("{\"query\":\"query ($name: String!, $owner: String!) {\\n  viewer {\\n    name\\n    location\\n  }\\n  repository(name: $name, owner: $owner) {\\n    stargazerCount\\n    forkCount\\n  }\\n}\",\"operationName\":\"UserAndRepo\"}");
+    expect(response3.data).toEqual({
+      data: {
+        viewer: {
+          name: "nullcc",
+          location: "Xiamen China" },
+        repository: {
+          stargazerCount: 45,
+          forkCount: 11
+        }
+      }
+    });
   });
 });
