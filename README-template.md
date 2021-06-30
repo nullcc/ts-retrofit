@@ -346,10 +346,7 @@ class ItemService extends BaseService {
 class ItemService extends BaseService {
   // GET ${ENDPOINT}/api/v1/items?size=20
   @GET("/items")
-  @Queries({
-    size: 20,
-  })
-  async getItems(): Promise<Response<Array<Item>>> { return <Response<Array<Item>>> {} };
+  async getItems(@Query('size') size: number): Promise<Response<Array<Item>>> { return <Response<Array<Item>>> {} };
 }
 ```
 
