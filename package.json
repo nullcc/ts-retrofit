@@ -20,16 +20,11 @@
     "lint": "eslint . --ext .ts",
     "lint:fix": "eslint . --ext .ts --fix",
     "make-badges": "istanbul-badges-readme",
-    "prepare": "yarn run build",
+    "prepare": "husky install",
     "prepublishOnly": "yarn run lint"
   },
   "author": "NP",
   "license": "MIT",
-  "husky": {
-    "hooks": {
-      "pre-commit": "yarn test && yarn lint && yarn make-badges && git add README.md"
-    }
-  },
   "dependencies": {
     "axios": "^0.21.1",
     "class-transformer": "^0.4.0",
