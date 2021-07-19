@@ -34,8 +34,8 @@
     "reflect-metadata": "^0.1.13"
   },
   "devDependencies": {
-    "@commitlint/cli": "^12.1.4",
-    "@commitlint/config-conventional": "^12.1.4",
+    "@commitlint/cli": "12.1.4",
+    "@commitlint/config-conventional": "12.1.4",
     "@types/express": "^4.17.13",
     "@types/jest": "^26.0.24",
     "@types/multer": "^1.4.7",
