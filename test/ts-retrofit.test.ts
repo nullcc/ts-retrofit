@@ -26,10 +26,11 @@ import {
   ResponseStatusService,
   ConfigService,
   AbsoluteURLService,
-  HttpMethodOptionsService,
+  HealthService,
   GraphQLService,
 } from "./fixture/fixtures";
-import { DATA_CONTENT_TYPES, HttpContentType } from "../src/constants";
+import { HttpContentType } from "../src/constants";
+import { RequestConfig, Response } from "../src";
 
 declare module 'axios' {
   interface AxiosRequestConfig {
@@ -524,7 +525,7 @@ describe("Test ts-retrofit.", () => {
   test("Test `ignoreBasePath` in HTTP method option.", async () => {
     const service = new ServiceBuilder()
       .setEndpoint(TEST_SERVER_ENDPOINT)
-      .build(HttpMethodOptionsService);
+      .build(HealthService);
     const response = await service.ping();
     expect(response.config.url).toEqual(`${TEST_SERVER_ENDPOINT}/ping`);
     expect(response.data).toEqual({ result: "pong" });
@@ -586,5 +587,48 @@ describe("Test ts-retrofit.", () => {
         }
       }
     });
+  });
+
+  test("Test log callback with ok response.", async () => {
+    const myLogCallback = (config: RequestConfig, response: Response) => {
+      const log = `[${config.method}] ${config.url} ${response.status}`;
+      expect(log).toEqual("[GET] http://localhost:12345/ping 200");
+      console.log(log);
+    };
+    const myLogCallback2 = (config: RequestConfig, response: Response) => {
+      const log = `-> [${config.method}] ${config.url} ${response.status}`;
+      expect(log).toEqual("-> [GET] http://localhost:12345/ping 200");
+      console.log(log);
+    };
+    const service = new ServiceBuilder()
+      .setEndpoint(TEST_SERVER_ENDPOINT)
+      .setLogCallback(myLogCallback)
+      .build(HealthService);
+    const response1 = await service.ping();
+    expect(response1.config.url).toEqual(`${TEST_SERVER_ENDPOINT}/ping`);
+    expect(response1.data).toEqual({ result: "pong" });
+
+    service.setLogCallback(myLogCallback2);
+    const response2 = await service.ping();
+    expect(response2.config.url).toEqual(`${TEST_SERVER_ENDPOINT}/ping`);
+    expect(response2.data).toEqual({ result: "pong" });
+  });
+
+  test("Test log callback with error response.", async () => {
+    const myLogCallback = (config: RequestConfig, response: Response) => {
+      const log = `[${config.method}] ${config.url} ${response.status}`;
+      expect(log).toEqual("[GET] http://localhost:12345/boom 404");
+      console.log(log);
+    };
+    const service = new ServiceBuilder()
+      .setEndpoint(TEST_SERVER_ENDPOINT)
+      .setLogCallback(myLogCallback)
+      .build(HealthService);
+    try {
+      await service.boom();
+    } catch (err) {
+      expect(err.response.config.url).toEqual(`${TEST_SERVER_ENDPOINT}/boom`);
+      expect(err.response.status).toEqual(404);
+    }
   });
 });

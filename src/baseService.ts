@@ -7,7 +7,11 @@ import { isNode } from "./util";
 
 axios.defaults.withCredentials = true;
 
+export type RequestConfig = AxiosRequestConfig;
+
 export interface Response<T = any> extends AxiosResponse<T> { }
+
+export type LogCallback = (config: RequestConfig, response: Response) => void;
 
 const NON_HTTP_REQUEST_PROPERTY_NAME = "__nonHTTPRequestMethod__";
 
@@ -25,12 +29,14 @@ export class BaseService {
   private _httpClient: HttpClient;
   private _methodMap: Map<string, Function>;
   private _timeout: number;
+  private _logCallback: LogCallback | null;
 
   constructor(serviceBuilder: ServiceBuilder) {
     this._endpoint = serviceBuilder.endpoint;
     this._httpClient = new HttpClient(serviceBuilder);
     this._methodMap = new Map<string, Function>();
     this._timeout = serviceBuilder.timeout;
+    this._logCallback = serviceBuilder.logCallback;
 
     const methodNames = this._getInstanceMethodNames();
     methodNames.forEach((methodName) => {
@@ -48,9 +54,15 @@ export class BaseService {
           if (methodOriginalDescriptor && methodOriginalDescriptor.value === true) {
             return method;
           }
+          if (methodName === "_logCallback") {
+            return method;
+          }
           return (...args: any[]) => {
             return self._wrap(methodName, args);
           };
+        },
+        set: (newValue: any) => {
+          self._methodMap[methodName] = newValue;
         },
       };
       Object.defineProperty(this, methodName, descriptor);
@@ -88,6 +100,11 @@ export class BaseService {
   }
 
   @nonHTTPRequestMethod
+  public setLogCallback(logCallback: LogCallback | null): void {
+    this._logCallback = logCallback;
+  }
+
+  @nonHTTPRequestMethod
   private _getInstanceMethodNames(): string[] {
     let properties: string[] = [];
     let obj = this;
@@ -101,10 +118,24 @@ export class BaseService {
   }
 
   @nonHTTPRequestMethod
-  private _wrap(methodName: string, args: any[]): Promise<Response> {
+  private async _wrap(methodName: string, args: any[]): Promise<Response> {
     const { url, method, headers, query, data } = this._resolveParameters(methodName, args);
     const config = this._makeConfig(methodName, url, method, headers, query, data);
-    return this._httpClient.sendRequest(config);
+    let error;
+    let response;
+    try {
+      response = await this._httpClient.sendRequest(config);
+    } catch (err) {
+      error = err;
+      response = err.response;
+    }
+    if (this._logCallback) {
+      this._logCallback(config, response);
+    }
+    if (error) {
+      throw error;
+    }
+    return response;
   }
 
   @nonHTTPRequestMethod
@@ -122,8 +153,8 @@ export class BaseService {
 
   @nonHTTPRequestMethod
   private _makeConfig(methodName: string, url: string, method: HttpMethod, headers: any, query: any, data: any)
-    : AxiosRequestConfig {
-    let config: AxiosRequestConfig = {
+    : RequestConfig {
+    let config: RequestConfig = {
       url,
       method,
       headers,
@@ -326,6 +357,7 @@ export class ServiceBuilder {
   private _requestInterceptors: Array<RequestInterceptorFunction | RequestInterceptor> = [];
   private _responseInterceptors: Array<ResponseInterceptorFunction | ResponseInterceptor> = [];
   private _timeout: number = 60000;
+  private _logCallback: LogCallback | null = null;
 
   public build<T>(service: new (builder: ServiceBuilder) => T): T {
     return new service(this);
@@ -361,6 +393,11 @@ export class ServiceBuilder {
     return this;
   }
 
+  public setLogCallback(logCallback: LogCallback): ServiceBuilder {
+    this._logCallback = logCallback;
+    return this;
+  }
+
   get endpoint(): string {
     return this._endpoint;
   }
@@ -379,6 +416,10 @@ export class ServiceBuilder {
 
   get timeout(): number {
     return this._timeout;
+  }
+
+  get logCallback(): LogCallback | null {
+    return this._logCallback;
   }
 }
 
@@ -421,12 +462,8 @@ class HttpClient {
     return this.standalone;
   }
 
-  public async sendRequest(config: AxiosRequestConfig): Promise<Response> {
-    try {
-      return await this.axios(config);
-    } catch (err) {
-      throw err;
-    }
+  public async sendRequest(config: RequestConfig): Promise<Response> {
+    return this.axios(config);
   }
 
   public useRequestInterceptor(interceptor: RequestInterceptorFunction): number {

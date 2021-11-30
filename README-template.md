@@ -108,6 +108,31 @@ const ResponseInterceptor: ResponseInterceptorFunction = (response) => {
 // <response data>
 ```
 
+## Log
+
+You can set log callback to print some information after request finished (ok/error):
+
+```typescript
+@BasePath("")
+export class HealthService extends BaseService {
+  @GET("/ping")
+  @ResponseStatus(200)
+  async ping(): Promise<Response> { return <Response>{} };
+}
+const myLogCallback = (config: RequestConfig, response: Response) => {
+  const log = `[${config.method}] ${config.url} ${response.status}`;
+  console.log(log); // [GET] http://localhost:12345/ping 200
+};
+const service = new ServiceBuilder()
+  .setEndpoint("http://localhost:12345")
+  .setLogCallback(myLogCallback)
+  .build(HealthService);
+
+// or use this
+service.setLogCallback(myLogCallback);
+const response = await service.ping();
+```
+
 ## Decorators
 
 ### BasePath

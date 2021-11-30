@@ -218,10 +218,13 @@ export class AbsoluteURLService extends BaseService {
 }
 
 @BasePath(API_PREFIX)
-export class HttpMethodOptionsService extends BaseService {
+export class HealthService extends BaseService {
   @GET("/ping", { ignoreBasePath: true })
   @ResponseStatus(200)
   async ping(): Promise<Response> { return <Response>{} };
+
+  @GET("/boom", { ignoreBasePath: true })
+  async boom(): Promise<Response> { return <Response>{} };
 }
 
 const gqlQuery =

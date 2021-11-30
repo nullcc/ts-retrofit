@@ -5,7 +5,7 @@
 
 | Statements                               | Branches                                 | Functions                                | Lines                               |
 | ---------------------------------------- | ---------------------------------------- | ---------------------------------------- | ----------------------------------- |
-| ![Statements](https://img.shields.io/badge/Coverage-96.34%25-brightgreen.svg "Make me better!") | ![Branches](https://img.shields.io/badge/Coverage-86.09%25-yellow.svg "Make me better!") | ![Functions](https://img.shields.io/badge/Coverage-88.46%25-yellow.svg "Make me better!") | ![Lines](https://img.shields.io/badge/Coverage-96.34%25-brightgreen.svg "Make me better!") |
+| ![Statements](https://img.shields.io/badge/Coverage-96.49%25-brightgreen.svg "Make me better!") | ![Branches](https://img.shields.io/badge/Coverage-86.78%25-yellow.svg "Make me better!") | ![Functions](https://img.shields.io/badge/Coverage-88.89%25-yellow.svg "Make me better!") | ![Lines](https://img.shields.io/badge/Coverage-96.49%25-brightgreen.svg "Make me better!") |
 
 > A declarative and [axios](https://github.com/axios/axios) based retrofit implementation for JavaScript and TypeScript.
 
@@ -106,6 +106,31 @@ const ResponseInterceptor: ResponseInterceptorFunction = (response) => {
 // Before sending request to server.
 // After receiving response from server.
 // <response data>
+```
+
+## Log
+
+You can set log callback to print some information after request finished (ok/error):
+
+```typescript
+@BasePath("")
+export class HealthService extends BaseService {
+  @GET("/ping")
+  @ResponseStatus(200)
+  async ping(): Promise<Response> { return <Response>{} };
+}
+const myLogCallback = (config: RequestConfig, response: Response) => {
+  const log = `[${config.method}] ${config.url} ${response.status}`;
+  console.log(log); // [GET] http://localhost:12345/ping 200
+};
+const service = new ServiceBuilder()
+  .setEndpoint("http://localhost:12345")
+  .setLogCallback(myLogCallback)
+  .build(HealthService);
+
+// or use this
+service.setLogCallback(myLogCallback);
+const response = await service.ping();
 ```
 
 ## Decorators
