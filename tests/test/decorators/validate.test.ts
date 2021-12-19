@@ -80,14 +80,9 @@ describe("Validate", () => {
       );
 
       test("Wrong url", async () => {
-        await validateThrows(
-          async () => {
-            await service.wrongUrlAndOneField();
-          },
-          (error) => {
-            expect(error.message).toContain("404");
-          },
-        );
+        await validateThrows(service.wrongUrlAndOneField, (error) => {
+          expect(error.message).toContain("404");
+        });
       });
     });
 

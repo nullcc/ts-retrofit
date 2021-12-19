@@ -25,10 +25,10 @@ import { makeConfig } from "./request-config-builder";
 
 axios.defaults.withCredentials = true;
 
-export type HttpApiResponse<T = unknown> = Promise<AxiosResponse<T>>;
+export type HttpApiResponse<T = unknown> = Awaited<Promise<AxiosResponse<T>>>;
 
 export type ApiResponse<T = unknown> = HttpApiResponse<T> & void;
-export type ApiResponseBody<T = unknown> = Promise<T> & void;
+export type ApiResponseBody<T = unknown> = Awaited<Promise<T>> & void;
 
 export const ErrorMessages = {
   NO_HTTP_METHOD: "No http method for method (Add @GET / @POST ...)",
@@ -95,7 +95,10 @@ export class BaseService {
     return this.__meta__;
   }
 
-  async __performRequest<T = DataType | DataType[]>(methodName: keyof this, args: unknown[] = []): HttpApiResponse<T> {
+  async __performRequest<T = DataType | DataType[]>(
+    methodName: keyof this,
+    args: unknown[] = [],
+  ): Promise<HttpApiResponse<T>> {
     return await this._wrapToAxiosResponse(methodName as string, args);
   }
 
@@ -127,7 +130,7 @@ export class BaseService {
   private async _wrapToAxiosResponse<T = DataType | DataType[]>(
     methodName: string,
     args: unknown[],
-  ): HttpApiResponse<T> {
+  ): Promise<HttpApiResponse<T>> {
     const metadata = this.__meta__.getMetadata(methodName);
     this._resolveConverterAndValidator(methodName, metadata);
 

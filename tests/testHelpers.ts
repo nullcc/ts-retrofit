@@ -1,5 +1,6 @@
 import { AxiosResponse, Method } from "axios";
 import { AddressInfo } from "net";
+import { ApiResponse, ApiResponseBody } from "../src";
 
 export const JSONPLACEHOLDER_URL = "https://jsonplaceholder.typicode.com";
 export const testServerUrl = (address: AddressInfo | string | null) =>
@@ -25,7 +26,7 @@ export function verifyBody<T>(
 }
 
 export async function validateThrows<T extends Error = Error, R = unknown>(
-  fn: () => Promise<R>,
+  fn: () => ApiResponse<R> | ApiResponseBody<R>,
   catchChecks: (error: T) => void = () => {
     // do nothing
   },

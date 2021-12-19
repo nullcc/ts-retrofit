@@ -37,7 +37,7 @@ export class RetrofitHttpClient {
     });
   }
 
-  public async sendRequest<T>(config: AxiosRequestConfig): HttpApiResponse<T> {
+  public async sendRequest<T>(config: AxiosRequestConfig): Promise<HttpApiResponse<T>> {
     return this.axios(config);
   }
 }

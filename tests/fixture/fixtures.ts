@@ -222,26 +222,26 @@ export class ResponseBodyPostsApiService extends BaseService {
   patch(@Path("id") id: number, @Body body: PostCreateDTO): ApiResponseBody<Post> {}
 
   @DELETE("/{id}")
-  delete(@Path("id") id: number): ApiResponseBody<never> {}
+  delete(@Path("id") id: number): ApiResponseBody {}
 
   @HEAD("/{id}")
-  head(@Path("id") id: number): ApiResponseBody<never> {}
+  head(@Path("id") id: number): ApiResponseBody {}
 
   @OPTIONS("/{id}")
-  options(@Path("id") id: number): ApiResponseBody<never> {}
+  options(@Path("id") id: number): ApiResponseBody {}
 
   @POST("/")
   @Headers({
     Header1: "Value1",
     Header2: "Value2",
   })
-  headers(@Body body: PostCreateDTO): ApiResponseBody<never> {}
+  headers(@Body body: PostCreateDTO): ApiResponseBody {}
 
   @GET("/")
-  header(@Header("Header") header: string): ApiResponseBody<never> {}
+  header(@Header("Header") header: string): ApiResponseBody {}
 
   @GET("/")
-  headerMap(@HeaderMap headers: { [key: string]: unknown }): ApiResponseBody<never> {}
+  headerMap(@HeaderMap headers: { [key: string]: unknown }): ApiResponseBody {}
 
   @GET("/")
   @Queries({
@@ -249,13 +249,13 @@ export class ResponseBodyPostsApiService extends BaseService {
     size: 20,
     sort: "createdAt:desc",
   })
-  queries(): ApiResponseBody<never> {}
+  queries(): ApiResponseBody {}
 
   @GET("/")
-  query(@Query("userId") userId: number): ApiResponseBody<never> {}
+  query(@Query("userId") userId: number): ApiResponseBody {}
 
   @GET("/")
-  queryMap(@QueryMap query: SearchQuery): ApiResponseBody<never> {}
+  queryMap(@QueryMap query: SearchQuery): ApiResponseBody {}
 
   @POST("/")
   @FormUrlEncoded
@@ -294,7 +294,7 @@ export class ResponseBodyPostsApiService extends BaseService {
   config(): ApiResponseBody<Post[]> {}
 
   @GET("/asdasda/sdasdasda/sdasd/asdkjajkldkasd", { ignoreBasePath: true })
-  wrongUrl(): ApiResponseBody<never> {}
+  wrongUrl(): ApiResponseBody {}
 }
 
 export class WithHeaderService extends BaseService {
@@ -310,7 +310,7 @@ export class ResponseBodyWithHeaderService extends BaseService {
   withHeaders(): ApiResponseBody<unknown> {}
 
   @GET("/with-oauth")
-  withOauth(): ApiResponseBody<string> {}
+  withOauth(): ApiResponseBody {}
 }
 
 export class ServiceWithoutBasePath extends BaseService {

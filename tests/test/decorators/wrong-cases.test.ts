@@ -247,8 +247,8 @@ describe("Decorators - wrong cases", () => {
   async function verifyErrorThrown(exec: () => void, err?: string) {
     try {
       await exec();
-    } catch (e) {
-      expect(e.message).toBe(err);
+    } catch ({ message }) {
+      expect(message).toBe(err);
       return;
     }
 
