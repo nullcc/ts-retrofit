@@ -95,22 +95,22 @@ describe("Decorators", () => {
 
   test("@Headers", async () => {
     const response = await service.headers(PostsApiService.dto);
-    expect(response.config.headers["Header1"]).toBe("Value1");
-    expect(response.config.headers["Header2"]).toBe("Value2");
+    expect(response.config.headers!["Header1"]).toBe("Value1");
+    expect(response.config.headers!["Header2"]).toBe("Value2");
     verifyRequest(response, "post", "/posts/", 201);
   });
 
   test("@Header", async () => {
     const response = await service.header("Value1");
-    expect(response.config.headers["Header"]).toBe("Value1");
+    expect(response.config.headers!["Header"]).toBe("Value1");
     verifyRequest(response, "get");
   });
 
   test("@HeaderMap", async () => {
     const response = await service.headerMap({ h1: 1, h2: "v2", h3: true });
-    expect(response.config.headers["h1"]).toBe(1);
-    expect(response.config.headers["h2"]).toBe("v2");
-    expect(response.config.headers["h3"]).toBe(true);
+    expect(response.config.headers!["h1"]).toBe("1");
+    expect(response.config.headers!["h2"]).toBe("v2");
+    expect(response.config.headers!["h3"]).toBe("true");
     verifyRequest(response, "get");
   });
 
@@ -144,7 +144,7 @@ describe("Decorators", () => {
       PostsApiService.dto.body,
     );
 
-    expect(response.config.headers[CONTENT_TYPE_HEADER]).toBe(CONTENT_TYPE.APPLICATION_JSON);
+    expect(response.config.headers![CONTENT_TYPE_HEADER]).toBe(CONTENT_TYPE.APPLICATION_JSON);
 
     verifyRequest(response, "post", "/posts/", 201);
     verifyBody(response, PostsApiService.dto);
@@ -153,7 +153,7 @@ describe("Decorators", () => {
   test("@FieldMap", async () => {
     const response = await service.fieldMap(PostsApiService.dto);
 
-    expect(response.config.headers[CONTENT_TYPE_HEADER]).toBe(CONTENT_TYPE.APPLICATION_JSON);
+    expect(response.config.headers![CONTENT_TYPE_HEADER]).toBe(CONTENT_TYPE.APPLICATION_JSON);
 
     verifyRequest(response, "post", "/posts/", 201);
     verifyBody(response, PostsApiService.dto);

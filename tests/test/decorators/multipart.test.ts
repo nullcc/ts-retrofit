@@ -15,7 +15,7 @@ describe("Decorators - Multipart", () => {
       filename: "pic.png",
     };
     const response = await fileService.upload(bucket, file);
-    expect(response.config.headers[CONTENT_TYPE_HEADER]).toContain(CONTENT_TYPE.MULTIPART_FORM_DATA);
+    expect(response.config.headers![CONTENT_TYPE_HEADER]).toContain(CONTENT_TYPE.MULTIPART_FORM_DATA);
   });
 
   test("@Multipart - test2", async () => {
@@ -23,7 +23,7 @@ describe("Decorators - Multipart", () => {
     const from = { value: "+11111111" };
     const to = { value: ["+22222222", "+33333333"] };
     const response = await messagingService.createSMS(from, to);
-    expect(response.config.headers[CONTENT_TYPE_HEADER]).toContain(CONTENT_TYPE.MULTIPART_FORM_DATA);
+    expect(response.config.headers![CONTENT_TYPE_HEADER]).toContain(CONTENT_TYPE.MULTIPART_FORM_DATA);
   });
 
   test("@ResponseType", async () => {

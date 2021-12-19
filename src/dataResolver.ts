@@ -1,16 +1,17 @@
 import * as qs from "qs";
 import FormData from "form-data";
-import { CONTENT_TYPE, CONTENT_TYPE_HEADER, DataType, HeadersParamType } from "./constants";
+import { CONTENT_TYPE, CONTENT_TYPE_HEADER, DataType } from "./constants";
 import { ErrorMessages } from "./baseService";
+import { AxiosRequestHeaders } from "axios";
 
 export class BaseDataResolver {
-  public resolve(headers: HeadersParamType, data: DataType): DataType {
+  public resolve(headers: AxiosRequestHeaders, data: DataType): DataType {
     throw new Error("Can not call this method in BaseDataResolver.");
   }
 }
 
 export class FormUrlencodedResolver extends BaseDataResolver {
-  public resolve(headers: HeadersParamType, data: DataType): DataType {
+  public resolve(headers: AxiosRequestHeaders, data: DataType): DataType {
     const deepStringify = (obj: Record<string, unknown>) => {
       const res = {};
       for (const key in obj) {
@@ -30,7 +31,7 @@ export class FormUrlencodedResolver extends BaseDataResolver {
 }
 
 export class MultiPartResolver extends BaseDataResolver {
-  public resolve(headers: HeadersParamType, data: Record<string, unknown>): FormData {
+  public resolve(headers: AxiosRequestHeaders, data: Record<string, unknown>): FormData {
     const formData = new FormData();
     Object.entries(data).map((e) => {
       if (typeof e[1] !== "object") throw new Error(ErrorMessages.MULTIPART_PARAM_WRONG_TYPE);
@@ -54,13 +55,13 @@ export class MultiPartResolver extends BaseDataResolver {
 }
 
 export class JsonResolver extends BaseDataResolver {
-  public resolve(headers: HeadersParamType, data: DataType): DataType {
+  public resolve(headers: AxiosRequestHeaders, data: DataType): DataType {
     return data && typeof data === "string" ? JSON.parse(data) : data;
   }
 }
 
 export class TextXmlResolver extends BaseDataResolver {
-  public resolve(headers: HeadersParamType, data: DataType): DataType {
+  public resolve(headers: AxiosRequestHeaders, data: DataType): DataType {
     return data;
   }
 }
@@ -74,9 +75,9 @@ dataResolverMap.set(CONTENT_TYPE.HTML, TextXmlResolver);
 
 export class DataResolverFactory {
   public static createDataResolver(contentType: string): BaseDataResolver;
-  public static createDataResolver(headers: HeadersParamType): BaseDataResolver;
+  public static createDataResolver(headers: AxiosRequestHeaders): BaseDataResolver;
 
-  public static createDataResolver(arg: string | HeadersParamType): BaseDataResolver {
+  public static createDataResolver(arg: string | AxiosRequestHeaders): BaseDataResolver {
     const argElement = arg[CONTENT_TYPE_HEADER] || arg[CONTENT_TYPE_HEADER.toLocaleLowerCase()];
     const contentType = typeof arg === "string" ? arg : (argElement as string);
 

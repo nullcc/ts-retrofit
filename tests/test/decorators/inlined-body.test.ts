@@ -105,24 +105,24 @@ describe("Decorators - inlined response", () => {
   test("@Headers", async () => {
     await service.headers(PostsApiService.dto);
     const lastRequest = service.__getLastRequest();
-    expect(lastRequest.config.headers["Header1"]).toBe("Value1");
-    expect(lastRequest.config.headers["Header2"]).toBe("Value2");
+    expect(lastRequest.config.headers!["Header1"]).toBe("Value1");
+    expect(lastRequest.config.headers!["Header2"]).toBe("Value2");
     verifyRequest(lastRequest, "post", "/posts/", 201);
   });
 
   test("@Header", async () => {
     await service.header("Value1");
     const lastRequest = service.__getLastRequest();
-    expect(lastRequest.config.headers["Header"]).toBe("Value1");
+    expect(lastRequest.config.headers!["Header"]).toBe("Value1");
     verifyRequest(lastRequest, "get");
   });
 
   test("@HeaderMap", async () => {
     await service.headerMap({ h1: 1, h2: "v2", h3: true });
     const lastRequest = service.__getLastRequest();
-    expect(lastRequest.config.headers["h1"]).toBe(1);
-    expect(lastRequest.config.headers["h2"]).toBe("v2");
-    expect(lastRequest.config.headers["h3"]).toBe(true);
+    expect(lastRequest.config.headers!["h1"]).toBe("1");
+    expect(lastRequest.config.headers!["h2"]).toBe("v2");
+    expect(lastRequest.config.headers!["h3"]).toBe("true");
     verifyRequest(lastRequest, "get");
   });
 
@@ -159,7 +159,7 @@ describe("Decorators - inlined response", () => {
     );
 
     const lastRequest = service.__getLastRequest();
-    expect(lastRequest.config.headers[CONTENT_TYPE_HEADER]).toBe(CONTENT_TYPE.APPLICATION_JSON);
+    expect(lastRequest.config.headers![CONTENT_TYPE_HEADER]).toBe(CONTENT_TYPE.APPLICATION_JSON);
 
     verifyRequest(lastRequest, "post", "/posts/", 201);
     verifyInlinedBody(response, lastRequest, PostsApiService.dto);
@@ -169,7 +169,7 @@ describe("Decorators - inlined response", () => {
     const response = await service.fieldMap(PostsApiService.dto);
     const lastRequest = service.__getLastRequest();
 
-    expect(lastRequest.config.headers[CONTENT_TYPE_HEADER]).toBe(CONTENT_TYPE.APPLICATION_JSON);
+    expect(lastRequest.config.headers![CONTENT_TYPE_HEADER]).toBe(CONTENT_TYPE.APPLICATION_JSON);
 
     verifyRequest(lastRequest, "post", "/posts/", 201);
     verifyInlinedBody(response, lastRequest, PostsApiService.dto);

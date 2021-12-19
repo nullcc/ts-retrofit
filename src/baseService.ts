@@ -1,10 +1,9 @@
-import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
+import axios, { AxiosRequestConfig, AxiosResponse, AxiosResponseHeaders } from "axios";
 import FormData from "form-data";
 import {
   CONTENT_TYPE,
   CONTENT_TYPE_HEADER,
   DataType,
-  HeadersParamType,
   HttpMethod,
   HttpMethodOptions,
   MethodMetadata,
@@ -208,7 +207,7 @@ export class BaseService {
   ): {
     url: string;
     method: HttpMethod;
-    headers: HeadersParamType;
+    headers: AxiosResponseHeaders;
     query: QueriesParamType;
     data: DataType | DataType[];
   } {

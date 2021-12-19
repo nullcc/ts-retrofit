@@ -1,11 +1,12 @@
-import { CONTENT_TYPE_HEADER, DataType, HeadersParamType, MethodMetadata } from "../constants";
+import { CONTENT_TYPE_HEADER, DataType, MethodMetadata } from "../constants";
 import { DataResolverFactory } from "../dataResolver";
 import { ErrorMessages } from "../baseService";
+import { AxiosRequestHeaders } from "axios";
 
 export const requestBodyResolver = (
   metadata: MethodMetadata,
   methodName: string,
-  headers: HeadersParamType,
+  headers: AxiosRequestHeaders,
   args: unknown[],
 ): DataType => {
   const bodyIndex = metadata.bodyIndex;

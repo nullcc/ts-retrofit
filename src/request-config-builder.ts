@@ -1,5 +1,5 @@
-import { DataType, HeadersParamType, HttpMethod, MethodMetadata, QueriesParamType } from "./constants";
-import { AxiosRequestConfig } from "axios";
+import { DataType, HttpMethod, MethodMetadata, QueriesParamType } from "./constants";
+import { AxiosRequestConfig, AxiosRequestHeaders, AxiosResponseHeaders } from "axios";
 import { DataResolverFactory } from "./dataResolver";
 import { ServiceBuilder } from "./service.builder";
 
@@ -9,7 +9,7 @@ export function makeConfig(
   methodName: string,
   url: string,
   method: HttpMethod,
-  headers: HeadersParamType,
+  headers: AxiosRequestHeaders,
   query: QueriesParamType,
   data: unknown,
 ): AxiosRequestConfig {
@@ -50,8 +50,8 @@ export function makeConfig(
   // response transformer
   if (metadata.responseTransformer.length > 0) {
     config.transformResponse = [
-      (body: string, headers: HeadersParamType) => {
-        return DataResolverFactory.createDataResolver(headers).resolve(headers, body);
+      (body: string, headers?: AxiosResponseHeaders) => {
+        return DataResolverFactory.createDataResolver(headers || {}).resolve(headers || {}, body);
       },
       ...metadata.responseTransformer,
     ];

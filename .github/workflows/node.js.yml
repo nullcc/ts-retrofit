@@ -11,21 +11,27 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
-
     strategy:
       matrix:
-        node-version: [12.x, 14.x, 16.x]
-        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+        node-version: [ 12.x, 14.x, 16.x ]
+      steps:
+        - uses: actions/checkout@v2
+        - uses: actions/setup-node@v2
+          with:
+            node-version: ${{ matrix.node }}
+            cache: 'yarn'
+        - run: yarn install
+        - run: yarn test
 
-    steps:
-    - uses: actions/checkout@v2
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v2
-      with:
-        node-version: ${{ matrix.node-version }}
-        cache: 'npm'
-    - run: npm ci
-    - run: npm run build --if-present
-    - run: npm test
+#    steps:
+#      - uses: actions/checkout@v2
+#      - uses: borales/actions-yarn@v2.3.0
+#          with:
+#            cmd: install # will run `yarn install` command
+#      - uses: borales/actions-yarn@v2.3.0
+#          with:
+#            cmd: build # will run `yarn build` command
+#      - uses: borales/actions-yarn@v2.3.0
+#          with:
+#            cmd: test # will run `yarn test` command

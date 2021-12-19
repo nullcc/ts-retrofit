@@ -1,10 +1,9 @@
-import { AxiosRequestConfig, ResponseType as AxiosResponseType } from "axios";
+import { AxiosRequestConfig, AxiosRequestHeaders, ResponseType as AxiosResponseType } from "axios";
 import {
   CHARSET_UTF_8,
   CONTENT_TYPE,
   CONTENT_TYPE_HEADER,
   DataType,
-  HeadersParamType,
   HttpMethod,
   HttpMethodOptions,
   MethodMetadata,
@@ -80,7 +79,7 @@ export const Body = <T extends BaseService>(target: T, methodName: string, param
  *           "Accept": "application/json"
  *         })
  */
-export const Headers = <T extends BaseService>(headers: HeadersParamType) => {
+export const Headers = <T extends BaseService>(headers: AxiosRequestHeaders) => {
   return (target: T, methodName: string, descriptor: PropertyDescriptor) => {
     target.__getServiceMetadata().setMetadata(methodName, (prev: MethodMetadata) => ({
       headers: {

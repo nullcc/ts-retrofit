@@ -26,7 +26,7 @@ describe("Decorators - @FormUrlEncoded", () => {
     const response = await service.formUrlEncoded(object.param1, object.param2, object.param3);
 
     expect(response.data).toMatchObject(objectFieldsAsString);
-    expect(response.config.headers[CONTENT_TYPE_HEADER]).toEqual(`${CONTENT_TYPE.FORM_URL_ENCODED};${CHARSET_UTF_8}`);
+    expect(response.config.headers![CONTENT_TYPE_HEADER]).toEqual(`${CONTENT_TYPE.FORM_URL_ENCODED};${CHARSET_UTF_8}`);
     expect(response.config.data).toEqual(`param1=${object.param1}&param2=${object.param2}&param3=${object.param3}`);
   });
 
@@ -34,7 +34,7 @@ describe("Decorators - @FormUrlEncoded", () => {
     const response = await service.formUrlEncodedWithBody(object);
 
     expect(response.data).toMatchObject(objectFieldsAsString);
-    expect(response.config.headers[CONTENT_TYPE_HEADER]).toEqual(`${CONTENT_TYPE.FORM_URL_ENCODED};${CHARSET_UTF_8}`);
+    expect(response.config.headers![CONTENT_TYPE_HEADER]).toEqual(`${CONTENT_TYPE.FORM_URL_ENCODED};${CHARSET_UTF_8}`);
     expect(response.config.data).toEqual(`param1=${object.param1}&param2=${object.param2}&param3=${object.param3}`);
   });
 
@@ -42,7 +42,7 @@ describe("Decorators - @FormUrlEncoded", () => {
     const response = await service.formUrlEncodedWithFieldMap(object);
 
     expect(response.data).toMatchObject(objectFieldsAsString);
-    expect(response.config.headers[CONTENT_TYPE_HEADER]).toEqual(`${CONTENT_TYPE.FORM_URL_ENCODED};${CHARSET_UTF_8}`);
+    expect(response.config.headers![CONTENT_TYPE_HEADER]).toEqual(`${CONTENT_TYPE.FORM_URL_ENCODED};${CHARSET_UTF_8}`);
     expect(response.config.data).toEqual(`param1=${object.param1}&param2=${object.param2}&param3=${object.param3}`);
   });
 });

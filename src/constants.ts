@@ -1,4 +1,11 @@
-import { AxiosRequestConfig, AxiosTransformer, Method, ResponseType as AxiosResponseType } from "axios";
+import {
+  AxiosRequestConfig,
+  AxiosRequestHeaders,
+  AxiosRequestTransformer,
+  AxiosResponseTransformer,
+  Method,
+  ResponseType as AxiosResponseType,
+} from "axios";
 import { ValidationError } from "class-validator";
 
 export enum ValidationMethod {
@@ -28,23 +35,19 @@ export enum CONTENT_TYPE {
   HTML = "text/html",
 }
 
-export type HeadersParamType = {
-  [x: string]: Primitive;
-};
-
 export type QueriesParamType = {
   [x: string]: Primitive;
 };
 
 export interface TransformerType<T extends DataType = DataType> {
-  (data: T, headers?: HeadersParamType): T;
+  (data: T, headers?: AxiosRequestHeaders): T;
 }
 
 export type MethodMetadata = {
   config?: Partial<AxiosRequestConfig>;
   responseType?: AxiosResponseType;
-  requestTransformer: AxiosTransformer[];
-  responseTransformer: AxiosTransformer[];
+  requestTransformer: AxiosRequestTransformer[];
+  responseTransformer: AxiosResponseTransformer[];
   timeout?: number;
   convertTo?: ResponseConvertTo;
   path?: string;
@@ -57,7 +60,7 @@ export type MethodMetadata = {
   parts: { [key: number]: string };
   fieldMapIndex?: number;
 
-  headers: HeadersParamType;
+  headers: AxiosRequestHeaders;
   headerParams: { [key: number]: string };
   headerMapIndex?: number;
   query: QueriesParamType;

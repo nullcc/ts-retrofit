@@ -42,7 +42,7 @@ export async function validateThrows<T extends Error = Error, R = unknown>(
 // @TODO
 describe.skip("TMP", () => {
   test.skip("t", () => {
-    return 10;
+    const a = 10;
   });
 });
 

@@ -71,7 +71,7 @@ export class ServiceBuilder {
         ...config,
         headers: {
           ...config.headers,
-          [key]: value,
+          [key]: `${value}`,
         },
       };
     });

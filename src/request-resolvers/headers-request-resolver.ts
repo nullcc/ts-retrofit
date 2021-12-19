@@ -1,11 +1,12 @@
 import { ErrorMessages } from "../baseService";
-import { HeadersParamType, MethodMetadata } from "../constants";
+import { MethodMetadata } from "../constants";
+import { AxiosRequestHeaders } from "axios";
 
 export const requestHeadersResolver = (
   metadata: MethodMetadata,
   methodName: string,
   args: unknown[],
-): HeadersParamType => {
+): AxiosRequestHeaders => {
   const headers = metadata.headers;
 
   Object.entries(metadata.headerParams).map((e) => {
@@ -30,7 +31,7 @@ export const requestHeadersResolver = (
     if (headerKey === "") throw new Error(ErrorMessages.EMPTY_HEADER_KEY);
 
     if (typeof headerValue === "number" || typeof headerValue === "string" || typeof headerValue === "boolean") {
-      metadata.headers[headerKey] = headerValue;
+      metadata.headers[headerKey] = `${headerValue}`;
     } else {
       throw new Error(ErrorMessages.WRONG_HEADERS_PROPERTY_TYPE);
     }
