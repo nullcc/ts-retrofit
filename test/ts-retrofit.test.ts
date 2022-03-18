@@ -477,6 +477,10 @@ describe("Test ts-retrofit.", () => {
       .setTimeout(3000)
       .build(TimeoutService);
     await expect(service.sleep5000()).rejects.toThrow(/timeout/);
+
+    service.setTimeout(6000);
+    const response = await service.sleep5000();
+    expect(response.data).toEqual({});
   });
 
   test("Test `@Timeout` decorator.", async () => {
