@@ -105,6 +105,11 @@ export class BaseService {
   }
 
   @nonHTTPRequestMethod
+  public setTimeout(timeout: number): void {
+    this._timeout = timeout;
+  }
+
+  @nonHTTPRequestMethod
   private _getInstanceMethodNames(): string[] {
     let properties: string[] = [];
     let obj = this;
