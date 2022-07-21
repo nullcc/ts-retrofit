@@ -601,7 +601,7 @@ export class GraphQLService extends BaseService {
 
 * Position: Method
 
-`Deprecated` decorator mark a method is deprecated.
+`Deprecated` decorator marks a method is deprecated.
 
 ```typescript
 @BasePath("/api/v1")
@@ -646,7 +646,7 @@ class ItemService extends BaseService {
 |       Config        |       @Config        |      A direct way to set config for a request in axios       |       Method       |                 @Config({ maxRedirects: 1 })                 |
 |       GraphQL       |       @GraphQL       |            Declares query for a GraphQL request.             |       Method       |             @GraphQL(gqlQuery, "operationName")              |
 |  GraphQLVariables   |  @GraphQLVariables   |          Declares variables for a GraphQL request.           |       Method       |                      @GraphQLVariables                       |
-|     Deprecated      |     @Deprecated      |               Declares a method is deprecated                |       Method       |  @Deprecated()<br>@Deprecated("This method is deprecated")   |
+|     Deprecated      |     @Deprecated      |               Marks a method is deprecated                |       Method       |  @Deprecated()<br>@Deprecated("This method is deprecated")   |
 
 ## Test
 
