@@ -1,7 +1,7 @@
 import {
   GET, POST, PUT, PATCH, DELETE, HEAD, OPTIONS, BasePath, Header, Queries, Headers, Path, Query, QueryMap, Body,
   FormUrlEncoded, Field, FieldMap, Multipart, ResponseType, Part, PartDescriptor, BaseService, Response, HeaderMap,
-  RequestTransformer, ResponseTransformer, Timeout, ResponseStatus, Config, GraphQL, GraphQLVariables
+  RequestTransformer, ResponseTransformer, Timeout, ResponseStatus, Config, GraphQL, GraphQLVariables, Deprecated,
 } from "../../src";
 
 export const TEST_SERVER_HOST = "http://localhost";
@@ -75,6 +75,10 @@ export class UserService extends BaseService {
 
   @OPTIONS("/users/{userId}")
   async optionsUser(@Header("X-Token") token: string, @Path("userId") userId: number): Promise<Response> { return <Response>{} };
+
+  @GET("/users/{userId}/pets")
+  @Deprecated("This method is deprecated on version v2.")
+  async getUserPets(@Header("X-Token") token: string, @Path("userId") userId: number): Promise<Response> { return <Response>{} };
 }
 
 @BasePath(API_PREFIX)

@@ -180,6 +180,14 @@ export class BaseService {
     }
     // timeout
     config.timeout = this.__meta__[methodName].timeout || this._timeout;
+    // deprecated
+    if (this.__meta__[methodName].deprecated) {
+      let hint = `[warning] Deprecated method: "${methodName}". `;
+      if (this.__meta__[methodName].deprecatedHint) {
+        hint += this.__meta__[methodName].deprecatedHint;
+      }
+      console.warn(hint);
+    }
     // mix in config set by @Config
     config = {
       ...config,
@@ -373,20 +381,17 @@ export class ServiceBuilder {
     return this;
   }
 
-  // 单例模式
   public setStandalone(standalone: boolean | AxiosInstance): ServiceBuilder {
     this._standalone = standalone;
     return this;
   }
 
-  // 插入请求拦截器
   public setRequestInterceptors(...interceptors: Array<RequestInterceptorFunction | RequestInterceptor>)
     : ServiceBuilder {
     this._requestInterceptors.push(...interceptors);
     return this;
   }
 
-  // 插入应答拦截器
   public setResponseInterceptors(...interceptors: Array<ResponseInterceptorFunction | ResponseInterceptor>)
     : ServiceBuilder {
     this._responseInterceptors.push(...interceptors);
@@ -429,8 +434,8 @@ export class ServiceBuilder {
 }
 
 class HttpClient {
-  private axios: AxiosInstance = axios;
-  private standalone: boolean = false;
+  private readonly axios: AxiosInstance = axios;
+  private readonly standalone: boolean = false;
 
   constructor(builder: ServiceBuilder) {
     if (builder.standalone === true) {

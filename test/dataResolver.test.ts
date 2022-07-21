@@ -1,7 +1,12 @@
-import {
-  BaseDataResolver, FormUrlencodedResolver, MultiPartResolver, JsonResolver, TextXmlResolver, DataResolverFactory,
-} from "../src/dataResolver";
 import * as fs from "fs";
+import {
+  BaseDataResolver,
+  FormUrlencodedResolver,
+  MultiPartResolver,
+  JsonResolver,
+  TextXmlResolver,
+  DataResolverFactory,
+} from "../src/dataResolver";
 
 describe("Test data resolver.", () => {
   test("Test BaseDataResolver.", async () => {
