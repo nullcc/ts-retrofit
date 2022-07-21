@@ -186,6 +186,7 @@ export class BaseService {
       if (this.__meta__[methodName].deprecatedHint) {
         hint += this.__meta__[methodName].deprecatedHint;
       }
+      // tslint:disable-next-line:no-console
       console.warn(hint);
     }
     // mix in config set by @Config
