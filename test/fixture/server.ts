@@ -141,3 +141,7 @@ app.post("/graphql", async function (req, res) {
     }
   });
 });
+
+app.get("/api/v1/users/:userId/pets", function (req, res) {
+  res.status(200).json({});
+});

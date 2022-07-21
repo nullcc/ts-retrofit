@@ -635,4 +635,13 @@ describe("Test ts-retrofit.", () => {
       expect(err.response.status).toEqual(404);
     }
   });
+
+  test("Test `@Deprecated` decorator.", async () => {
+    const userId = 1;
+    const userService = new ServiceBuilder()
+      .setEndpoint(TEST_SERVER_ENDPOINT)
+      .build(UserService);
+    const response = await userService.getUserPets(TOKEN, userId);
+    expect(response.config.url).toEqual(`${TEST_SERVER_ENDPOINT}${API_PREFIX}/users/1/pets`);
+  });
 });
