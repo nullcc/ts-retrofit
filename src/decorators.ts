@@ -22,6 +22,16 @@ export interface HttpMethodOptions {
   ignoreBasePath?: boolean;
 }
 
+// indices:  ?foo[0]=bar&foo[1]=qux
+// brackets: ?foo[]=bar&foo[]=qux
+// repeat:   ?foo=bar&foo=qux
+// comma:    ?foo=bar,qux
+export type QueryArrayFormat = "indices" | "brackets" | "repeat" | "comma";
+
+export interface QueryOptions {
+  arrayFormat?: QueryArrayFormat; // default is brackets
+}
+
 /**
  * Ensure the `__meta__` attribute is in the target object and `methodName` has been initialized.
  * @param target
@@ -216,6 +226,19 @@ export const Header = (paramName: string) => {
 export const HeaderMap = (target: any, methodName: string, paramIndex: number) => {
   ensureMeta(target, methodName);
   target.__meta__[methodName].headerMapIndex = paramIndex;
+};
+
+/**
+ * Set array format for query
+ * @param queryArrayFormat
+ * @sample @QueryArrayFormat('repeat')
+ * @constructor
+ */
+export const QueryArrayFormat = (queryArrayFormat: QueryArrayFormat) => {
+  return (target: BaseService, methodName: string, descriptor: PropertyDescriptor) => {
+    ensureMeta(target, methodName);
+    target.__meta__[methodName].queryArrayFormat = queryArrayFormat;
+  };
 };
 
 /**
