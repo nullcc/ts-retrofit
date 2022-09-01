@@ -32,7 +32,7 @@ import {
 import { HttpContentType } from "../src/constants";
 import { RequestConfig, Response } from "../src";
 
-declare module 'axios' {
+declare module "axios" {
   interface AxiosRequestConfig {
     standaloneId?: string;
   }
@@ -73,7 +73,7 @@ describe("Test ts-retrofit.", () => {
       .build(UserService);
     const newUser: User = {
       name: "Jane",
-      age: 18
+      age: 18,
     };
     const response = await userService.createUser(TOKEN, newUser);
     expect(response.config.method).toEqual("post");
@@ -160,7 +160,7 @@ describe("Test ts-retrofit.", () => {
       .build(UserService);
     const newUser: User = {
       name: "Jane",
-      age: 18
+      age: 18,
     };
     const response = await userService.createUser(TOKEN, newUser);
     expect(response.config.data).toEqual(JSON.stringify(newUser));
@@ -205,7 +205,7 @@ describe("Test ts-retrofit.", () => {
     expect(response.config.params).toMatchObject({
       page: 1,
       size: 20,
-      sort: "createdAt:desc"
+      sort: "createdAt:desc",
     });
   });
 
@@ -215,6 +215,24 @@ describe("Test ts-retrofit.", () => {
       .build(PostService);
     const response = await postService.getPosts1("typescript");
     expect(response.config.params.group).toEqual("typescript");
+  });
+
+  test("Test `@QueryArrayFormat` decorator.", async () => {
+    const postService = new ServiceBuilder()
+      .setEndpoint(TEST_SERVER_ENDPOINT)
+      .build(PostService);
+
+    const response1 = await postService.getPostsWithQueryArrayFormatIndices(["typescript", "ruby", "python"]);
+    expect(response1.request.path).toEqual("/api/v1/posts?groups%5B0%5D=typescript&groups%5B1%5D=ruby&groups%5B2%5D=python");
+
+    const response2 = await postService.getPostsWithQueryArrayFormatBrackets(["typescript", "ruby", "python"]);
+    expect(response2.request.path).toEqual("/api/v1/posts?groups%5B%5D=typescript&groups%5B%5D=ruby&groups%5B%5D=python");
+
+    const response3 = await postService.getPostsWithQueryArrayFormatRepeat(["typescript", "ruby", "python"]);
+    expect(response3.request.path).toEqual("/api/v1/posts?groups=typescript&groups=ruby&groups=python");
+
+    const response4 = await postService.getPostsWithQueryArrayFormatComma(["typescript", "ruby", "python"]);
+    expect(response4.request.path).toEqual("/api/v1/posts?groups=typescript%2Cruby%2Cpython");
   });
 
   test("Test `@QueryMap` decorator.", async () => {
@@ -296,7 +314,7 @@ describe("Test ts-retrofit.", () => {
   });
 
   test("Test multi-standalone services", async () => {
-    const standaloneId1 = Math.random().toString()
+    const standaloneId1 = Math.random().toString();
     const axiosInstance1 = axios.create();
     axiosInstance1.interceptors.response.use((value) => {
       value.config.standaloneId = standaloneId1;
@@ -310,7 +328,7 @@ describe("Test ts-retrofit.", () => {
     const response1 = await userService1.getUsers(TOKEN);
     expect(response1.config.standaloneId).toEqual(standaloneId1);
 
-    const standaloneId2 = Math.random().toString()
+    const standaloneId2 = Math.random().toString();
     const axiosInstance2 = axios.create();
     axiosInstance2.interceptors.response.use((value) => {
       value.config.standaloneId = standaloneId2;
@@ -324,7 +342,7 @@ describe("Test ts-retrofit.", () => {
     const response2 = await userService2.getUsers(TOKEN);
     expect(response2.config.standaloneId).toEqual(standaloneId2);
 
-    const standaloneId3 = Math.random().toString()
+    const standaloneId3 = Math.random().toString();
     const axiosInstance3 = axios.create();
     axiosInstance3.interceptors.response.use((value) => {
       value.config.standaloneId = standaloneId3;
@@ -342,22 +360,22 @@ describe("Test ts-retrofit.", () => {
   test("Test Request Interceptors", async () => {
     const requestInterceptor: RequestInterceptorFunction = (config) => {
       switch (config.method) {
-        case 'GET':
-        case 'get':
-          if (typeof config.params !== 'object') config.params = {};
-          config.params.role = 'interceptor';
+        case "GET":
+        case "get":
+          if (typeof config.params !== "object") { config.params = {}; }
+          config.params.role = "interceptor";
           break;
-        case 'POST':
-        case 'post':
-          if (config.headers?.post['Content-Type'] === HttpContentType.urlencoded) {
+        case "POST":
+        case "post":
+          if (config.headers?.post["Content-Type"] === HttpContentType.urlencoded) {
             const data = config.data;
             const body: { [key: string]: string } = {};
-            if (typeof data === 'string' && data.length) {
-              const list = data.split('&').map(v => v.split('='));
+            if (typeof data === "string" && data.length) {
+              const list = data.split("&").map((v) => v.split("="));
               for (const [key, value] of list) {
                 body[key] = value;
               }
-            } else if (typeof data === 'object') {
+            } else if (typeof data === "object") {
               for (const key in data) {
                 if (data.hasOwnProperty(key)) {
                   const element = data[key];
@@ -365,8 +383,8 @@ describe("Test ts-retrofit.", () => {
                 }
               }
             }
-            body['role'] = 'interceptor';
-            config.data = Object.entries(body).map(v => v.join('=')).join('&');
+            body.role = "interceptor";
+            config.data = Object.entries(body).map((v) => v.join("=")).join("&");
           }
           break;
         default:
@@ -382,16 +400,17 @@ describe("Test ts-retrofit.", () => {
       .build(InterceptorService);
 
     const response1 = await interceptorService.getParams();
-    expect(response1.config.params.role).toEqual('interceptor');
-    expect(response1.data.role).toEqual('interceptor');
+    expect(response1.config.params.role).toEqual("interceptor");
+    expect(response1.data.role).toEqual("interceptor");
 
-    const response2 = await interceptorService.createParams({ title: 'title', content: 'content' });
-    expect(response2.data.role).toEqual('interceptor');
+    const response2 = await interceptorService.createParams({ title: "title", content: "content" });
+    expect(response2.data.role).toEqual("interceptor");
   });
 
   test("Test Response Interceptors", async () => {
-    const standaloneId = 'im a interceptor';
+    const standaloneId = "im a interceptor";
 
+    // tslint:disable-next-line:no-shadowed-variable
     const responseInterceptor: ResponseInterceptorFunction = (response) => {
       response.config.standaloneId = standaloneId;
       return response;
@@ -409,15 +428,14 @@ describe("Test ts-retrofit.", () => {
 
   test("Test Interceptor Abstract Class", async () => {
     class AddHeaderInterceptor extends RequestInterceptor {
+      public role = "interceptor";
 
-      role = 'interceptor';
-
-      onFulfilled(config: AxiosRequestConfig) {
+      public onFulfilled(config: AxiosRequestConfig) {
         switch (config.method) {
-          case 'get':
-          case 'GET':
-            if (typeof config.headers?.get === 'object') {
-              config.headers.get['X-Role'] = this.role;
+          case "get":
+          case "GET":
+            if (typeof config.headers?.get === "object") {
+              config.headers.get["X-Role"] = this.role;
             }
             break;
 
@@ -430,12 +448,12 @@ describe("Test ts-retrofit.", () => {
 
     const interceptorService = new ServiceBuilder()
       .setStandalone(true)
-      .setRequestInterceptors(new AddHeaderInterceptor)
+      .setRequestInterceptors(new AddHeaderInterceptor())
       .setEndpoint(TEST_SERVER_ENDPOINT)
       .build(InterceptorService);
 
     const response = await interceptorService.getHeader();
-    expect(response.data.role).toEqual('interceptor');
+    expect(response.data.role).toEqual("interceptor");
   });
 
   test("Test `@ResponseType` decorator.", async () => {
@@ -468,7 +486,7 @@ describe("Test ts-retrofit.", () => {
       .setEndpoint(TEST_SERVER_ENDPOINT)
       .build(TransformerService);
     const response = await service.getSomething();
-    expect(response.data).toEqual({ foo: 'foo' });
+    expect(response.data).toEqual({ foo: "foo" });
   });
 
   test("Test `setTimeout` method.", async () => {
@@ -543,8 +561,8 @@ describe("Test ts-retrofit.", () => {
     const response1 = await service.graphql1(
       {
         name: "ts-retrofit",
-        owner: "nullcc"
-      }
+        owner: "nullcc",
+      },
     );
     expect(response1.config.data).toEqual("{\"query\":\"query ($name: String!, $owner: String!) {\\n  viewer {\\n    name\\n    location\\n  }\\n  repository(name: $name, owner: $owner) {\\n    stargazerCount\\n    forkCount\\n  }\\n}\",\"variables\":{\"name\":\"ts-retrofit\",\"owner\":\"nullcc\"}}");
     expect(response1.data).toEqual({
@@ -554,16 +572,16 @@ describe("Test ts-retrofit.", () => {
           location: "Xiamen China" },
         repository: {
           stargazerCount: 45,
-          forkCount: 11
-        }
-      }
+          forkCount: 11,
+        },
+      },
     });
 
     const response2 = await service.graphql2(
       {
         name: "ts-retrofit",
-        owner: "nullcc"
-      }
+        owner: "nullcc",
+      },
     );
     expect(response2.config.data).toEqual("{\"query\":\"query ($name: String!, $owner: String!) {\\n  viewer {\\n    name\\n    location\\n  }\\n  repository(name: $name, owner: $owner) {\\n    stargazerCount\\n    forkCount\\n  }\\n}\",\"operationName\":\"UserAndRepo\",\"variables\":{\"name\":\"ts-retrofit\",\"owner\":\"nullcc\"}}");
     expect(response2.data).toEqual({
@@ -573,9 +591,9 @@ describe("Test ts-retrofit.", () => {
           location: "Xiamen China" },
         repository: {
           stargazerCount: 45,
-          forkCount: 11
-        }
-      }
+          forkCount: 11,
+        },
+      },
     });
 
     const response3 = await service.graphql3();
@@ -587,9 +605,9 @@ describe("Test ts-retrofit.", () => {
           location: "Xiamen China" },
         repository: {
           stargazerCount: 45,
-          forkCount: 11
-        }
-      }
+          forkCount: 11,
+        },
+      },
     });
   });
 
@@ -597,12 +615,10 @@ describe("Test ts-retrofit.", () => {
     const myLogCallback = (config: RequestConfig, response: Response) => {
       const log = `[${config.method}] ${config.url} ${response.status}`;
       expect(log).toEqual("[GET] http://localhost:12345/ping 200");
-      console.log(log);
     };
     const myLogCallback2 = (config: RequestConfig, response: Response) => {
       const log = `-> [${config.method}] ${config.url} ${response.status}`;
       expect(log).toEqual("-> [GET] http://localhost:12345/ping 200");
-      console.log(log);
     };
     const service = new ServiceBuilder()
       .setEndpoint(TEST_SERVER_ENDPOINT)
@@ -622,7 +638,6 @@ describe("Test ts-retrofit.", () => {
     const myLogCallback = (config: RequestConfig, response: Response) => {
       const log = `[${config.method}] ${config.url} ${response.status}`;
       expect(log).toEqual("[GET] http://localhost:12345/boom 404");
-      console.log(log);
     };
     const service = new ServiceBuilder()
       .setEndpoint(TEST_SERVER_ENDPOINT)

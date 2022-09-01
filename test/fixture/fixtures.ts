@@ -2,6 +2,7 @@ import {
   GET, POST, PUT, PATCH, DELETE, HEAD, OPTIONS, BasePath, Header, Queries, Headers, Path, Query, QueryMap, Body,
   FormUrlEncoded, Field, FieldMap, Multipart, ResponseType, Part, PartDescriptor, BaseService, Response, HeaderMap,
   RequestTransformer, ResponseTransformer, Timeout, ResponseStatus, Config, GraphQL, GraphQLVariables, Deprecated,
+  QueryArrayFormat,
 } from "../../src";
 
 export const TEST_SERVER_HOST = "http://localhost";
@@ -114,6 +115,22 @@ export class PostService extends BaseService {
     sort: "createdAt:desc",
   })
   async getPosts1(@Query('group') group: string): Promise<Response> { return <Response>{} };
+
+  @GET("/posts")
+  @QueryArrayFormat('indices')
+  async getPostsWithQueryArrayFormatIndices(@Query('groups') groups: string[]): Promise<Response> { return <Response>{} };
+
+  @GET("/posts")
+  @QueryArrayFormat('brackets')
+  async getPostsWithQueryArrayFormatBrackets(@Query('groups') groups: string[]): Promise<Response> { return <Response>{} };
+
+  @GET("/posts")
+  @QueryArrayFormat('repeat')
+  async getPostsWithQueryArrayFormatRepeat(@Query('groups') groups: string[]): Promise<Response> { return <Response>{} };
+
+  @GET("/posts")
+  @QueryArrayFormat('comma')
+  async getPostsWithQueryArrayFormatComma(@Query('groups') groups: string[]): Promise<Response> { return <Response>{} };
 
   @POST("/posts")
   @FormUrlEncoded

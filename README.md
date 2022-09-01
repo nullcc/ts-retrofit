@@ -5,7 +5,7 @@
 
 | Statements                               | Branches                                 | Functions                                | Lines                               |
 | ---------------------------------------- | ---------------------------------------- | ---------------------------------------- | ----------------------------------- |
-| ![Statements](https://img.shields.io/badge/Coverage-96.59%25-brightgreen.svg "Make me better!") | ![Branches](https://img.shields.io/badge/Coverage-86.4%25-yellow.svg "Make me better!") | ![Functions](https://img.shields.io/badge/Coverage-89.19%25-yellow.svg "Make me better!") | ![Lines](https://img.shields.io/badge/Coverage-96.59%25-brightgreen.svg "Make me better!") |
+| ![Statements](https://img.shields.io/badge/Coverage-96.66%25-brightgreen.svg "Make me better!") | ![Branches](https://img.shields.io/badge/Coverage-86.61%25-yellow.svg "Make me better!") | ![Functions](https://img.shields.io/badge/Coverage-89.47%25-yellow.svg "Make me better!") | ![Lines](https://img.shields.io/badge/Coverage-96.66%25-brightgreen.svg "Make me better!") |
 
 > A declarative and [axios](https://github.com/axios/axios) based retrofit implementation for JavaScript and TypeScript.
 
@@ -342,6 +342,49 @@ class ItemService extends BaseService {
 }
 ```
 
+### QueryArrayFormat
+
+* Position: Method
+
+`QueryArrayFormat` decorator declares that what kind of array format should be used for query.
+
+```typescript
+@BasePath("/api/v1")
+class ItemService extends BaseService {
+  // getItemsWithQueryArrayFormatIndices(["food", "book", "pet"])
+  // GET ${ENDPOINT}/api/v1/items?categories[0]=food&categories[1]=book&categories[2]=pet
+  @GET("/items")
+  @QueryArrayFormat("indices")
+  async getItemsWithQueryArrayFormatIndices(
+  	@Query("categories") categories: string[]
+  ): Promise<Response<Array<Item>>> { return <Response<Array<Item>>> {} };
+  
+  // getItemsWithQueryArrayFormatBrackets(["food", "book", "pet"])
+  // GET ${ENDPOINT}/api/v1/items?categories[]=food&categories[]=book&categories[]=pet
+  @GET("/items")
+  @QueryArrayFormat("brackets")
+  async getItemsWithQueryArrayFormatBrackets(
+  	@Query("categories") categories: string[]
+  ): Promise<Response<Array<Item>>> { return <Response<Array<Item>>> {} };
+  
+  // getItemsWithQueryArrayFormatRepeat(["food", "book", "pet"])
+  // GET ${ENDPOINT}/api/v1/items?categories=food&categories=book&categories=pet
+  @GET("/items")
+  @QueryArrayFormat("repeat")
+  async getItemsWithQueryArrayFormatRepeat(
+  	@Query("categories") categories: string[]
+  ): Promise<Response<Array<Item>>> { return <Response<Array<Item>>> {} };
+  
+  // getItemsWithQueryArrayFormatComma(["food", "book", "pet"])
+  // GET ${ENDPOINT}/api/v1/items?categories=food,book,pet
+  @GET("/items")
+  @QueryArrayFormat("comma")
+  async getItemsWithQueryArrayFormatComma(
+  	@Query("categories") categories: string[]
+  ): Promise<Response<Array<Item>>> { return <Response<Array<Item>>> {} };
+}
+```
+
 ### Queries
 
 - Position: Method
@@ -630,6 +673,7 @@ class ItemService extends BaseService {
 |  Header Parameters  |      @HeaderMap      |                     Parameterized header                     |  Method Parameter  |                          @HeaderMap                          |
 |   Path Parameter    |        @Path         |             Specifying parameter in path of API              |  Method Parameter  |                       @Path("userId")                        |
 |        Body         |        @Body         |                     Specifying body data                     |  Method Parameter  |                            @Body                             |
+| Query Array Format  |  @QueryArrayFormat   |                Specifying query array format                 |       Method       |                 @QueryArrayFormat('repeat')                  |
 |    Static Query     |       @Queries       |                 Specifying static query data                 |       Method       | @Queries({ page: 1,   size: 20,   sort: "createdAt:desc" })  |
 |   Query Parameter   |        @Query        |                     Parameterized query                      |  Method Parameter  |                       @Query("group")                        |
 |  Query Parameters   |      @QueryMap       |                     Parameterized query                      |  Method Parameter  |                          @QueryMap                           |
@@ -646,7 +690,7 @@ class ItemService extends BaseService {
 |       Config        |       @Config        |      A direct way to set config for a request in axios       |       Method       |                 @Config({ maxRedirects: 1 })                 |
 |       GraphQL       |       @GraphQL       |            Declares query for a GraphQL request.             |       Method       |             @GraphQL(gqlQuery, "operationName")              |
 |  GraphQLVariables   |  @GraphQLVariables   |          Declares variables for a GraphQL request.           |       Method       |                      @GraphQLVariables                       |
-|     Deprecated      |     @Deprecated      |               Marks a method is deprecated                |       Method       |  @Deprecated()<br>@Deprecated("This method is deprecated")   |
+|     Deprecated      |     @Deprecated      |                 Marks a method is deprecated                 |       Method       |  @Deprecated()<br>@Deprecated("This method is deprecated")   |
 
 ## Test
 
