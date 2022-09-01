@@ -193,7 +193,7 @@ export class BaseService {
     // query array format
     if (this.__meta__[methodName].queryArrayFormat) {
       config.paramsSerializer = (params: any): string => {
-        return qs.stringify(params, { arrayFormat: this.__meta__[methodName].queryArrayFormat})
+        return qs.stringify(params, { arrayFormat: this.__meta__[methodName].queryArrayFormat});
       };
     }
     // mix in config set by @Config
