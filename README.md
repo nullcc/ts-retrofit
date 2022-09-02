@@ -346,7 +346,7 @@ class ItemService extends BaseService {
 
 * Position: Method
 
-`QueryArrayFormat` decorator declares that what kind of array format should be used for query.
+`QueryArrayFormat` decorator declares that what kind of array format should be used in query.
 
 ```typescript
 @BasePath("/api/v1")
