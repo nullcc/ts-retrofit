@@ -356,7 +356,7 @@ class ItemService extends BaseService {
   @GET("/items")
   @QueryArrayFormat("indices")
   async getItemsWithQueryArrayFormatIndices(
-  	@Query("categories") categories: string[]
+    @Query("categories") categories: string[]
   ): Promise<Response<Array<Item>>> { return <Response<Array<Item>>> {} };
   
   // getItemsWithQueryArrayFormatBrackets(["food", "book", "pet"])
@@ -364,7 +364,7 @@ class ItemService extends BaseService {
   @GET("/items")
   @QueryArrayFormat("brackets")
   async getItemsWithQueryArrayFormatBrackets(
-  	@Query("categories") categories: string[]
+    @Query("categories") categories: string[]
   ): Promise<Response<Array<Item>>> { return <Response<Array<Item>>> {} };
   
   // getItemsWithQueryArrayFormatRepeat(["food", "book", "pet"])
@@ -372,7 +372,7 @@ class ItemService extends BaseService {
   @GET("/items")
   @QueryArrayFormat("repeat")
   async getItemsWithQueryArrayFormatRepeat(
-  	@Query("categories") categories: string[]
+    @Query("categories") categories: string[]
   ): Promise<Response<Array<Item>>> { return <Response<Array<Item>>> {} };
   
   // getItemsWithQueryArrayFormatComma(["food", "book", "pet"])
@@ -380,7 +380,7 @@ class ItemService extends BaseService {
   @GET("/items")
   @QueryArrayFormat("comma")
   async getItemsWithQueryArrayFormatComma(
-  	@Query("categories") categories: string[]
+    @Query("categories") categories: string[]
   ): Promise<Response<Array<Item>>> { return <Response<Array<Item>>> {} };
 }
 ```
