@@ -42,14 +42,16 @@ export class MultiPartResolver extends BaseDataResolver {
     for (const key in data) {
       if (data[key].filename) {
         formData.append(key, data[key].value, { filename: data[key].filename });
-      } else {
-        if (Array.isArray(data[key].value)) {
-          for (const element of data[key].value) {
-            formData.append(key, element);
-          }
-        } else {
-          formData.append(key, data[key].value);
+      } else if (Array.isArray(data[key])) {
+        for (const element of data[key]) {
+          formData.append(key, element.value, { filename: element.filename });
         }
+      } else if (Array.isArray(data[key].value)) {
+        for (const element of data[key].value) {
+          formData.append(key, element);
+        }
+      } else {
+        formData.append(key, data[key].value);
       }
     }
     return formData;
