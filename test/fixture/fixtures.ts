@@ -132,6 +132,34 @@ export class PostService extends BaseService {
   @QueryArrayFormat('comma')
   async getPostsWithQueryArrayFormatComma(@Query('groups') groups: string[]): Promise<Response> { return <Response>{} };
 
+  @GET("/posts")
+  @Queries({
+    page: 1,
+    size: 20,
+    sort: "createdAt:desc",
+  })
+  async getPostsWithOptionalQuery(@Query('since') since?: string): Promise<Response> { return <Response>{} };
+
+  @GET("/posts")
+  @Queries({
+    page: 1,
+    size: 20,
+    sort: "createdAt:desc",
+  })
+  async getPostsWithOptionalQueryMap(@QueryMap filters?: SearchQuery): Promise<Response> { return <Response>{} };
+
+  @GET("/posts")
+  @Headers({
+    'Cache-Control': 'no-cache'
+  })
+  async getPostsWithOptionalHeader(@Header('X-Correlation-Id') correlationId?: string): Promise<Response> { return <Response>{} };
+
+  @GET("/posts")
+  @Headers({
+    'Cache-Control': 'no-cache'
+  })
+  async getPostsWithOptionalHeaderMap(@HeaderMap headers?: any): Promise<Response> { return <Response>{} };
+
   @POST("/posts")
   @FormUrlEncoded
   async createPost(@Field("title") title: string, @Field("content") content: string): Promise<Response> { return <Response>{} };
