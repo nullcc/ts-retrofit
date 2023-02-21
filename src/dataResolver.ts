@@ -1,6 +1,7 @@
 import * as qs from "qs";
-import FormData from "form-data";
+import FormData, { AppendOptions } from "form-data";
 import { DATA_CONTENT_TYPES } from "./constants";
+import {PartDescriptor} from "./decorators";
 
 export class BaseDataResolver {
   public resolve(headers: any, data: any): any {
@@ -40,21 +41,32 @@ export class MultiPartResolver extends BaseDataResolver {
   public resolve(headers: any, data: any): any {
     const formData = new FormData();
     for (const key in data) {
-      if (data[key].filename) {
-        formData.append(key, data[key].value, { filename: data[key].filename });
-      } else if (Array.isArray(data[key])) {
+      if (Array.isArray(data[key])) {
         for (const element of data[key]) {
-          formData.append(key, element.value, { filename: element.filename });
+          const options = this.getFormDataAppendOptions(element);
+          formData.append(key, element.value, options);
         }
       } else if (Array.isArray(data[key].value)) {
         for (const element of data[key].value) {
-          formData.append(key, element);
+          const options = this.getFormDataAppendOptions(data[key]);
+          formData.append(key, element, options);
         }
       } else {
-        formData.append(key, data[key].value);
+        const options = this.getFormDataAppendOptions(data[key]);
+        formData.append(key, data[key].value, options);
       }
     }
     return formData;
+  }
+
+  private getFormDataAppendOptions<T>(partDescriptor: PartDescriptor<T>): AppendOptions {
+    const options = {};
+    Object.keys(partDescriptor).forEach((key) => {
+      if (key !== "value") {
+        options[key] = partDescriptor[key];
+      }
+    });
+    return options;
   }
 }
 

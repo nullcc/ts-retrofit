@@ -16,6 +16,7 @@ interface Query {
 export interface PartDescriptor<T> {
   value: T;
   filename?: string;
+  contentType?: string;
 }
 
 export interface HttpMethodOptions {

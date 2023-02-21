@@ -295,11 +295,16 @@ describe("Test ts-retrofit.", () => {
     const bucket = {
       value: "test-bucket",
     };
+    const metadata = {
+      value: JSON.stringify({ tag: "logo" }),
+      contentType: "application/json",
+    };
     const file = {
       value: fs.readFileSync("test/fixture/pic.png"),
       filename: "pic.png",
+      contentType: "image/png",
     };
-    const response = await fileService.upload(bucket, file);
+    const response = await fileService.upload(bucket, metadata, file);
     expect(response.config.headers["Content-Type"]).toContain("multipart/form-data");
   });
 

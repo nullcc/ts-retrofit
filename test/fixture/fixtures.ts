@@ -149,7 +149,11 @@ export class PostService extends BaseService {
 export class FileService extends BaseService {
   @POST("/upload")
   @Multipart
-  async upload(@Part("bucket") bucket: PartDescriptor<string>, @Part("file") file: PartDescriptor<Buffer>): Promise<Response> { return <Response>{} };
+  async upload(
+    @Part("bucket") bucket: PartDescriptor<string>,
+    @Part("metadata") metadata: PartDescriptor<string>,
+    @Part("file") file: PartDescriptor<Buffer>,
+  ): Promise<Response> { return <Response>{} };
 
   @GET("/file")
   @ResponseType("stream")
