@@ -545,6 +545,7 @@ describe("Test ts-retrofit.", () => {
     try {
       const response = await service.getSomethingAbsolute();
     } catch (err) {
+      // @ts-ignore
       expect(err.config.url).toEqual("https://absolute-foobar.com");
     }
   });
@@ -651,7 +652,9 @@ describe("Test ts-retrofit.", () => {
     try {
       await service.boom();
     } catch (err) {
+      // @ts-ignore
       expect(err.response.config.url).toEqual(`${TEST_SERVER_ENDPOINT}/boom`);
+      // @ts-ignore
       expect(err.response.status).toEqual(404);
     }
   });

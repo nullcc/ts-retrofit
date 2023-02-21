@@ -133,6 +133,7 @@ export class BaseService {
       response = await this._httpClient.sendRequest(config);
     } catch (err) {
       error = err;
+      // @ts-ignore
       response = err.response;
     }
     if (this._logCallback) {
