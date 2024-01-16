@@ -1,6 +1,6 @@
 import {
   ResponseType as AxiosResponseType,
-  AxiosTransformer, AxiosRequestConfig,
+   AxiosRequestTransformer, AxiosResponseTransformer, InternalAxiosRequestConfig,
 } from "axios";
 import { HttpMethod } from "./constants";
 import { BaseService } from "./baseService";
@@ -382,7 +382,7 @@ export const ResponseType = (responseType: AxiosResponseType) => {
  *         })
  * @constructor
  */
-export const RequestTransformer = (transformer: AxiosTransformer) => {
+export const RequestTransformer = (transformer: AxiosRequestTransformer) => {
   return (target: any, methodName: string) => {
     ensureMeta(target, methodName);
     target.__meta__[methodName].requestTransformer = transformer;
@@ -399,7 +399,7 @@ export const RequestTransformer = (transformer: AxiosTransformer) => {
  *         })
  * @constructor
  */
-export const ResponseTransformer = (transformer: AxiosTransformer) => {
+export const ResponseTransformer = (transformer: AxiosResponseTransformer) => {
   return (target: any, methodName: string) => {
     ensureMeta(target, methodName);
     target.__meta__[methodName].responseTransformer = transformer;
@@ -438,7 +438,7 @@ export const ResponseStatus = (responseStatus: number) => {
  * @sample @Config({ maxRedirects: 1 })
  * @constructor
  */
-export const Config = (config: Partial<AxiosRequestConfig>) => {
+export const Config = (config: Partial<InternalAxiosRequestConfig>) => {
   return (target: any, methodName: string) => {
     ensureMeta(target, methodName);
     target.__meta__[methodName].config = config;

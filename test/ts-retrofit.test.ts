@@ -1,6 +1,6 @@
 import * as http from "http";
 import * as fs from "fs";
-import axios, { AxiosRequestConfig } from "axios";
+import axios, { InternalAxiosRequestConfig } from "axios";
 import { app } from "./fixture/server";
 import { ServiceBuilder, RequestInterceptorFunction, ResponseInterceptorFunction, RequestInterceptor } from "../src";
 import {
@@ -33,7 +33,7 @@ import { HttpContentType } from "../src/constants";
 import { RequestConfig, Response } from "../src";
 
 declare module "axios" {
-  interface AxiosRequestConfig {
+  interface InternalAxiosRequestConfig {
     standaloneId?: string;
   }
 }
@@ -372,25 +372,23 @@ describe("Test ts-retrofit.", () => {
           break;
         case "POST":
         case "post":
-          if (config.headers?.post["Content-Type"] === HttpContentType.urlencoded) {
-            const data = config.data;
-            const body: { [key: string]: string } = {};
-            if (typeof data === "string" && data.length) {
-              const list = data.split("&").map((v) => v.split("="));
-              for (const [key, value] of list) {
-                body[key] = value;
-              }
-            } else if (typeof data === "object") {
-              for (const key in data) {
-                if (data.hasOwnProperty(key)) {
-                  const element = data[key];
-                  body[key] = element;
-                }
+          const data = config.data;
+          const body: { [key: string]: string } = {};
+          if (typeof data === "string" && data.length) {
+            const list = data.split("&").map((v) => v.split("="));
+            for (const [key, value] of list) {
+              body[key] = value;
+            }
+          } else if (typeof data === "object") {
+            for (const key in data) {
+              if (data.hasOwnProperty(key)) {
+                const element = data[key];
+                body[key] = element;
               }
             }
-            body.role = "interceptor";
-            config.data = Object.entries(body).map((v) => v.join("=")).join("&");
           }
+          body.role = "interceptor";
+          config.data = Object.entries(body).map((v) => v.join("=")).join("&");
           break;
         default:
           break;
@@ -435,12 +433,12 @@ describe("Test ts-retrofit.", () => {
     class AddHeaderInterceptor extends RequestInterceptor {
       public role = "interceptor";
 
-      public onFulfilled(config: AxiosRequestConfig) {
+      public onFulfilled(config: InternalAxiosRequestConfig) {
         switch (config.method) {
           case "get":
           case "GET":
-            if (typeof config.headers?.get === "object") {
-              config.headers.get["X-Role"] = this.role;
+            if (typeof config.headers === "object") {
+              config.headers["X-Role"] = this.role;
             }
             break;
 
