@@ -1,5 +1,5 @@
 import * as qs from "qs";
-import axios, { AxiosRequestConfig, AxiosResponse, AxiosInstance } from "axios";
+import axios, { InternalAxiosRequestConfig, AxiosResponse, AxiosInstance } from "axios";
 import FormData from "form-data";
 import { DataResolverFactory } from "./dataResolver";
 import { HttpMethod } from "./constants";
@@ -8,7 +8,7 @@ import { isNode } from "./util";
 
 axios.defaults.withCredentials = true;
 
-export type RequestConfig = AxiosRequestConfig;
+export type RequestConfig = InternalAxiosRequestConfig;
 
 export interface Response<T = any> extends AxiosResponse<T> { }
 
@@ -357,7 +357,7 @@ export class BaseService {
 }
 
 export type RequestInterceptorFunction =
-  (value: AxiosRequestConfig) => AxiosRequestConfig | Promise<AxiosRequestConfig>;
+  (value: InternalAxiosRequestConfig) => InternalAxiosRequestConfig | Promise<InternalAxiosRequestConfig>;
 export type ResponseInterceptorFunction<T = any> =
   (value: AxiosResponse<T>) => AxiosResponse<T> | Promise<AxiosResponse<T>>;
 
@@ -366,7 +366,7 @@ abstract class BaseInterceptor {
 }
 
 export abstract class RequestInterceptor extends BaseInterceptor {
-  public abstract onFulfilled(value: AxiosRequestConfig): AxiosRequestConfig | Promise<AxiosRequestConfig>;
+  public abstract onFulfilled(value: InternalAxiosRequestConfig): InternalAxiosRequestConfig | Promise<InternalAxiosRequestConfig>;
 }
 
 export abstract class ResponseInterceptor<T = any> extends BaseInterceptor {
