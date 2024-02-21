@@ -243,17 +243,17 @@ export class BaseService {
   @nonHTTPRequestMethod
   private _resolveHeaders(methodName: string, args: any[]): any {
     const meta = this.__meta__;
-    const headers = meta[methodName].headers || {};
+    const headers = { ...meta[methodName].headers };
     const headerParams = meta[methodName].headerParams;
     for (const pos in headerParams) {
-      if (headerParams[pos]) {
+      if (headerParams[pos] && args[pos] !== undefined) {
         headers[headerParams[pos]] = args[pos];
       }
     }
     const headerMapIndex = meta[methodName].headerMapIndex;
     if (headerMapIndex >= 0) {
       for (const key in args[headerMapIndex]) {
-        if (args[headerMapIndex][key]) {
+        if (args[headerMapIndex][key] !== undefined) {
           headers[key] = args[headerMapIndex][key];
         }
       }
@@ -264,17 +264,17 @@ export class BaseService {
   @nonHTTPRequestMethod
   private _resolveQuery(methodName: string, args: any[]): any {
     const meta = this.__meta__;
-    const query = meta[methodName].query || {};
+    const query = { ...meta[methodName].query };
     const queryParams = meta[methodName].queryParams;
     for (const pos in queryParams) {
-      if (queryParams[pos]) {
+      if (queryParams[pos] && args[pos] !== undefined) {
         query[queryParams[pos]] = args[pos];
       }
     }
     const queryMapIndex = meta[methodName].queryMapIndex;
     if (queryMapIndex >= 0) {
       for (const key in args[queryMapIndex]) {
-        if (args[queryMapIndex][key]) {
+        if (args[queryMapIndex][key] !== undefined) {
           query[key] = args[queryMapIndex][key];
         }
       }
