@@ -196,7 +196,10 @@ export const Headers = (headers: Headers) => {
     if (!target.__meta__[methodName].headers) {
       target.__meta__[methodName].headers = {};
     }
-    target.__meta__[methodName].headers = headers;
+    target.__meta__[methodName].headers = {
+      ...target.__meta__[methodName].headers,
+      ...headers,
+    };
   };
 };
 
