@@ -248,6 +248,100 @@ describe("Test ts-retrofit.", () => {
     expect(response.config.params).toMatchObject(query);
   });
 
+  test("Test `@Query` decorator should not persist optional param across requests.", async () => {
+    const postsService = new ServiceBuilder()
+      .setEndpoint(TEST_SERVER_ENDPOINT)
+      .build(PostService);
+    const since1 = "2022-12-01"
+    const since3 = "2020-10-31"
+    const response1 = await postsService.getPostsWithOptionalQuery(since1);
+    const response2 = await postsService.getPostsWithOptionalQuery();
+    const response3 = await postsService.getPostsWithOptionalQuery(since3);
+    console.log(response1.config.params)
+    console.log(response2.config.params)
+    console.log(response3.config.params)
+    expect(response1.config.params.since).toEqual(since1);
+
+    expect(response2.config.params.since).toBeUndefined();
+    expect(Object.keys(response2.config.params)).not.toContain('since');
+
+    expect(response3.config.params.since).toEqual(since3);
+  });
+
+  test("Test `@QueryMap` decorator should not persist optional params across requests.", async () => {
+    const postsService = new ServiceBuilder()
+      .setEndpoint(TEST_SERVER_ENDPOINT)
+      .build(PostService);
+    const query1: SearchQuery = {
+      title: "TypeScript",
+    };
+    const query3: SearchQuery = {
+      author: "John Doe",
+    };
+    const response1 = await postsService.getPostsWithOptionalQueryMap(query1);
+    const response2 = await postsService.getPostsWithOptionalQueryMap();
+    const response3 = await postsService.getPostsWithOptionalQueryMap(query3);
+    
+    expect(response1.config.params.title).toEqual(query1.title);
+    expect(response1.config.params.author).toBeUndefined();
+    expect(Object.keys(response1.config.params)).not.toContain('author');
+
+    expect(response2.config.params.title).toBeUndefined();
+    expect(Object.keys(response2.config.params)).not.toContain('title');
+    expect(response2.config.params.author).toBeUndefined();
+    expect(Object.keys(response2.config.params)).not.toContain('author');
+
+    expect(response3.config.params.title).toBeUndefined();
+    expect(Object.keys(response3.config.params)).not.toContain('title');
+    expect(response3.config.params.author).toEqual(query3.author);
+  });
+
+  test("Test `@Header` decorator should not persist optional header across requests.", async () => {
+    const postsService = new ServiceBuilder()
+      .setEndpoint(TEST_SERVER_ENDPOINT)
+      .build(PostService);
+    const correlationId1 = "1234abcd"
+    const correlationId3 = "9876zyxw"
+    const response1 = await postsService.getPostsWithOptionalHeader(correlationId1);
+    const response2 = await postsService.getPostsWithOptionalHeader();
+    const response3 = await postsService.getPostsWithOptionalHeader(correlationId3);
+
+    expect(response1.config.headers['X-Correlation-Id']).toEqual(correlationId1);
+
+    expect(response2.config.headers['X-Correlation-Id']).toBeUndefined();
+    expect(Object.keys(response2.config.headers)).not.toContain('X-Correlation-Id');
+
+    expect(response3.config.headers['X-Correlation-Id']).toEqual(correlationId3);
+  });
+
+  test("Test `@HeaderMap` decorator should not persist optional headers across requests.", async () => {
+    const postsService = new ServiceBuilder()
+      .setEndpoint(TEST_SERVER_ENDPOINT)
+      .build(PostService);
+    const headers1 = {
+      'X-Session-Id': "1234abcd"
+    };
+    const headers3 = {
+      'X-Correlation-Id': "9876zyxw",
+    };
+    const response1 = await postsService.getPostsWithOptionalHeaderMap(headers1);
+    const response2 = await postsService.getPostsWithOptionalHeaderMap();
+    const response3 = await postsService.getPostsWithOptionalHeaderMap(headers3);
+
+    expect(response1.config.headers['X-Session-Id']).toEqual(headers1['X-Session-Id']);
+    expect(response1.config.headers['X-Correlation-Id']).toBeUndefined();
+    expect(Object.keys(response1.config.headers)).not.toContain('X-Correlation-Id');
+
+    expect(response2.config.headers['X-Session-Id']).toBeUndefined();
+    expect(Object.keys(response2.config.headers)).not.toContain('X-Session-Id');
+    expect(response2.config.headers['X-Correlation-Id']).toBeUndefined();
+    expect(Object.keys(response2.config.headers)).not.toContain('X-Correlation-Id');
+
+    expect(response3.config.headers['X-Session-Id']).toBeUndefined();
+    expect(Object.keys(response3.config.headers)).not.toContain('X-Session-Id');
+    expect(response3.config.headers['X-Correlation-Id']).toEqual(headers3['X-Correlation-Id']);
+  });
+
   test("Test `@FormUrlEncoded` decorator.", async () => {
     const postService = new ServiceBuilder()
       .setEndpoint(TEST_SERVER_ENDPOINT)
